@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 0.5
-;; Last-Updated: 2018-10-07 18:49:24
+;; Version: 0.4
+;; Last-Updated: 2018-10-07 17:30:41
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -77,7 +77,6 @@
 ;;      * Add row/column information.
 ;;      * Add `awesome-tray-advice' make tray information visible always.
 ;;      * Use `frame-width' instead `window-width' to handle blank characters fill.
-;;      * Use `awesome-tray-current-message' re-implement `awesome-tray-advice' to avoid format error by `eval-*' functions.
 ;;
 
 ;;; Acknowledgements:
@@ -121,9 +120,7 @@
       (awesome-tray-enable)
     (awesome-tray-disable)))
 
-(defvar awesome-tray-current-message "")
-
-(defvar awesome-tray-info-padding-right 3)
+(defvar awesome-tray-info-padding-right 2)
 
 (defvar awesome-tray-mode-line-colors nil)
 
@@ -193,7 +190,7 @@
 (defun awesome-tray-build-info ()
   (let ((info ""))
     ;; Collection information.
-    (mapcar #'(lambda (i) (setq info (format " %s %s" info i)))
+    (mapcar '(lambda (i) (setq info (format " %s %s" info i)))
             (list
              ;; Git branch.
              (if (fboundp 'magit-get-current-branch)
@@ -213,26 +210,40 @@
     info))
 
 (defun awesome-tray-show-info ()
+  ;; Only flush tray info when current message is empty.
+  (unless (current-message)
+    (awesome-tray-flush-info)))
+
+(defun awesome-tray-flush-info ()
   (let* ((tray-info (awesome-tray-build-info)))
     (with-current-buffer " *Minibuf-0*"
       (erase-buffer)
-      (insert (format "%s %s %s"
-                      awesome-tray-current-message
-                      (make-string (max 0 (- (frame-width) (length awesome-tray-current-message) (length tray-info) awesome-tray-info-padding-right)) ?\ )
-                      tray-info)))))
+      (insert (format "%s %s" (make-string (max 0 (- (frame-width) (length tray-info) awesome-tray-info-padding-right)) ?\ ) tray-info)))))
+
+(defun awesome-tray-get-echo-format-string (message-string)
+  (let* ((tray-info (awesome-tray-build-info))
+         (blank-length (- (frame-width) (length tray-info) (length message-string) awesome-tray-info-padding-right)))
+    (if (> blank-length 0)
+        ;; Return wrap format string if message width less than window width (such as magit ask message)
+        (concat "%s " (make-string blank-length ?\ ) tray-info)
+      ;; Otherwise wrap nothing.
+      "%s")))
 
 ;; Wrap `message' make tray information visible always
 ;; even other plugins call `message' to flush minibufer.
 (defadvice message (around awesome-tray-advice activate)
   (if awesome-tray-active-p
-      (progn
-        ;; Save message string to `awesome-tray-current-message'
-        (setq awesome-tray-current-message
-              (if (not (ad-get-arg 0))
-                  ""
-                (apply 'format (ad-get-args 0))))
-        ;; Update newest message with tray information.
-        (awesome-tray-show-info))
+      (if (not (ad-get-arg 0))
+          ;; Just flush tray info if message string is empty.
+          (progn
+            ad-do-it
+            (awesome-tray-flush-info))
+        ;; Otherwise, wrap message string with tray info.
+        (let ((formatted-string (apply 'format (ad-get-args 0)))
+              echo-string)
+          (setq echo-string (awesome-tray-get-echo-format-string formatted-string))
+          (ad-set-args 0 `(,echo-string ,formatted-string))
+          ad-do-it))
     ad-do-it))
 
 (provide 'awesome-tray)
