@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 0.1
-;; Last-Updated: 2018-10-07 07:30:16
+;; Version: 0.2
+;; Last-Updated: 2018-10-07 10:50:19
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -74,6 +74,7 @@
 ;;
 ;; 2018/10/07
 ;;      * First released.
+;;      * Add row/column information.
 ;;
 
 ;;; Acknowledgements:
@@ -198,6 +199,8 @@
                "")
              ;; Current mode.
              major-mode
+             ;; Location.
+             (format "(%s:%s)" (line-number-at-pos) (current-column))
              ;; Date.
              (format-time-string "[%Y-%m-%d %H:%M]")))
     info))
