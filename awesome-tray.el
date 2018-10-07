@@ -227,17 +227,19 @@
 ;; Wrap `message' make tray information visible always
 ;; even other plugins call `message' to flush minibufer.
 (defadvice message (around awesome-tray-advice activate)
-  (if (not (ad-get-arg 0))
-      ;; Just flush tray info if message string is empty.
-      (progn
-        ad-do-it
-        (awesome-tray-flush-info))
-    ;; Otherwise, wrap message string with tray info.
-    (let ((formatted-string (apply 'format (ad-get-args 0)))
-          echo-string)
-      (setq echo-string (awesome-tray-get-echo-format-string formatted-string))
-      (ad-set-args 0 `(,echo-string ,formatted-string))
-      ad-do-it)))
+  (if awesome-tray-mode
+      (if (not (ad-get-arg 0))
+          ;; Just flush tray info if message string is empty.
+          (progn
+            ad-do-it
+            (awesome-tray-flush-info))
+        ;; Otherwise, wrap message string with tray info.
+        (let ((formatted-string (apply 'format (ad-get-args 0)))
+              echo-string)
+          (setq echo-string (awesome-tray-get-echo-format-string formatted-string))
+          (ad-set-args 0 `(,echo-string ,formatted-string))
+          ad-do-it))
+    ad-do-it))
 
 (provide 'awesome-tray)
 
