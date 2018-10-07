@@ -14,7 +14,7 @@ It's set in your ~/.emacs like this:
 
 ```Elisp
 (require 'awesome-tray)
-(awesome-tray 1)
+(awesome-tray-mode 1)
 ```
 
 ## Note

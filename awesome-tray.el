@@ -56,7 +56,7 @@
 ;; And the following to your ~/.emacs startup file.
 ;;
 ;; (require 'awesome-tray)
-;; (awesome-tray 1)
+;; (awesome-tray-mode 1)
 ;;
 ;; No need more.
 
