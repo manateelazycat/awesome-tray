@@ -212,7 +212,7 @@
   (let* ((tray-info (awesome-tray-build-info)))
     (with-current-buffer " *Minibuf-0*"
       (erase-buffer)
-      (insert (format "%s %s" (make-string (- (window-width) (length tray-info) awesome-tray-info-padding-right) ?\ ) tray-info)))))
+      (insert (format "%s %s" (make-string (max 0 (- (window-width) (length tray-info) awesome-tray-info-padding-right)) ?\ ) tray-info)))))
 
 (defun awesome-tray-get-echo-format-string (message-string)
   (let* ((tray-info (awesome-tray-build-info))
