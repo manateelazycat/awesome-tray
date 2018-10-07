@@ -204,6 +204,7 @@
     info))
 
 (defun awesome-tray-show-info ()
+  ;; Only flush tray info when current message is empty.
   (unless (current-message)
     (awesome-tray-flush-info)))
 
@@ -217,16 +218,20 @@
   (let* ((tray-info (awesome-tray-build-info))
          (blank-length (- (window-width) (length tray-info) (length message-string) awesome-tray-info-padding-right)))
     (if (> blank-length 0)
+        ;; Return wrap format string if message width less than window width (such as magit ask message)
         (concat "%s " (make-string blank-length ?\ ) tray-info)
+      ;; Otherwise wrap nothing.
       "%s")))
 
 ;; Wrap `message' make tray information visible always
 ;; even other plugins call `message' to flush minibufer.
 (defadvice message (around awesome-tray-advice activate)
   (if (not (ad-get-arg 0))
+      ;; Just flush tray info if message string is empty.
       (progn
         ad-do-it
         (awesome-tray-flush-info))
+    ;; Otherwise, wrap message string with tray info.
     (let ((formatted-string (apply 'format (ad-get-args 0)))
           echo-string)
       (setq echo-string (awesome-tray-get-echo-format-string formatted-string))
