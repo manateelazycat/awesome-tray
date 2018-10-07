@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 0.3
-;; Last-Updated: 2018-10-07 12:17:49
+;; Version: 0.4
+;; Last-Updated: 2018-10-07 17:30:41
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -76,6 +76,7 @@
 ;;      * First released.
 ;;      * Add row/column information.
 ;;      * Add `awesome-tray-advice' make tray information visible always.
+;;      * Use `frame-width' instead `window-width' to handle blank characters fill.
 ;;
 
 ;;; Acknowledgements:
@@ -212,11 +213,11 @@
   (let* ((tray-info (awesome-tray-build-info)))
     (with-current-buffer " *Minibuf-0*"
       (erase-buffer)
-      (insert (format "%s %s" (make-string (max 0 (- (window-width) (length tray-info) awesome-tray-info-padding-right)) ?\ ) tray-info)))))
+      (insert (format "%s %s" (make-string (max 0 (- (frame-width) (length tray-info) awesome-tray-info-padding-right)) ?\ ) tray-info)))))
 
 (defun awesome-tray-get-echo-format-string (message-string)
   (let* ((tray-info (awesome-tray-build-info))
-         (blank-length (- (window-width) (length tray-info) (length message-string) awesome-tray-info-padding-right)))
+         (blank-length (- (frame-width) (length tray-info) (length message-string) awesome-tray-info-padding-right)))
     (if (> blank-length 0)
         ;; Return wrap format string if message width less than window width (such as magit ask message)
         (concat "%s " (make-string blank-length ?\ ) tray-info)
