@@ -106,7 +106,7 @@
   :group 'awesome-tray)
 
 (defface awesome-tray-info-face
-  '((t (:foreground "gray30" :bold t)))
+  '((t (:foreground "green3" :bold t)))
   "Face tray info."
   :group 'awesome-tray)
 
