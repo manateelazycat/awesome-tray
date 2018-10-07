@@ -122,22 +122,26 @@
 
 (defvar awesome-tray-info-padding-right 2)
 
-(defvar awesome-tray-mode-line-colors)
+(defvar awesome-tray-mode-line-colors nil)
 
-(defvar awesome-tray-timer)
+(defvar awesome-tray-timer nil)
+
+(defvar awesome-tray-active-p nil)
 
 (defun awesome-tray-enable ()
-  ;; Save mode-line colors.
-  (setq awesome-tray-mode-line-colors
-        (list (face-attribute 'mode-line :foreground)
-              (face-attribute 'mode-line :background)
-              (face-attribute 'mode-line :family)
-              (face-attribute 'mode-line :box)
-              (face-attribute 'mode-line-inactive :foreground)
-              (face-attribute 'mode-line-inactive :background)
-              (face-attribute 'mode-line-inactive :family)
-              (face-attribute 'mode-line-inactive :box)
-              ))
+  ;; Save mode-line colors when first time.
+  ;; Don't change `awesome-tray-mode-line-colors' anymore.
+  (unless awesome-tray-mode-line-colors
+    (setq awesome-tray-mode-line-colors
+          (list (face-attribute 'mode-line :foreground)
+                (face-attribute 'mode-line :background)
+                (face-attribute 'mode-line :family)
+                (face-attribute 'mode-line :box)
+                (face-attribute 'mode-line-inactive :foreground)
+                (face-attribute 'mode-line-inactive :background)
+                (face-attribute 'mode-line-inactive :family)
+                (face-attribute 'mode-line-inactive :box)
+                )))
   ;; Disable mode line.
   (set-face-attribute 'mode-line nil
                       :foreground awesome-tray-mode-line-active-color
@@ -154,6 +158,7 @@
         (run-with-timer 0 0.5 'awesome-tray-show-info))
   (add-hook 'focus-in-hook 'awesome-tray-show-info)
   ;; Notify user.
+  (setq awesome-tray-active-p t)
   (message "Enable awesome tray."))
 
 (defun awesome-tray-disable ()
@@ -170,7 +175,6 @@
                       :family (nth 6 awesome-tray-mode-line-colors)
                       :box (nth 7 awesome-tray-mode-line-colors)
                       :height 1)
-  (setq awesome-tray-mode-line-colors nil)
   ;; Cancel timer.
   (cancel-timer awesome-tray-timer)
   (remove-hook 'focus-in-hook 'awesome-tray-timer)
@@ -180,6 +184,7 @@
   (with-current-buffer " *Minibuf-0*"
     (erase-buffer))
   ;; Notify user.
+  (setq awesome-tray-active-p nil)
   (message "Disable awesome tray."))
 
 (defun awesome-tray-build-info ()
@@ -227,7 +232,7 @@
 ;; Wrap `message' make tray information visible always
 ;; even other plugins call `message' to flush minibufer.
 (defadvice message (around awesome-tray-advice activate)
-  (if awesome-tray-mode
+  (if awesome-tray-active-p
       (if (not (ad-get-arg 0))
           ;; Just flush tray info if message string is empty.
           (progn
