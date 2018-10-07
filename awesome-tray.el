@@ -127,9 +127,11 @@
   (setq awesome-tray-mode-line-colors
         (list (face-attribute 'mode-line :foreground)
               (face-attribute 'mode-line :background)
+              (face-attribute 'mode-line :family)
               (face-attribute 'mode-line :box)
               (face-attribute 'mode-line-inactive :foreground)
               (face-attribute 'mode-line-inactive :background)
+              (face-attribute 'mode-line-inactive :family)
               (face-attribute 'mode-line-inactive :box)
               ))
   ;; Disable mode line.
@@ -155,12 +157,14 @@
   (set-face-attribute 'mode-line nil
                       :foreground (nth 0 awesome-tray-mode-line-colors)
                       :background (nth 1 awesome-tray-mode-line-colors)
-                      :box (nth 2 awesome-tray-mode-line-colors)
+                      :family (nth 2 awesome-tray-mode-line-colors)
+                      :box (nth 3 awesome-tray-mode-line-colors)
                       :height 1)
   (set-face-attribute 'mode-line-inactive nil
-                      :foreground (nth 3 awesome-tray-mode-line-colors)
-                      :background (nth 4 awesome-tray-mode-line-colors)
-                      :box (nth 5 awesome-tray-mode-line-colors)
+                      :foreground (nth 4 awesome-tray-mode-line-colors)
+                      :background (nth 5 awesome-tray-mode-line-colors)
+                      :family (nth 6 awesome-tray-mode-line-colors)
+                      :box (nth 7 awesome-tray-mode-line-colors)
                       :height 1)
   (setq awesome-tray-mode-line-colors nil)
   ;; Cancel timer.
