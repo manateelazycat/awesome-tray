@@ -121,7 +121,7 @@
       (awesome-tray-enable)
     (awesome-tray-disable)))
 
-(defvar awesome-tray-info-padding-right 3)
+(defvar awesome-tray-info-padding-right 1)
 
 (defvar awesome-tray-mode-line-colors nil)
 
@@ -219,18 +219,18 @@
   (let* ((tray-info (awesome-tray-build-info)))
     (with-current-buffer " *Minibuf-0*"
       (erase-buffer)
-      (insert (format "%s %s" (make-string (max 0 (- (frame-width) (length tray-info) awesome-tray-info-padding-right)) ?\ ) tray-info)))))
+      (insert (concat (make-string (max 0 (- (frame-width) (length tray-info) awesome-tray-info-padding-right)) ?\ ) tray-info)))))
 
 (defun awesome-tray-get-echo-format-string (message-string)
   (let* ((tray-info (awesome-tray-build-info))
          (blank-length (- (frame-width) (length tray-info) (length message-string) awesome-tray-info-padding-right)))
     (if (> blank-length 0)
-        (format "%s %s %s"
-                message-string
-                (make-string (max 0 (- (frame-width) (length message-string) (length tray-info) awesome-tray-info-padding-right)) ?\ )
-                tray-info)
+        (concat
+         message-string
+         (make-string (max 0 (- (frame-width) (length message-string) (length tray-info) awesome-tray-info-padding-right)) ?\ )
+         tray-info)
       ;; Don't fill blank if message string is wider than frame width.
-      (format "%s %s" message-string tray-info))))
+      (concat message-string tray-info))))
 
 ;; Wrap `message' make tray information visible always
 ;; even other plugins call `message' to flush minibufer.
