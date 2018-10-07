@@ -242,7 +242,7 @@
         ad-do-it
         (awesome-tray-flush-info))
        ;; Otherwise, wrap message string with tray info.
-       (t (let ((formatted-string (string-trim (apply 'format (ad-get-args 0))))
+       (t (let ((formatted-string (apply 'format (ad-get-args 0)))
                 echo-string)
             (setq echo-string (awesome-tray-get-echo-format-string formatted-string))
             (ad-set-args 0 `("%s" ,echo-string))
