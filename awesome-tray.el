@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 0.2
-;; Last-Updated: 2018-10-07 10:50:19
+;; Version: 0.3
+;; Last-Updated: 2018-10-07 12:17:49
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -75,6 +75,7 @@
 ;; 2018/10/07
 ;;      * First released.
 ;;      * Add row/column information.
+;;      * Add `awesome-tray-advice' make tray information visible always.
 ;;
 
 ;;; Acknowledgements:
@@ -117,6 +118,8 @@
   (if awesome-tray-mode
       (awesome-tray-enable)
     (awesome-tray-disable)))
+
+(defvar awesome-tray-info-padding-right 2)
 
 (defvar awesome-tray-mode-line-colors)
 
@@ -178,20 +181,9 @@
   ;; Notify user.
   (message "Disable awesome tray."))
 
-(defun awesome-tray-show-info ()
-  (unless (current-message)
-    (let* ((tray-info (awesome-tray-build-info))
-           (tray-info-width (length tray-info))
-           (tray-info-padding-right 2)
-           (minibuffer-width (window-width)))
-      (with-current-buffer " *Minibuf-0*"
-        (erase-buffer)
-        (put-text-property 0 (length tray-info) 'face 'awesome-tray-info-face tray-info)
-        (insert (format "%s %s" (make-string (- minibuffer-width tray-info-width tray-info-padding-right) ?\ ) tray-info))
-        ))))
-
 (defun awesome-tray-build-info ()
   (let ((info ""))
+    ;; Collection information.
     (mapcar '(lambda (i) (setq info (format " %s %s" info i)))
             (list
              ;; Git branch.
@@ -207,7 +199,39 @@
              (format "(%s:%s)" (line-number-at-pos) (current-column))
              ;; Date.
              (format-time-string "[%Y-%m-%d %H:%M]")))
+    ;; Add color property.
+    (put-text-property 0 (length info) 'face 'awesome-tray-info-face info)
     info))
+
+(defun awesome-tray-show-info ()
+  (unless (current-message)
+    (awesome-tray-flush-info)))
+
+(defun awesome-tray-flush-info ()
+  (let* ((tray-info (awesome-tray-build-info)))
+    (with-current-buffer " *Minibuf-0*"
+      (erase-buffer)
+      (insert (format "%s %s" (make-string (- (window-width) (length tray-info) awesome-tray-info-padding-right) ?\ ) tray-info)))))
+
+(defun awesome-tray-get-echo-format-string (message-string)
+  (let* ((tray-info (awesome-tray-build-info))
+         (blank-length (- (window-width) (length tray-info) (length message-string) awesome-tray-info-padding-right)))
+    (if (> blank-length 0)
+        (concat "%s " (make-string blank-length ?\ ) tray-info)
+      "%s")))
+
+;; Wrap `message' make tray information visible always
+;; even other plugins call `message' to flush minibufer.
+(defadvice message (around awesome-tray-advice activate)
+  (if (not (ad-get-arg 0))
+      (progn
+        ad-do-it
+        (awesome-tray-flush-info))
+    (let ((formatted-string (apply 'format (ad-get-args 0)))
+          echo-string)
+      (setq echo-string (awesome-tray-get-echo-format-string formatted-string))
+      (ad-set-args 0 `(,echo-string ,formatted-string))
+      ad-do-it)))
 
 (provide 'awesome-tray)
 
