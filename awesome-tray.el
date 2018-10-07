@@ -176,7 +176,7 @@
 
 (defun awesome-tray-show-info ()
   (unless (current-message)
-    (let* ((tray-info (awesom-tray-build-info))
+    (let* ((tray-info (awesome-tray-build-info))
            (tray-info-width (length tray-info))
            (tray-info-padding-right 2)
            (minibuffer-width (window-width)))
@@ -186,7 +186,7 @@
         (insert (format "%s %s" (make-string (- minibuffer-width tray-info-width tray-info-padding-right) ?\ ) tray-info))
         ))))
 
-(defun awesom-tray-build-info ()
+(defun awesome-tray-build-info ()
   (let ((info ""))
     (mapcar '(lambda (i) (setq info (format " %s %s" info i)))
             (list
