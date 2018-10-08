@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 0.6
-;; Last-Updated: 2018-10-07 19:44:14
+;; Version: 0.7
+;; Last-Updated: 2018-10-09 06:16:53
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -64,13 +64,16 @@
 ;;
 ;; `awesome-tray-mode-line-active-color'
 ;; `awesome-tray-mode-line-inactive-color'
-;; `awesome-tray-info-face'
+;; `awesome-tray-active-modules'
 ;;
 ;; All of the above can customize by:
 ;;      M-x customize-group RET awesome-tray RET
 ;;
 
 ;;; Change log:
+;;
+;; 2018/10/09
+;;	* Add new option `awesome-tray-active-modules'.
 ;;
 ;; 2018/10/07
 ;;      * First released.
@@ -108,9 +111,30 @@
   :type 'string
   :group 'awesome-tray)
 
-(defface awesome-tray-info-face
+(defcustom awesome-tray-active-modules
+  '("git" "mode-name" "location" "date")
+  "Default active modules."
+  :type 'list
+  :group 'awesome-tray)
+
+(defface awesome-tray-module-git-face
+  '((t (:foreground "SystemPinkColor" :bold t)))
+  "Git face."
+  :group 'awesome-tray)
+
+(defface awesome-tray-module-mode-name-face
   '((t (:foreground "green3" :bold t)))
-  "Face tray info."
+  "Mode name face."
+  :group 'awesome-tray)
+
+(defface awesome-tray-module-location-face
+  '((t (:foreground "SystemOrangeColor" :bold t)))
+  "Location face."
+  :group 'awesome-tray)
+
+(defface awesome-tray-module-date-face
+  '((t (:foreground "SystemGrayColor" :bold t)))
+  "Date face."
   :group 'awesome-tray)
 
 (define-minor-mode awesome-tray-mode
@@ -121,13 +145,16 @@
       (awesome-tray-enable)
     (awesome-tray-disable)))
 
-(defvar awesome-tray-info-padding-right 1)
+(defvar awesome-tray-info-padding-right 2)
 
 (defvar awesome-tray-mode-line-colors nil)
 
 (defvar awesome-tray-timer nil)
 
 (defvar awesome-tray-active-p nil)
+
+(defvar awesome-tray-all-modules
+  '("git" "mode-name" "location" "date"))
 
 (defun awesome-tray-enable ()
   ;; Save mode-line colors when first time.
@@ -191,24 +218,49 @@
 (defun awesome-tray-build-info ()
   (let ((info ""))
     ;; Collection information.
-    (mapcar #'(lambda (i) (setq info (format " %s %s" info i)))
-            (list
-             ;; Git branch.
-             (if (fboundp 'magit-get-current-branch)
-                 (let ((branch (magit-get-current-branch)))
-                   (if branch
-                       (format "Git:%s" branch)
-                     ""))
-               "")
-             ;; Current mode.
-             major-mode
-             ;; Location.
-             (format "(%s:%s)" (line-number-at-pos) (current-column))
-             ;; Date.
-             (format-time-string "[%Y-%m-%d %H:%M]")))
-    ;; Add color property.
-    (put-text-property 0 (length info) 'face 'awesome-tray-info-face info)
-    info))
+    (mapcar #'(lambda (module-info)
+                (let ((module-string (nth 0 module-info))
+                      (module-name (nth 1 module-info)))
+                  (cond ((string-equal module-name "git")
+                         (put-text-property 0 (length module-string) 'face 'awesome-tray-module-git-face module-string))
+                        ((string-equal module-name "mode-name")
+                         (put-text-property 0 (length module-string) 'face 'awesome-tray-module-mode-name-face module-string))
+                        ((string-equal module-name "location")
+                         (put-text-property 0 (length module-string) 'face 'awesome-tray-module-location-face module-string))
+                        ((string-equal module-name "date")
+                         (put-text-property 0 (length module-string) 'face 'awesome-tray-module-date-face module-string)))
+                  (setq info (concat info " " module-string))))
+            (mapcar #'(lambda (module-name)
+                        (cond ((string-equal module-name "git")
+                               (list (awesome-tray-module-git-info) module-name))
+                              ((string-equal module-name "mode-name")
+                               (list (awesome-tray-module-mode-name-info) module-name))
+                              ((string-equal module-name "location")
+                               (list (awesome-tray-module-location-info) module-name))
+                              ((string-equal module-name "date")
+                               (list (awesome-tray-module-date-info) module-name))
+                              ))
+                    awesome-tray-active-modules))
+    ;; Return info.
+    (string-trim info)
+    ))
+
+(defun awesome-tray-module-git-info ()
+  (if (fboundp 'magit-get-current-branch)
+      (let ((branch (magit-get-current-branch)))
+        (if branch
+            (format "%s %s" "♜" branch)
+          ""))
+    ""))
+
+(defun awesome-tray-module-mode-name-info ()
+  (format "%s" major-mode))
+
+(defun awesome-tray-module-location-info ()
+  (format "(%s:%s)" (line-number-at-pos) (current-column)))
+
+(defun awesome-tray-module-date-info ()
+  (format-time-string "[%Y-%m-%d %H:%M]"))
 
 (defun awesome-tray-show-info ()
   ;; Only flush tray info when current message is empty.
