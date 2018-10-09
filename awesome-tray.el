@@ -73,7 +73,7 @@
 ;;; Change log:
 ;;
 ;; 2018/10/09
-;;	* Add new option `awesome-tray-active-modules'.
+;;      * Add new option `awesome-tray-active-modules'.
 ;;
 ;; 2018/10/07
 ;;      * First released.
@@ -204,8 +204,9 @@
                       :box (nth 7 awesome-tray-mode-line-colors)
                       :height 1)
   ;; Cancel timer.
-  (cancel-timer awesome-tray-timer)
-  (remove-hook 'focus-in-hook 'awesome-tray-timer)
+  (when (timerp awesome-tray-timer)
+    (cancel-timer awesome-tray-timer))
+  (remove-hook 'focus-in-hook 'awesome-tray-show-info)
   ;; Update mode-line.
   (force-mode-line-update)
   (redraw-display)
@@ -216,34 +217,20 @@
   (message "Disable awesome tray."))
 
 (defun awesome-tray-build-info ()
-  (let ((info ""))
-    ;; Collection information.
-    (mapcar #'(lambda (module-info)
-                (let ((module-string (nth 0 module-info))
-                      (module-name (nth 1 module-info)))
-                  (cond ((string-equal module-name "git")
-                         (put-text-property 0 (length module-string) 'face 'awesome-tray-module-git-face module-string))
-                        ((string-equal module-name "mode-name")
-                         (put-text-property 0 (length module-string) 'face 'awesome-tray-module-mode-name-face module-string))
-                        ((string-equal module-name "location")
-                         (put-text-property 0 (length module-string) 'face 'awesome-tray-module-location-face module-string))
-                        ((string-equal module-name "date")
-                         (put-text-property 0 (length module-string) 'face 'awesome-tray-module-date-face module-string)))
-                  (setq info (concat info " " module-string))))
-            (mapcar #'(lambda (module-name)
-                        (cond ((string-equal module-name "git")
-                               (list (awesome-tray-module-git-info) module-name))
-                              ((string-equal module-name "mode-name")
-                               (list (awesome-tray-module-mode-name-info) module-name))
-                              ((string-equal module-name "location")
-                               (list (awesome-tray-module-location-info) module-name))
-                              ((string-equal module-name "date")
-                               (list (awesome-tray-module-date-info) module-name))
-                              ))
-                    awesome-tray-active-modules))
-    ;; Return info.
-    (string-trim info)
-    ))
+  (condition-case nil
+      (mapconcat 'identity (mapcar 'awesome-tray-get-module-info awesome-tray-active-modules) " ")
+    (format "Awesome Tray broken.")))
+
+(defun awesome-tray-get-module-info (module-name)
+  (cond ((string-equal module-name "git")
+         (propertize (awesome-tray-module-git-info) 'face 'awesome-tray-module-git-face))
+        ((string-equal module-name "mode-name")
+         (propertize (awesome-tray-module-mode-name-info) 'face 'awesome-tray-module-mode-name-face))
+        ((string-equal module-name "location")
+         (propertize (awesome-tray-module-location-info) 'face 'awesome-tray-module-location-face))
+        ((string-equal module-name "date")
+         (propertize (awesome-tray-module-date-info) 'face 'awesome-tray-module-date-face)
+         )))
 
 (defun awesome-tray-module-git-info ()
   (if (fboundp 'magit-get-current-branch)
@@ -287,16 +274,18 @@
 ;; Wrap `message' make tray information visible always
 ;; even other plugins call `message' to flush minibufer.
 (defadvice message (around awesome-tray-advice activate)
-  (if awesome-tray-active-p
-      (cond
-       ;; Just flush tray info if message string is empty.
-       ((not (ad-get-arg 0))
-        ad-do-it
-        (awesome-tray-flush-info))
-       ;; Otherwise, wrap message string with tray info.
-       (t (let ((formatted-string (apply 'format (ad-get-args 0))))
-            (ad-set-args 0 `(,(awesome-tray-get-echo-format-string formatted-string)))
-            ad-do-it)))
+  (condition-case nil
+      (if awesome-tray-active-p
+          (cond
+           ;; Just flush tray info if message string is empty.
+           ((not (ad-get-arg 0))
+            ad-do-it
+            (awesome-tray-flush-info))
+           ;; Otherwise, wrap message string with tray info.
+           (t (let ((formatted-string (apply 'format (ad-get-args 0))))
+                (ad-set-args 0 `(,(awesome-tray-get-echo-format-string formatted-string)))
+                ad-do-it)))
+        ad-do-it)
     ad-do-it))
 
 (provide 'awesome-tray)
