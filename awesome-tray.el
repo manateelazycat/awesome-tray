@@ -112,7 +112,7 @@
   :group 'awesome-tray)
 
 (defcustom awesome-tray-active-modules
-  '("git" "mode-name" "location" "date")
+  '("location" "git" "mode-name" "date")
   "Default active modules."
   :type 'list
   :group 'awesome-tray)
