@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 0.8
-;; Last-Updated: 2018-10-11 19:41:01
+;; Version: 0.9
+;; Last-Updated: 2018-10-11 19:52:32
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -73,7 +73,8 @@
 ;;; Change log:
 ;;
 ;; 2018/10/11
-;;	* Reimplement `awesome-tray-module-git-info' don't depend on magit.
+;;      * Reimplement `awesome-tray-module-git-info' don't depend on magit.
+;;      * Add last-command module, handy for debug emacs.
 ;;
 ;; 2018/10/09
 ;;      * Add new option `awesome-tray-active-modules'.
@@ -140,6 +141,11 @@
   "Date face."
   :group 'awesome-tray)
 
+(defface awesome-tray-module-last-command-face
+  '((t (:foreground "SystemBlueColor" :bold t)))
+  "Date face."
+  :group 'awesome-tray)
+
 (define-minor-mode awesome-tray-mode
   "Modular tray bar."
   :require 'awesome-tray-mode
@@ -157,7 +163,7 @@
 (defvar awesome-tray-active-p nil)
 
 (defvar awesome-tray-all-modules
-  '("git" "mode-name" "location" "date"))
+  '("last-command" "git" "mode-name" "location" "date"))
 
 (defun awesome-tray-enable ()
   ;; Save mode-line colors when first time.
@@ -232,7 +238,9 @@
         ((string-equal module-name "location")
          (propertize (awesome-tray-module-location-info) 'face 'awesome-tray-module-location-face))
         ((string-equal module-name "date")
-         (propertize (awesome-tray-module-date-info) 'face 'awesome-tray-module-date-face)
+         (propertize (awesome-tray-module-date-info) 'face 'awesome-tray-module-date-face))
+        ((string-equal module-name "last-command")
+         (propertize (awesome-tray-module-last-command-info) 'face 'awesome-tray-module-last-command-face)
          )))
 
 (defun awesome-tray-module-git-info ()
@@ -251,6 +259,9 @@
 
 (defun awesome-tray-module-date-info ()
   (format-time-string "[%Y-%m-%d %H:%M]"))
+
+(defun awesome-tray-module-last-command-info ()
+  (format "%s" last-command))
 
 (defun awesome-tray-show-info ()
   ;; Only flush tray info when current message is empty.
