@@ -73,7 +73,7 @@
 ;;; Change log:
 ;;
 ;; 2018/10/11
-;;	* Reimplement `awesome-tray-module-git-info' don't depend on magit.
+;;      * Reimplement `awesome-tray-module-git-info' don't depend on magit.
 ;;
 ;; 2018/10/09
 ;;      * Add new option `awesome-tray-active-modules'.
@@ -240,7 +240,7 @@
       (let ((current-branch (replace-regexp-in-string "\n" "" (shell-command-to-string "git symbolic-ref --short HEAD"))))
         (if (string-prefix-p "fatal: Not a git repository" current-branch)
             ""
-          current-branch))
+          (concat "♜ " current-branch)))
     ""))
 
 (defun awesome-tray-module-mode-name-info ()
