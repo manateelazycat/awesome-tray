@@ -20,6 +20,3 @@ It's set in your ~/.emacs like this:
 ## Customize
 You can controll modules through option ```awesome-tray-active-modules```
 You can find all modules name through variable ```awesome-tray-all-modules```
-
-## Note
-If you want show git branch like screenshot, you need install [magit](https://github.com/magit/magit) first.

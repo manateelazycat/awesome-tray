@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 0.7
-;; Last-Updated: 2018-10-09 06:16:53
+;; Version: 0.8
+;; Last-Updated: 2018-10-11 19:41:01
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -71,6 +71,9 @@
 ;;
 
 ;;; Change log:
+;;
+;; 2018/10/11
+;;	* Reimplement `awesome-tray-module-git-info' don't depend on magit.
 ;;
 ;; 2018/10/09
 ;;      * Add new option `awesome-tray-active-modules'.
@@ -233,11 +236,11 @@
          )))
 
 (defun awesome-tray-module-git-info ()
-  (if (fboundp 'magit-get-current-branch)
-      (let ((branch (magit-get-current-branch)))
-        (if branch
-            (format "%s %s" "♜" branch)
-          ""))
+  (if (executable-find "git")
+      (let ((current-branch (replace-regexp-in-string "\n" "" (shell-command-to-string "git symbolic-ref --short HEAD"))))
+        (if (string-prefix-p "fatal: Not a git repository" current-branch)
+            ""
+          current-branch))
     ""))
 
 (defun awesome-tray-module-mode-name-info ()
