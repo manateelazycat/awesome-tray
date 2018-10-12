@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 0.9
-;; Last-Updated: 2018-10-11 19:52:32
+;; Version: 1.0
+;; Last-Updated: 2018-10-13 07:30:13
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -72,6 +72,9 @@
 
 ;;; Change log:
 ;;
+;; 2018/10/13
+;;	* Use `awesome-tray-process-exit-code-and-output' fetch git current branch for better error handling.
+;; 
 ;; 2018/10/11
 ;;      * Reimplement `awesome-tray-module-git-info' don't depend on magit.
 ;;      * Add last-command module, handy for debug emacs.
@@ -252,10 +255,12 @@
 
 (defun awesome-tray-module-git-info ()
   (if (executable-find "git")
-      (let ((current-branch (replace-regexp-in-string "\n" "" (shell-command-to-string "git symbolic-ref --short HEAD"))))
-        (if (string-prefix-p "fatal: Not a git repository" current-branch)
-            ""
-          current-branch))
+      (let* ((git-info (awesome-tray-process-exit-code-and-output "git" "symbolic-ref" "--short" "HEAD"))
+             (status (nth 0 git-info))
+             (result (nth 1 git-info)))
+        (if (equal status 0)
+            (replace-regexp-in-string "\n" "" result)
+          ""))
     ""))
 
 (defun awesome-tray-module-mode-name-info ()
@@ -294,6 +299,12 @@
          tray-info)
       ;; Don't fill blank if message string is wider than frame width.
       (concat message-string tray-info))))
+
+(defun awesome-tray-process-exit-code-and-output (program &rest args)
+  "Run PROGRAM with ARGS and return the exit code and output in a list."
+  (with-temp-buffer
+    (list (apply 'call-process program nil (current-buffer) nil args)
+          (buffer-string))))
 
 ;; Wrap `message' make tray information visible always
 ;; even other plugins call `message' to flush minibufer.
