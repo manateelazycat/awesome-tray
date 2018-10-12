@@ -168,7 +168,7 @@
 (defvar awesome-tray-active-p nil)
 
 (defvar awesome-tray-all-modules
-  '("last-command" "git" "mode-name" "location" "date"))
+  '("last-command" "git" "buffer-name" "mode-name" "location" "date"))
 
 (defun awesome-tray-enable ()
   ;; Save mode-line colors when first time.
