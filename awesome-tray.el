@@ -147,7 +147,7 @@
   :group 'awesome-tray)
 
 (defface awesome-tray-module-buffer-name-face
-  '((t (:foreground "white" :bold t)))
+  '((t (:foreground "SystemOrangecolor" :bold t)))
   "Buffer name face."
   :group 'awesome-tray)
 
