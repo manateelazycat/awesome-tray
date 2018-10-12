@@ -146,6 +146,11 @@
   "Date face."
   :group 'awesome-tray)
 
+(defface awesome-tray-module-buffer-name-face
+  '((t (:foreground "white" :bold t)))
+  "Buffer name face."
+  :group 'awesome-tray)
+
 (define-minor-mode awesome-tray-mode
   "Modular tray bar."
   :require 'awesome-tray-mode
@@ -240,8 +245,10 @@
         ((string-equal module-name "date")
          (propertize (awesome-tray-module-date-info) 'face 'awesome-tray-module-date-face))
         ((string-equal module-name "last-command")
-         (propertize (awesome-tray-module-last-command-info) 'face 'awesome-tray-module-last-command-face)
-         )))
+         (propertize (awesome-tray-module-last-command-info) 'face 'awesome-tray-module-last-command-face))
+        ((string-equal module-name "buffer-name")
+         (propertize (awesome-tray-module-buffer-name-info) 'face 'awesome-tray-module-buffer-name-face))
+        ))
 
 (defun awesome-tray-module-git-info ()
   (if (executable-find "git")
@@ -262,6 +269,9 @@
 
 (defun awesome-tray-module-last-command-info ()
   (format "%s" last-command))
+
+(defun awesome-tray-module-buffer-name-info ()
+  (format "%s" (buffer-name)))
 
 (defun awesome-tray-show-info ()
   ;; Only flush tray info when current message is empty.
