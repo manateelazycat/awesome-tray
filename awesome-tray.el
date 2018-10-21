@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 1.1
-;; Last-Updated: 2018-10-21 17:51:26
+;; Version: 1.2
+;; Last-Updated: 2018-10-21 18:31:21
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -74,6 +74,7 @@
 ;;
 ;; 2018/10/21
 ;;      * Use `advice-add' re-implmenet `awesome-tray-message-advice'
+;;      * Add parent-dir module.
 ;;
 ;; 2018/10/13
 ;;      * Use `awesome-tray-process-exit-code-and-output' fetch git current branch for better error handling.
@@ -122,7 +123,7 @@
   :group 'awesome-tray)
 
 (defcustom awesome-tray-active-modules
-  '("location" "git" "mode-name" "date")
+  '("location" "parent-dir" "git" "mode-name" "date")
   "Default active modules."
   :type 'list
   :group 'awesome-tray)
@@ -157,6 +158,11 @@
   "Buffer name face."
   :group 'awesome-tray)
 
+(defface awesome-tray-module-parent-dir-face
+  '((t (:foreground "#9DED4D" :bold t)))
+  "Parent dir face."
+  :group 'awesome-tray)
+
 (define-minor-mode awesome-tray-mode
   "Modular tray bar."
   :require 'awesome-tray-mode
@@ -174,7 +180,7 @@
 (defvar awesome-tray-active-p nil)
 
 (defvar awesome-tray-all-modules
-  '("last-command" "git" "buffer-name" "mode-name" "location" "date"))
+  '("last-command" "parent-dir" "git" "buffer-name" "mode-name" "location" "date"))
 
 (defun awesome-tray-enable ()
   ;; Save mode-line colors when first time.
@@ -254,13 +260,16 @@
          (propertize (awesome-tray-module-last-command-info) 'face 'awesome-tray-module-last-command-face))
         ((string-equal module-name "buffer-name")
          (propertize (awesome-tray-module-buffer-name-info) 'face 'awesome-tray-module-buffer-name-face))
+        ((string-equal module-name "parent-dir")
+         (propertize (awesome-tray-module-parent-dir-info) 'face 'awesome-tray-module-parent-dir-face)
+         )
         ))
 
 (defun awesome-tray-module-git-info ()
   (if (executable-find "git")
       (let* ((git-info (awesome-tray-process-exit-code-and-output "git" "symbolic-ref" "--short" "HEAD"))
              (status (nth 0 git-info))
-             (result (nth 1 git-info)))
+             (result (format "git:%s" (nth 1 git-info))))
         (if (equal status 0)
             (replace-regexp-in-string "\n" "" result)
           ""))
@@ -280,6 +289,9 @@
 
 (defun awesome-tray-module-buffer-name-info ()
   (format "%s" (buffer-name)))
+
+(defun awesome-tray-module-parent-dir-info ()
+  (format "dir:%s" (file-name-nondirectory (directory-file-name default-directory))))
 
 (defun awesome-tray-show-info ()
   ;; Only flush tray info when current message is empty.
