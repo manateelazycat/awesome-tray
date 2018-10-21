@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 1.2
-;; Last-Updated: 2018-10-21 18:31:21
+;; Version: 1.3
+;; Last-Updated: 2018-10-21 18:42:20
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -75,6 +75,7 @@
 ;; 2018/10/21
 ;;      * Use `advice-add' re-implmenet `awesome-tray-message-advice'
 ;;      * Add parent-dir module.
+;;      * Don't show parent-dir if current mode is `dired-mode'.
 ;;
 ;; 2018/10/13
 ;;      * Use `awesome-tray-process-exit-code-and-output' fetch git current branch for better error handling.
@@ -171,7 +172,7 @@
       (awesome-tray-enable)
     (awesome-tray-disable)))
 
-(defvar awesome-tray-info-padding-right 2)
+(defvar awesome-tray-info-padding-right 1)
 
 (defvar awesome-tray-mode-line-colors nil)
 
@@ -244,7 +245,8 @@
 
 (defun awesome-tray-build-info ()
   (condition-case nil
-      (mapconcat 'identity (mapcar 'awesome-tray-get-module-info awesome-tray-active-modules) " ")
+      (mapconcat 'identity (remove-if #'(lambda (n) (equal (length n) 0))
+                                      (mapcar 'awesome-tray-get-module-info awesome-tray-active-modules)) " ")
     (format "Awesome Tray broken.")))
 
 (defun awesome-tray-get-module-info (module-name)
@@ -291,7 +293,9 @@
   (format "%s" (buffer-name)))
 
 (defun awesome-tray-module-parent-dir-info ()
-  (format "dir:%s" (file-name-nondirectory (directory-file-name default-directory))))
+  (if (derived-mode-p 'dired-mode)
+      ""
+    (format "dir:%s" (file-name-nondirectory (directory-file-name default-directory)))))
 
 (defun awesome-tray-show-info ()
   ;; Only flush tray info when current message is empty.
