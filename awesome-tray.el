@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 1.0
-;; Last-Updated: 2018-10-13 07:30:13
+;; Version: 1.1
+;; Last-Updated: 2018-10-21 17:51:26
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -72,9 +72,12 @@
 
 ;;; Change log:
 ;;
+;; 2018/10/21
+;;      * Use `advice-add' re-implmenet `awesome-tray-message-advice'
+;;
 ;; 2018/10/13
-;;	* Use `awesome-tray-process-exit-code-and-output' fetch git current branch for better error handling.
-;; 
+;;      * Use `awesome-tray-process-exit-code-and-output' fetch git current branch for better error handling.
+;;
 ;; 2018/10/11
 ;;      * Reimplement `awesome-tray-module-git-info' don't depend on magit.
 ;;      * Add last-command module, handy for debug emacs.
@@ -85,7 +88,7 @@
 ;; 2018/10/07
 ;;      * First released.
 ;;      * Add row/column information.
-;;      * Add `awesome-tray-advice' make tray information visible always.
+;;      * Add `awesome-tray-message-advice' make tray information visible always.
 ;;      * Use `frame-width' instead `window-width' to handle blank characters fill.
 ;;      * Don't fill blank if message string is wider than frame width.
 ;;
@@ -308,20 +311,21 @@
 
 ;; Wrap `message' make tray information visible always
 ;; even other plugins call `message' to flush minibufer.
-(defadvice message (around awesome-tray-advice activate)
+(defun awesome-tray-message-advice (old-message &rest arguments)
   (condition-case nil
       (if awesome-tray-active-p
           (cond
            ;; Just flush tray info if message string is empty.
-           ((not (ad-get-arg 0))
-            ad-do-it
+           ((not (car arguments))
+            (apply old-message arguments)
             (awesome-tray-flush-info))
            ;; Otherwise, wrap message string with tray info.
-           (t (let ((formatted-string (apply 'format (ad-get-args 0))))
-                (ad-set-args 0 `(,(awesome-tray-get-echo-format-string formatted-string)))
-                ad-do-it)))
-        ad-do-it)
-    ad-do-it))
+           (t
+            (apply old-message (cons (awesome-tray-get-echo-format-string (apply 'format arguments)) '()))))
+        (apply old-message arguments))
+    (apply old-message arguments)))
+
+(advice-add #'message :around #'awesome-tray-message-advice)
 
 (provide 'awesome-tray)
 
