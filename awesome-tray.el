@@ -106,7 +106,7 @@
 ;;
 
 ;;; Require
-
+(require 'cl)
 
 ;;; Code:
 (defgroup awesome-tray nil
