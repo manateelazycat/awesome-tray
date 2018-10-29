@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 1.4
-;; Last-Updated: 2018-10-29 22:18:59
+;; Version: 1.5
+;; Last-Updated: 2018-10-29 23:35:16
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -65,6 +65,7 @@
 ;; `awesome-tray-mode-line-active-color'
 ;; `awesome-tray-mode-line-inactive-color'
 ;; `awesome-tray-active-modules'
+;; `awesome-tray-git-update-duration'
 ;;
 ;; All of the above can customize by:
 ;;      M-x customize-group RET awesome-tray RET
@@ -73,7 +74,8 @@
 ;;; Change log:
 ;;
 ;; 2018/10/29
-;;	* Use `unspecified' attribute fix black block of mode-line inactive status.
+;;      * Use `unspecified' attribute fix black block of mode-line inactive status.
+;;      * Add `awesome-tray-git-update-duration' option.
 ;;
 ;; 2018/10/21
 ;;      * Use `advice-add' re-implmenet `awesome-tray-message-advice'
@@ -132,6 +134,14 @@
   :type 'list
   :group 'awesome-tray)
 
+(defcustom awesome-tray-git-update-duration 1
+  "Update duration of git command, in seconds.
+
+It's very slow start new process in Windows platform.
+Maybe you need set this option with bigger value to speedup on Windows platform."
+  :type 'integer
+  :group 'awesome-tray)
+
 (defface awesome-tray-module-git-face
   '((t (:foreground "SystemPinkColor" :bold t)))
   "Git face."
@@ -185,6 +195,10 @@
 
 (defvar awesome-tray-all-modules
   '("last-command" "parent-dir" "git" "buffer-name" "mode-name" "location" "date"))
+
+(defvar awesome-tray-git-command-last-time 0)
+
+(defvar awesome-tray-git-command-cache "")
 
 (defun awesome-tray-enable ()
   ;; Save mode-line colors when first time.
@@ -273,12 +287,12 @@
 
 (defun awesome-tray-module-git-info ()
   (if (executable-find "git")
-      (let* ((git-info (awesome-tray-process-exit-code-and-output "git" "symbolic-ref" "--short" "HEAD"))
-             (status (nth 0 git-info))
-             (result (format "git:%s" (nth 1 git-info))))
-        (if (equal status 0)
-            (replace-regexp-in-string "\n" "" result)
-          ""))
+      (let ((current-seconds (awesome-tray-current-seconds)))
+        (if (> (- current-seconds awesome-tray-git-command-last-time) awesome-tray-git-update-duration)
+            (progn
+              (setq awesome-tray-git-command-last-time current-seconds)
+              (awesome-tray-update-git-command-cache))
+          awesome-tray-git-command-cache))
     ""))
 
 (defun awesome-tray-module-mode-name-info ()
@@ -328,6 +342,19 @@
   (with-temp-buffer
     (list (apply 'call-process program nil (current-buffer) nil args)
           (buffer-string))))
+
+(defun awesome-tray-current-seconds ()
+  (string-to-number (format-time-string "%s")))
+
+(defun awesome-tray-update-git-command-cache ()
+  (let* ((git-info (awesome-tray-process-exit-code-and-output "git" "symbolic-ref" "--short" "HEAD"))
+         (status (nth 0 git-info))
+         (result (format "git:%s" (nth 1 git-info))))
+    (setq awesome-tray-git-command-cache
+          (if (equal status 0)
+              (replace-regexp-in-string "\n" "" result)
+            ""))
+    awesome-tray-git-command-cache))
 
 ;; Wrap `message' make tray information visible always
 ;; even other plugins call `message' to flush minibufer.
