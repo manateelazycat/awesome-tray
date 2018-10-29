@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 1.3
-;; Last-Updated: 2018-10-21 18:42:20
+;; Version: 1.4
+;; Last-Updated: 2018-10-29 22:18:59
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -71,6 +71,9 @@
 ;;
 
 ;;; Change log:
+;;
+;; 2018/10/29
+;;	* Use `unspecified' attribute fix black block of mode-line inactive status.
 ;;
 ;; 2018/10/21
 ;;      * Use `advice-add' re-implmenet `awesome-tray-message-advice'
@@ -207,7 +210,8 @@
                       :foreground awesome-tray-mode-line-inactive-color
                       :background awesome-tray-mode-line-inactive-color
                       :height 0.1
-                      :box nil)
+                      :box nil
+                      :inherit 'unspecified)
   ;; Add update timer.
   (setq awesome-tray-timer
         (run-with-timer 0 0.5 'awesome-tray-show-info))
