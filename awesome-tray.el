@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 1.6
-;; Last-Updated: 2018-11-03 21:08:21
+;; Version: 1.7
+;; Last-Updated: 2018-11-03 21:50:10
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -303,11 +303,22 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
   (format "%s" major-mode))
 
 (defun awesome-tray-module-location-info ()
-  (format "(%s:%s %.f%%)"
-          (line-number-at-pos)
-          (current-column)
-          (* (/ (float (line-number-at-pos)) (count-lines (point-min) (point-max))) 100)
+  (let* ((bottom-line (save-excursion
+                        (goto-char (point-max))
+                        (line-number-at-pos)))
+         (location-percent
+          (cond ((equal (line-number-at-pos) 1)
+                 "top")
+                ((equal (line-number-at-pos) bottom-line)
+                 "bottom")
+                (t
+                 (format "%.f%%" (* (/ (float (line-number-at-pos)) bottom-line) 100))))
           ))
+    (format "(%s:%s %s)"
+            (line-number-at-pos)
+            (current-column)
+            location-percent
+            )))
 
 (defun awesome-tray-module-date-info ()
   (format-time-string "[%Y-%m-%d %H:%M]"))
