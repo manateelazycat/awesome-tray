@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 1.5
-;; Last-Updated: 2018-10-29 23:35:16
+;; Version: 1.6
+;; Last-Updated: 2018-11-03 21:08:21
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -15,7 +15,7 @@
 ;;
 ;; Features that might be required by this library:
 ;;
-;;
+;; `cl'
 ;;
 
 ;;; This file is NOT part of GNU Emacs
@@ -72,6 +72,10 @@
 ;;
 
 ;;; Change log:
+;;
+;; 2018/11/03
+;;      * Add percent information in location module.
+;;      * Fix error: Not enough arguments for format string.
 ;;
 ;; 2018/10/29
 ;;      * Use `unspecified' attribute fix black block of mode-line inactive status.
@@ -299,7 +303,11 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
   (format "%s" major-mode))
 
 (defun awesome-tray-module-location-info ()
-  (format "(%s:%s)" (line-number-at-pos) (current-column)))
+  (format "(%s:%s %.f%%)"
+          (line-number-at-pos)
+          (current-column)
+          (* (/ (float (line-number-at-pos)) (count-lines (point-min) (point-max))) 100)
+          ))
 
 (defun awesome-tray-module-date-info ()
   (format-time-string "[%Y-%m-%d %H:%M]"))
@@ -368,9 +376,10 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
             (awesome-tray-flush-info))
            ;; Otherwise, wrap message string with tray info.
            (t
-            (apply old-message (cons (awesome-tray-get-echo-format-string (apply 'format arguments)) '()))))
+            (apply old-message "%s" (cons (awesome-tray-get-echo-format-string (apply 'format arguments)) '()))))
         (apply old-message arguments))
-    (apply old-message arguments)))
+    (apply old-message arguments)
+    ))
 
 (advice-add #'message :around #'awesome-tray-message-advice)
 
