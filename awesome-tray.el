@@ -303,9 +303,7 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
   (format "%s" major-mode))
 
 (defun awesome-tray-module-location-info ()
-  (let* ((bottom-line (save-excursion
-                        (goto-char (point-max))
-                        (line-number-at-pos)))
+  (let* ((bottom-line (line-number-at-pos (point-max)))
          (location-percent
           (cond ((equal (line-number-at-pos) 1)
                  "top")
