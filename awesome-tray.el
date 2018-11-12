@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 1.7
-;; Last-Updated: 2018-11-03 21:50:10
+;; Version: 1.8
+;; Last-Updated: 2018-11-12 18:42:10
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -72,6 +72,9 @@
 ;;
 
 ;;; Change log:
+;;
+;; 2018/11/12
+;;	* Remove Mac color, use hex color instead.
 ;;
 ;; 2018/11/03
 ;;      * Add percent information in location module.
@@ -147,7 +150,7 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
   :group 'awesome-tray)
 
 (defface awesome-tray-module-git-face
-  '((t (:foreground "SystemPinkColor" :bold t)))
+  '((t (:foreground "#ff2d55" :bold t)))
   "Git face."
   :group 'awesome-tray)
 
@@ -157,22 +160,22 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
   :group 'awesome-tray)
 
 (defface awesome-tray-module-location-face
-  '((t (:foreground "SystemOrangeColor" :bold t)))
+  '((t (:foreground "#ff9500" :bold t)))
   "Location face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-date-face
-  '((t (:foreground "SystemGrayColor" :bold t)))
+  '((t (:foreground "#8e8e93" :bold t)))
   "Date face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-last-command-face
-  '((t (:foreground "SystemBlueColor" :bold t)))
+  '((t (:foreground "#007aff" :bold t)))
   "Date face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-buffer-name-face
-  '((t (:foreground "SystemOrangecolor" :bold t)))
+  '((t (:foreground "#ff9500" :bold t)))
   "Buffer name face."
   :group 'awesome-tray)
 
