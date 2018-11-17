@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 1.8
-;; Last-Updated: 2018-11-12 18:42:10
+;; Version: 1.9
+;; Last-Updated: 2018-11-18 07:47:06
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -73,8 +73,11 @@
 
 ;;; Change log:
 ;;
+;; 2018/11/18
+;;	* Fix the problem of displaying duplicate information when the mouse is in the minibuffer window.
+;;
 ;; 2018/11/12
-;;	* Remove Mac color, use hex color instead.
+;;      * Remove Mac color, use hex color instead.
 ;;
 ;; 2018/11/03
 ;;      * Add percent information in location module.
@@ -206,6 +209,8 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
 (defvar awesome-tray-git-command-last-time 0)
 
 (defvar awesome-tray-git-command-cache "")
+
+(defvar awesome-tray-last-tray-info nil)
 
 (defun awesome-tray-enable ()
   ;; Save mode-line colors when first time.
@@ -348,14 +353,21 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
 
 (defun awesome-tray-get-echo-format-string (message-string)
   (let* ((tray-info (awesome-tray-build-info))
-         (blank-length (- (frame-width) (length tray-info) (length message-string) awesome-tray-info-padding-right)))
-    (if (> blank-length 0)
-        (concat
-         message-string
-         (make-string (max 0 (- (frame-width) (length message-string) (length tray-info) awesome-tray-info-padding-right)) ?\ )
-         tray-info)
-      ;; Don't fill blank if message string is wider than frame width.
-      (concat message-string tray-info))))
+         (blank-length (- (frame-width) (length tray-info) (length message-string) awesome-tray-info-padding-right))
+         (empty-fill-string (make-string (max 0 (- (frame-width) (length tray-info) awesome-tray-info-padding-right)) ?\ ))
+         (message-fill-string (make-string (max 0 (- (frame-width) (length message-string) (length tray-info) awesome-tray-info-padding-right)) ?\ ))
+         )
+    (prog1
+        (if (> blank-length 0)
+            ;; Fill message's end with whitespace to keep tray info at right of minibuffer.
+            (concat message-string message-fill-string tray-info)
+          (if (string-suffix-p awesome-tray-last-tray-info message-string)
+              ;; Fill empty whitespace if new message contain duplicate tray-info (cause by move mouse on minibuffer window).
+              (concat empty-fill-string tray-info)
+            ;; Don't fill whitepsace at end of message if new message is very long.
+            (concat message-string tray-info)))
+      ;; Record last tray information.
+      (setq awesome-tray-last-tray-info tray-info))))
 
 (defun awesome-tray-process-exit-code-and-output (program &rest args)
   "Run PROGRAM with ARGS and return the exit code and output in a list."
