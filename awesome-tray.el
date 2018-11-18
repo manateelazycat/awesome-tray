@@ -74,7 +74,7 @@
 ;;; Change log:
 ;;
 ;; 2018/11/18
-;;	* Fix the problem of displaying duplicate information when the mouse is in the minibuffer window.
+;;      * Fix the problem of displaying duplicate information when the mouse is in the minibuffer window.
 ;;
 ;; 2018/11/12
 ;;      * Remove Mac color, use hex color instead.
@@ -361,7 +361,9 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
         (if (> blank-length 0)
             ;; Fill message's end with whitespace to keep tray info at right of minibuffer.
             (concat message-string message-fill-string tray-info)
-          (if (string-suffix-p awesome-tray-last-tray-info message-string)
+          (if (and awesome-tray-last-tray-info
+                   message-string
+                   (string-suffix-p awesome-tray-last-tray-info message-string))
               ;; Fill empty whitespace if new message contain duplicate tray-info (cause by move mouse on minibuffer window).
               (concat empty-fill-string tray-info)
             ;; Don't fill whitepsace at end of message if new message is very long.
