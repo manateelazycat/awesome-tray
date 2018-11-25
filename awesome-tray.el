@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 1.9
-;; Last-Updated: 2018-11-18 07:47:06
+;; Version: 2.0
+;; Last-Updated: 2018-11-25 20:33:29
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -75,6 +75,7 @@
 ;;
 ;; 2018/11/25
 ;;      * Add `RVM' support.
+;;      * The rvm module is not activated by default, I move it to `awesome-tray-all-modules'.
 ;;
 ;; 2018/11/18
 ;;      * Fix the problem of displaying duplicate information when the mouse is in the minibuffer window.
@@ -142,7 +143,7 @@
   :group 'awesome-tray)
 
 (defcustom awesome-tray-active-modules
-  '("location" "parent-dir" "git" "mode-name" "rvm" "date")
+  '("location" "parent-dir" "git" "mode-name" "date")
   "Default active modules."
   :type 'list
   :group 'awesome-tray)
@@ -212,7 +213,7 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
 (defvar awesome-tray-active-p nil)
 
 (defvar awesome-tray-all-modules
-  '("last-command" "parent-dir" "git" "buffer-name" "mode-name" "location" "date"))
+  '("last-command" "parent-dir" "git" "buffer-name" "mode-name" "location" "rvm" "date"))
 
 (defvar awesome-tray-git-command-last-time 0)
 
