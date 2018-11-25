@@ -73,6 +73,9 @@
 
 ;;; Change log:
 ;;
+;; 2018/11/25
+;;      * Add `RVM' support.
+;;
 ;; 2018/11/18
 ;;      * Fix the problem of displaying duplicate information when the mouse is in the minibuffer window.
 ;;
@@ -139,7 +142,7 @@
   :group 'awesome-tray)
 
 (defcustom awesome-tray-active-modules
-  '("location" "parent-dir" "git" "mode-name" "date")
+  '("location" "parent-dir" "git" "mode-name" "rvm" "date")
   "Default active modules."
   :type 'list
   :group 'awesome-tray)
@@ -154,6 +157,11 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
 
 (defface awesome-tray-module-git-face
   '((t (:foreground "#ff2d55" :bold t)))
+  "Git face."
+  :group 'awesome-tray)
+
+(defface awesome-tray-module-rvm-face
+  '((t (:foreground "#333fff" :bold t)))
   "Git face."
   :group 'awesome-tray)
 
@@ -282,6 +290,8 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
 (defun awesome-tray-get-module-info (module-name)
   (cond ((string-equal module-name "git")
          (propertize (awesome-tray-module-git-info) 'face 'awesome-tray-module-git-face))
+        ((string-equal module-name "rvm")
+         (propertize (awesome-tray-module-rvm-info) 'face 'awesome-tray-module-rvm-face))
         ((string-equal module-name "mode-name")
          (propertize (awesome-tray-module-mode-name-info) 'face 'awesome-tray-module-mode-name-face))
         ((string-equal module-name "location")
@@ -305,6 +315,14 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
               (setq awesome-tray-git-command-last-time current-seconds)
               (awesome-tray-update-git-command-cache))
           awesome-tray-git-command-cache))
+    ""))
+
+(defun awesome-tray-module-rvm-info ()
+  (if (executable-find "rvm-prompt")
+      (format "rvm:%s" (replace-regexp-in-string
+         "\n" ""
+         (nth 1 (awesome-tray-process-exit-code-and-output "rvm-prompt")))
+        )
     ""))
 
 (defun awesome-tray-module-mode-name-info ()
