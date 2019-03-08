@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 2.1
-;; Last-Updated: 2019-03-09 00:12:01
+;; Version: 2.0
+;; Last-Updated: 2018-11-25 20:33:29
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -72,9 +72,6 @@
 ;;
 
 ;;; Change log:
-;;
-;; 2019/03/09
-;;      * Display up two directories to facilitate quick identification between directories with the same name.
 ;;
 ;; 2018/11/25
 ;;      * Add `RVM' support.
@@ -324,9 +321,9 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
 (defun awesome-tray-module-rvm-info ()
   (if (executable-find "rvm-prompt")
       (format "rvm:%s" (replace-regexp-in-string
-                        "\n" ""
-                        (nth 1 (awesome-tray-process-exit-code-and-output "rvm-prompt")))
-              )
+         "\n" ""
+         (nth 1 (awesome-tray-process-exit-code-and-output "rvm-prompt")))
+        )
     ""))
 
 (defun awesome-tray-module-mode-name-info ()
@@ -358,7 +355,9 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
   (format "%s" (buffer-name)))
 
 (defun awesome-tray-module-parent-dir-info ()
-  (format "dir:/%s" (string-join (last (awesome-tray-split-path (directory-file-name default-directory)) 2) "/")))
+  (if (derived-mode-p 'dired-mode)
+      ""
+    (format "dir:%s" (file-name-nondirectory (directory-file-name default-directory)))))
 
 (defun awesome-tray-show-info ()
   ;; Only flush tray info when current message is empty.
@@ -409,16 +408,6 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
               (replace-regexp-in-string "\n" "" result)
             ""))
     awesome-tray-git-command-cache))
-
-(defun awesome-tray-split-path (path)
-  (awesome-tray-split-path-1 path ()))
-
-(defun awesome-tray-split-path-1 (path accum)
-  (let ((dir  (directory-file-name (file-name-directory path)))
-        (name (file-name-nondirectory path)))
-    (if (equal dir path)
-        accum
-      (awesome-tray-split-path-1 dir (cons name accum)))))
 
 ;; Wrap `message' make tray information visible always
 ;; even other plugins call `message' to flush minibufer.
