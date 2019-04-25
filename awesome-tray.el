@@ -73,6 +73,10 @@
 
 ;;; Change log:
 ;;
+;; 2019/04/25
+;;      * Add 'circe' module displaying circe tracking-buffer modeline info.
+;;      * The circe module is not activated by default, it's added to `awesome-tray-all-modules'.
+;;
 ;; 2018/11/25
 ;;      * Add `RVM' support.
 ;;      * The rvm module is not activated by default, I move it to `awesome-tray-all-modules'.
@@ -163,7 +167,12 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
 
 (defface awesome-tray-module-rvm-face
   '((t (:foreground "#333fff" :bold t)))
-  "Git face."
+  "RVM face."
+  :group 'awesome-tray)
+
+(defface awesome-tray-module-circe-face
+  '((t (:foreground "#333fff" :bold t)))
+  "Circe face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-mode-name-face
@@ -213,7 +222,7 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
 (defvar awesome-tray-active-p nil)
 
 (defvar awesome-tray-all-modules
-  '("last-command" "parent-dir" "git" "buffer-name" "mode-name" "location" "rvm" "date"))
+  '("last-command" "parent-dir" "git" "buffer-name" "mode-name" "location" "rvm" "date" "circe"))
 
 (defvar awesome-tray-git-command-last-time 0)
 
@@ -306,7 +315,9 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
         ((string-equal module-name "parent-dir")
          (propertize (awesome-tray-module-parent-dir-info) 'face 'awesome-tray-module-parent-dir-face)
          )
-        ))
+        ((string-equal module-name "circe")
+         (propertize (awesome-tray-module-circe-info) 'face 'awesome-tray-module-circe-face)
+         )))
 
 (defun awesome-tray-module-git-info ()
   (if (executable-find "git")
@@ -318,12 +329,19 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
           awesome-tray-git-command-cache))
     ""))
 
+(defun awesome-tray-module-circe-info ()
+  "Display circe tracking buffers"
+  (if (listp tracking-mode-line-buffers)
+      (apply 'concat (cl-loop for entry in tracking-mode-line-buffers
+                              collect (or (plist-get entry :propertize) "")))
+    ""))
+
 (defun awesome-tray-module-rvm-info ()
   (if (executable-find "rvm-prompt")
       (format "rvm:%s" (replace-regexp-in-string
-         "\n" ""
-         (nth 1 (awesome-tray-process-exit-code-and-output "rvm-prompt")))
-        )
+                        "\n" ""
+                        (nth 1 (awesome-tray-process-exit-code-and-output "rvm-prompt")))
+              )
     ""))
 
 (defun awesome-tray-module-mode-name-info ()
