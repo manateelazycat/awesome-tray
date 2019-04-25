@@ -147,7 +147,7 @@
   :group 'awesome-tray)
 
 (defcustom awesome-tray-active-modules
-  '("location" "parent-dir" "git" "mode-name" "circe" "date")
+  '("location" "parent-dir" "git" "mode-name" "date")
   "Default active modules."
   :type 'list
   :group 'awesome-tray)
@@ -222,7 +222,7 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
 (defvar awesome-tray-active-p nil)
 
 (defvar awesome-tray-all-modules
-  '("last-command" "parent-dir" "git" "buffer-name" "mode-name" "location" "rvm" "date"))
+  '("last-command" "parent-dir" "git" "buffer-name" "mode-name" "location" "rvm" "date" "circe"))
 
 (defvar awesome-tray-git-command-last-time 0)
 
