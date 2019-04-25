@@ -336,15 +336,6 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
                               collect (or (plist-get entry :propertize) "")))
     ""))
 
-  (if (executable-find "git")
-      (let ((current-seconds (awesome-tray-current-seconds)))
-        (if (> (- current-seconds awesome-tray-git-command-last-time) awesome-tray-git-update-duration)
-            (progn
-              (setq awesome-tray-git-command-last-time current-seconds)
-              (awesome-tray-update-git-command-cache))
-          awesome-tray-git-command-cache))
-    ""))
-
 (defun awesome-tray-module-rvm-info ()
   (if (executable-find "rvm-prompt")
       (format "rvm:%s" (replace-regexp-in-string
