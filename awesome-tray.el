@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 2.0
-;; Last-Updated: 2018-11-25 20:33:29
+;; Version: 2.1
+;; Last-Updated: 2019-04-29 21:51:44
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -72,6 +72,9 @@
 ;;
 
 ;;; Change log:
+;;
+;; 2019/04/29
+;;      * Fix position not update when execute command `beginning-of-buffer' or `end-of-buffer'.
 ;;
 ;; 2018/11/25
 ;;      * Add `RVM' support.
@@ -321,9 +324,9 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
 (defun awesome-tray-module-rvm-info ()
   (if (executable-find "rvm-prompt")
       (format "rvm:%s" (replace-regexp-in-string
-         "\n" ""
-         (nth 1 (awesome-tray-process-exit-code-and-output "rvm-prompt")))
-        )
+                        "\n" ""
+                        (nth 1 (awesome-tray-process-exit-code-and-output "rvm-prompt")))
+              )
     ""))
 
 (defun awesome-tray-module-mode-name-info ()
@@ -427,6 +430,18 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
     ))
 
 (advice-add #'message :around #'awesome-tray-message-advice)
+
+(defun awesome-tray-end-of-buffer-advice (old-func &rest arguments)
+  (apply old-func arguments)
+  (message ""))
+
+(advice-add #'end-of-buffer :around #'awesome-tray-end-of-buffer-advice)
+
+(defun awesome-tray-beginning-of-buffer-advice (old-func &rest arguments)
+  (apply old-func arguments)
+  (message ""))
+
+(advice-add #'beginning-of-buffer :around #'awesome-tray-beginning-of-buffer-advice)
 
 (provide 'awesome-tray)
 
