@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 2.1
-;; Last-Updated: 2019-04-29 21:51:44
+;; Version: 2.2
+;; Last-Updated: 2019-05-08 06:58:59
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -73,9 +73,12 @@
 
 ;;; Change log:
 ;;
+;; 2019/05/08
+;;      * Disable git modulde default, it have performance when we change buffer too fast.
+;;
 ;; 2019/04/29
 ;;      * Fix position not update when execute command `beginning-of-buffer' or `end-of-buffer'.
-;;      
+;;
 ;; 2019/04/25
 ;;      * Add 'circe' module displaying circe tracking-buffer modeline info.
 ;;      * The circe module is not activated by default, it's added to `awesome-tray-all-modules'.
@@ -150,12 +153,12 @@
   :group 'awesome-tray)
 
 (defcustom awesome-tray-active-modules
-  '("location" "parent-dir" "git" "mode-name" "date")
+  '("location" "parent-dir" "mode-name" "date")
   "Default active modules."
   :type 'list
   :group 'awesome-tray)
 
-(defcustom awesome-tray-git-update-duration 1
+(defcustom awesome-tray-git-update-duration 5
   "Update duration of git command, in seconds.
 
 It's very slow start new process in Windows platform.
