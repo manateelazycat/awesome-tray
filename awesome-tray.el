@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 2.2
-;; Last-Updated: 2019-05-08 06:58:59
+;; Version: 2.3
+;; Last-Updated: 2019-06-23 22:06:30
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -72,6 +72,9 @@
 ;;
 
 ;;; Change log:
+;;
+;; 2019/06/23
+;;      * Support `awesome-tab' group indicator.
 ;;
 ;; 2019/05/08
 ;;      * Disable git modulde default, it have performance when we change buffer too fast.
@@ -153,7 +156,7 @@
   :group 'awesome-tray)
 
 (defcustom awesome-tray-active-modules
-  '("location" "parent-dir" "mode-name" "date")
+  '("location" "parent-dir" "mode-name" "awesome-tab" "date")
   "Default active modules."
   :type 'list
   :group 'awesome-tray)
@@ -211,6 +214,11 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
   "Parent dir face."
   :group 'awesome-tray)
 
+(defface awesome-tray-module-awesome-tab-face
+  '((t (:foreground "#E73C70" :bold t)))
+  "Awesome tab face."
+  :group 'awesome-tray)
+
 (define-minor-mode awesome-tray-mode
   "Modular tray bar."
   :require 'awesome-tray-mode
@@ -228,7 +236,7 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
 (defvar awesome-tray-active-p nil)
 
 (defvar awesome-tray-all-modules
-  '("last-command" "parent-dir" "git" "buffer-name" "mode-name" "location" "rvm" "date" "circe"))
+  '("last-command" "parent-dir" "git" "buffer-name" "mode-name" "location" "rvm" "date" "circe" "awesome-tab"))
 
 (defvar awesome-tray-git-command-last-time 0)
 
@@ -319,10 +327,11 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
         ((string-equal module-name "buffer-name")
          (propertize (awesome-tray-module-buffer-name-info) 'face 'awesome-tray-module-buffer-name-face))
         ((string-equal module-name "parent-dir")
-         (propertize (awesome-tray-module-parent-dir-info) 'face 'awesome-tray-module-parent-dir-face)
-         )
+         (propertize (awesome-tray-module-parent-dir-info) 'face 'awesome-tray-module-parent-dir-face))
         ((string-equal module-name "circe")
-         (propertize (awesome-tray-module-circe-info) 'face 'awesome-tray-module-circe-face)
+         (propertize (awesome-tray-module-circe-info) 'face 'awesome-tray-module-circe-face))
+        ((string-equal module-name "awesome-tab")
+         (propertize (awesome-tray-module-awesome-tab-info) 'face 'awesome-tray-module-awesome-tab-face)
          )))
 
 (defun awesome-tray-module-git-info ()
@@ -382,6 +391,10 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
   (if (derived-mode-p 'dired-mode)
       ""
     (format "dir:%s" (file-name-nondirectory (directory-file-name default-directory)))))
+
+(defun awesome-tray-module-awesome-tab-info ()
+  (when (featurep 'awesome-tab)
+    (format "%s" (cdr (awesome-tab-selected-tab (awesome-tab-current-tabset t))))))
 
 (defun awesome-tray-show-info ()
   ;; Only flush tray info when current message is empty.
