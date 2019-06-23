@@ -393,8 +393,9 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
     (format "dir:%s" (file-name-nondirectory (directory-file-name default-directory)))))
 
 (defun awesome-tray-module-awesome-tab-info ()
-  (when (featurep 'awesome-tab)
-    (format "%s" (cdr (awesome-tab-selected-tab (awesome-tab-current-tabset t))))))
+  (ignore-errors
+    (when (featurep 'awesome-tab)
+      (format "%s" (cdr (awesome-tab-selected-tab (awesome-tab-current-tabset t)))))))
 
 (defun awesome-tray-show-info ()
   ;; Only flush tray info when current message is empty.
