@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 2.3
-;; Last-Updated: 2019-06-23 22:06:30
+;; Version: 2.4
+;; Last-Updated: 2019-06-24 00:07:35
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -75,6 +75,7 @@
 ;;
 ;; 2019/06/23
 ;;      * Support `awesome-tab' group indicator.
+;;      * Fix crash cause by `awesome-tray-module-awesome-tab-info'
 ;;
 ;; 2019/05/08
 ;;      * Disable git modulde default, it have performance when we change buffer too fast.
@@ -393,9 +394,11 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
     (format "dir:%s" (file-name-nondirectory (directory-file-name default-directory)))))
 
 (defun awesome-tray-module-awesome-tab-info ()
-  (ignore-errors
-    (when (featurep 'awesome-tab)
-      (format "%s" (cdr (awesome-tab-selected-tab (awesome-tab-current-tabset t)))))))
+  (with-demoted-errors
+      ""
+    (if (featurep 'awesome-tab)
+        (format "%s" (cdr (awesome-tab-selected-tab (awesome-tab-current-tabset t))))
+      "")))
 
 (defun awesome-tray-show-info ()
   ;; Only flush tray info when current message is empty.
