@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 2.4
-;; Last-Updated: 2019-06-24 00:07:35
+;; Version: 2.5
+;; Last-Updated: 2019-07-14 22:11:53
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -72,6 +72,9 @@
 ;;
 
 ;;; Change log:
+;;
+;; 2019/07/14
+;;      * Don't wrap awesome-tray info if variable `inhibit-message' is non-nil.
 ;;
 ;; 2019/06/23
 ;;      * Support `awesome-tab' group indicator.
@@ -454,16 +457,20 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
 ;; even other plugins call `message' to flush minibufer.
 (defun awesome-tray-message-advice (old-message &rest arguments)
   (condition-case nil
-      (if awesome-tray-active-p
-          (cond
-           ;; Just flush tray info if message string is empty.
-           ((not (car arguments))
-            (apply old-message arguments)
-            (awesome-tray-flush-info))
-           ;; Otherwise, wrap message string with tray info.
-           (t
-            (apply old-message "%s" (cons (awesome-tray-get-echo-format-string (apply 'format arguments)) '()))))
+      (cond
+       ;; Don't wrap tray info if `awesome-tray-active-p' is nil.
+       ((not awesome-tray-active-p)
         (apply old-message arguments))
+       ;; Don't wrap awesome-tray info if variable `inhibit-message' is non-nil.
+       (inhibit-message
+        (apply old-message arguments))
+       ;; Just flush tray info if message string is empty.
+       ((not (car arguments))
+        (apply old-message arguments)
+        (awesome-tray-flush-info))
+       ;; Otherwise, wrap message string with tray info.
+       (t
+        (apply old-message "%s" (cons (awesome-tray-get-echo-format-string (apply 'format arguments)) '()))))
     (apply old-message arguments)
     ))
 
