@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 2.5
-;; Last-Updated: 2019-07-14 22:11:53
+;; Version: 2.6
+;; Last-Updated: 2019-07-15 20:49:50
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -72,6 +72,9 @@
 ;;
 
 ;;; Change log:
+;;
+;; 2019/07/15
+;;      * Use current-line save value of `line-number-at-pos', improve the performance of `awesome-tray-module-location-info'.
 ;;
 ;; 2019/07/14
 ;;      * Don't wrap awesome-tray info if variable `inhibit-message' is non-nil.
@@ -367,17 +370,18 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
   (format "%s" major-mode))
 
 (defun awesome-tray-module-location-info ()
-  (let* ((bottom-line (line-number-at-pos (point-max)))
+  (let* ((current-line (line-number-at-pos))
+         (bottom-line (line-number-at-pos (point-max)))
          (location-percent
-          (cond ((equal (line-number-at-pos) 1)
+          (cond ((equal current-line 1)
                  "top")
-                ((equal (line-number-at-pos) bottom-line)
+                ((equal current-line bottom-line)
                  "bottom")
                 (t
-                 (format "%.f%%" (* (/ (float (line-number-at-pos)) bottom-line) 100))))
+                 (format "%.f%%" (* (/ (float current-line) bottom-line) 100))))
           ))
     (format "(%s:%s %s)"
-            (line-number-at-pos)
+            current-line
             (current-column)
             location-percent
             )))
