@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 2.7
-;; Last-Updated: 2019-07-15 21:28:44
+;; Version: 2.8
+;; Last-Updated: 2019-07-16 13:18:04
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -72,6 +72,9 @@
 ;;
 
 ;;; Change log:
+;;
+;; 2019/07/16
+;;      * Use `format-mode-line' improve performance of `awesome-tray-module-location-info'.
 ;;
 ;; 2019/07/15
 ;;      * Use current-line save value of `line-number-at-pos', improve the performance of `awesome-tray-module-location-info'.
@@ -371,21 +374,11 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
   (format "%s" major-mode))
 
 (defun awesome-tray-module-location-info ()
-  (let* ((current-line (line-number-at-pos))
-         (bottom-line (line-number-at-pos (point-max)))
-         (location-percent
-          (cond ((equal current-line 1)
-                 "top")
-                ((equal current-line bottom-line)
-                 "bottom")
-                (t
-                 (format "%.f%%" (* (/ (float current-line) bottom-line) 100))))
+  (format "(%s:%s %s)"
+          (format-mode-line "%l")
+          (format-mode-line "%c")
+          (format-mode-line "%p")
           ))
-    (format "(%s:%s %s)"
-            current-line
-            (current-column)
-            location-percent
-            )))
 
 (defun awesome-tray-module-date-info ()
   (format-time-string "[%Y-%m-%d %H:%M]"))
