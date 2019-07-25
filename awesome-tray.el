@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 2.8
-;; Last-Updated: 2019-07-16 13:18:04
+;; Version: 2.9
+;; Last-Updated: 2019-07-26 00:48:00
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -72,6 +72,9 @@
 ;;
 
 ;;; Change log:
+;;
+;; 2019/07/26
+;;      * Support snails framework.
 ;;
 ;; 2019/07/16
 ;;      * Use `format-mode-line' improve performance of `awesome-tray-module-location-info'.
@@ -406,18 +409,27 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
   (unless (current-message)
     (awesome-tray-flush-info)))
 
+(defun awesome-tray-get-frame-width ()
+  "Support `snails' framework.
+When snails active, calculate previous frame's width,
+Otherwise calculate current frame's width."
+  (if (and (featurep 'snails)
+           snails-frame
+           (frame-live-p snails-frame))
+      (frame-width (previous-frame))
+    (frame-width)))
+
 (defun awesome-tray-flush-info ()
   (let* ((tray-info (awesome-tray-build-info)))
     (with-current-buffer " *Minibuf-0*"
       (erase-buffer)
-      (insert (concat (make-string (max 0 (- (frame-width) (length tray-info) awesome-tray-info-padding-right)) ?\ ) tray-info)))))
+      (insert (concat (make-string (max 0 (- (awesome-tray-get-frame-width) (length tray-info) awesome-tray-info-padding-right)) ?\ ) tray-info)))))
 
 (defun awesome-tray-get-echo-format-string (message-string)
   (let* ((tray-info (awesome-tray-build-info))
-         (blank-length (- (frame-width) (length tray-info) (length message-string) awesome-tray-info-padding-right))
-         (empty-fill-string (make-string (max 0 (- (frame-width) (length tray-info) awesome-tray-info-padding-right)) ?\ ))
-         (message-fill-string (make-string (max 0 (- (frame-width) (length message-string) (length tray-info) awesome-tray-info-padding-right)) ?\ ))
-         )
+         (blank-length (- (awesome-tray-get-frame-width) (length tray-info) (length message-string) awesome-tray-info-padding-right))
+         (empty-fill-string (make-string (max 0 (- (awesome-tray-get-frame-width) (length tray-info) awesome-tray-info-padding-right)) ?\ ))
+         (message-fill-string (make-string (max 0 (- (awesome-tray-get-frame-width) (length message-string) (length tray-info) awesome-tray-info-padding-right)) ?\ )))
     (prog1
         (if (> blank-length 0)
             ;; Fill message's end with whitespace to keep tray info at right of minibuffer.
