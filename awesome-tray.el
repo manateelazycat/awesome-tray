@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 2.9
-;; Last-Updated: 2019-07-26 00:48:00
+;; Version: 3.0
+;; Last-Updated: 2019-08-13 20:28:08
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -72,6 +72,9 @@
 ;;
 
 ;;; Change log:
+;;
+;; 2019/08/13
+;;      * Keep tray info align right when message is very long, thanks QiangF.
 ;;
 ;; 2019/07/26
 ;;      * Support snails framework.
@@ -440,7 +443,7 @@ Otherwise calculate current frame's width."
               ;; Fill empty whitespace if new message contain duplicate tray-info (cause by move mouse on minibuffer window).
               (concat empty-fill-string tray-info)
             ;; Don't fill whitepsace at end of message if new message is very long.
-            (concat message-string tray-info)))
+            (concat message-string "\n" empty-fill-string tray-info)))
       ;; Record last tray information.
       (setq awesome-tray-last-tray-info tray-info))))
 
