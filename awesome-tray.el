@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 3.0
-;; Last-Updated: 2019-08-13 20:28:08
+;; Version: 3.1
+;; Last-Updated: 2019-08-14 22:02:35
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -72,6 +72,9 @@
 ;;
 
 ;;; Change log:
+;;
+;; 2019/08/14
+;;      * Remove notify message when toggle awesome-tray status. 
 ;;
 ;; 2019/08/13
 ;;      * Keep tray info align right when message is very long, thanks QiangF.
@@ -292,8 +295,7 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
         (run-with-timer 0 0.5 'awesome-tray-show-info))
   (add-hook 'focus-in-hook 'awesome-tray-show-info)
   ;; Notify user.
-  (setq awesome-tray-active-p t)
-  (message "Enable awesome tray."))
+  (setq awesome-tray-active-p t))
 
 (defun awesome-tray-disable ()
   ;; Restore mode-line colors.
@@ -319,8 +321,7 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
   (with-current-buffer " *Minibuf-0*"
     (erase-buffer))
   ;; Notify user.
-  (setq awesome-tray-active-p nil)
-  (message "Disable awesome tray."))
+  (setq awesome-tray-active-p nil))
 
 (defun awesome-tray-build-info ()
   (condition-case nil
