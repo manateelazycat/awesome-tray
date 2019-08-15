@@ -190,52 +190,82 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
   :group 'awesome-tray)
 
 (defface awesome-tray-module-git-face
-  '((t (:foreground "#ff2d55" :bold t)))
+  '((((background light))
+     :foreground "#cc2444" :bold t)
+    (t
+     :foreground "#ff2d55" :bold t))
   "Git face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-rvm-face
-  '((t (:foreground "#333fff" :bold t)))
+  '((((background light))
+     :foreground "#2832cc" :bold t)
+    (t
+     :foreground "#333fff" :bold t))
   "RVM face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-circe-face
-  '((t (:foreground "#333fff" :bold t)))
+  '((((background light))
+     :foreground "#2832cc" :bold t)
+    (t
+     :foreground "#333fff" :bold t))
   "Circe face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-mode-name-face
-  '((t (:foreground "green3" :bold t)))
+  '((((background light))
+     :foreground "#00a400" :bold t)
+    (t
+     :foreground "green3" :bold t))
   "Mode name face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-location-face
-  '((t (:foreground "#ff9500" :bold t)))
+  '((((background light))
+     :foreground "#cc7700" :bold t)
+    (t
+     :foreground "#ff9500" :bold t))
   "Location face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-date-face
-  '((t (:foreground "#8e8e93" :bold t)))
+  '((((background light))
+     :foreground "#717175" :bold t)
+    (t
+     :foreground "#8e8e93" :bold t))
   "Date face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-last-command-face
-  '((t (:foreground "#007aff" :bold t)))
+  '((((background light))
+     :foreground "#0061cc" :bold t)
+    (t
+     :foreground "#007aff" :bold t))
   "Date face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-buffer-name-face
-  '((t (:foreground "#ff9500" :bold t)))
+  '((((background light))
+     :foreground "#cc7700" :bold t)
+    (t
+     :foreground "#ff9500" :bold t))
   "Buffer name face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-parent-dir-face
-  '((t (:foreground "#9DED4D" :bold t)))
+  '((((background light))
+     :foreground "#5e8e2e" :bold t)
+    (t
+     :foreground "#9ded4d" :bold t))
   "Parent dir face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-awesome-tab-face
-  '((t (:foreground "#E73C70" :bold t)))
+  '((((background light))
+     :foreground "#b83059" :bold t)
+    (t
+     :foreground "#e73c70" :bold t))
   "Awesome tab face."
   :group 'awesome-tray)
 
