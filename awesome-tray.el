@@ -239,6 +239,14 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
   "Awesome tab face."
   :group 'awesome-tray)
 
+(defface awesome-tray-module-evil-face
+  '((((background light))
+     :foreground "#008080" :bold t)
+    (t
+     :foreground "#00ced1" :bold t))
+  "Evil state face."
+  :group 'awesome-tray)
+
 (define-minor-mode awesome-tray-mode
   "Modular tray bar."
   :require 'awesome-tray-mode
@@ -256,7 +264,7 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
 (defvar awesome-tray-active-p nil)
 
 (defvar awesome-tray-all-modules
-  '("last-command" "parent-dir" "git" "buffer-name" "mode-name" "location" "rvm" "date" "circe" "awesome-tab"))
+  '("last-command" "parent-dir" "git" "buffer-name" "mode-name" "location" "rvm" "date" "circe" "awesome-tab" "evil"))
 
 (defvar awesome-tray-git-command-last-time 0)
 
@@ -349,8 +357,10 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
         ((string-equal module-name "circe")
          (propertize (awesome-tray-module-circe-info) 'face 'awesome-tray-module-circe-face))
         ((string-equal module-name "awesome-tab")
-         (propertize (awesome-tray-module-awesome-tab-info) 'face 'awesome-tray-module-awesome-tab-face)
-         )))
+         (propertize (awesome-tray-module-awesome-tab-info) 'face 'awesome-tray-module-awesome-tab-face))
+        ((string-equal module-name "evil")
+         (propertize (awesome-tray-module-evil-info) 'face 'awesome-tray-module-evil-face))
+        ))
 
 (defun awesome-tray-module-git-info ()
   (if (executable-find "git")
@@ -406,6 +416,22 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
       ""
     (if (featurep 'awesome-tab)
         (format "%s" (cdr (awesome-tab-selected-tab (awesome-tab-current-tabset t))))
+      "")))
+
+(defun awesome-tray-module-evil-info ()
+  (with-demoted-errors
+      ""
+    (if (featurep 'evil)
+        (let ((state
+               (cond ((evil-normal-state-p) "<N>")
+                     ((evil-emacs-state-p) "<E>")
+                     ((evil-insert-state-p) "<I>")
+                     ((evil-motion-state-p) "<M>")
+                     ((evil-visual-state-p) "<V>")
+                     ((evil-operator-state-p) "<O>")
+                     ((evil-replace-state-p) "<R>")
+                     (t ""))))
+          state)
       "")))
 
 (defun awesome-tray-show-info ()
