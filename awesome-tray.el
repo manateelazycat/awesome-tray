@@ -15,7 +15,7 @@
 ;;
 ;; Features that might be required by this library:
 ;;
-;; `cl'
+;; `cl-lib'
 ;;
 
 ;;; This file is NOT part of GNU Emacs
@@ -158,7 +158,7 @@
 ;;
 
 ;;; Require
-(require 'cl)
+(require 'cl-lib)
 
 ;;; Code:
 (defgroup awesome-tray nil
@@ -293,14 +293,25 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
 
 (defvar awesome-tray-active-p nil)
 
-(defvar awesome-tray-all-modules
-  '("last-command" "parent-dir" "git" "buffer-name" "mode-name" "location" "rvm" "date" "circe" "awesome-tab" "evil"))
-
 (defvar awesome-tray-git-command-last-time 0)
 
 (defvar awesome-tray-git-command-cache "")
 
 (defvar awesome-tray-last-tray-info nil)
+
+(defvar awesome-tray-module-alist
+  '(("awesome-tab" . (awesome-tray-module-awesome-tab-info awesome-tray-module-awesome-tab-face))
+    ("buffer-name" . (awesome-tray-module-buffer-name-info awesome-tray-module-buffer-name-face))
+    ("circe" . (awesome-tray-module-circe-info awesome-tray-module-circe-face))
+    ("date" . (awesome-tray-module-date-info awesome-tray-module-date-face))
+    ("evil" . (awesome-tray-module-evil-info awesome-tray-module-evil-face))
+    ("git" . (awesome-tray-module-git-info awesome-tray-module-git-face))
+    ("last-command" . (awesome-tray-module-last-command-info awesome-tray-module-last-command-face))
+    ("location" . (awesome-tray-module-location-info awesome-tray-module-location-face))
+    ("parent-dir" . (awesome-tray-module-parent-dir-info awesome-tray-module-parent-dir-face))
+    ("mode-name" . (awesome-tray-module-mode-name-info awesome-tray-module-mode-name-face))
+    ("rvm" . (awesome-tray-module-rvm-info awesome-tray-module-rvm-face))
+    ))
 
 (defun awesome-tray-enable ()
   ;; Save mode-line colors when first time.
@@ -368,29 +379,12 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
     (format "Awesome Tray broken.")))
 
 (defun awesome-tray-get-module-info (module-name)
-  (cond ((string-equal module-name "git")
-         (propertize (awesome-tray-module-git-info) 'face 'awesome-tray-module-git-face))
-        ((string-equal module-name "rvm")
-         (propertize (awesome-tray-module-rvm-info) 'face 'awesome-tray-module-rvm-face))
-        ((string-equal module-name "mode-name")
-         (propertize (awesome-tray-module-mode-name-info) 'face 'awesome-tray-module-mode-name-face))
-        ((string-equal module-name "location")
-         (propertize (awesome-tray-module-location-info) 'face 'awesome-tray-module-location-face))
-        ((string-equal module-name "date")
-         (propertize (awesome-tray-module-date-info) 'face 'awesome-tray-module-date-face))
-        ((string-equal module-name "last-command")
-         (propertize (awesome-tray-module-last-command-info) 'face 'awesome-tray-module-last-command-face))
-        ((string-equal module-name "buffer-name")
-         (propertize (awesome-tray-module-buffer-name-info) 'face 'awesome-tray-module-buffer-name-face))
-        ((string-equal module-name "parent-dir")
-         (propertize (awesome-tray-module-parent-dir-info) 'face 'awesome-tray-module-parent-dir-face))
-        ((string-equal module-name "circe")
-         (propertize (awesome-tray-module-circe-info) 'face 'awesome-tray-module-circe-face))
-        ((string-equal module-name "awesome-tab")
-         (propertize (awesome-tray-module-awesome-tab-info) 'face 'awesome-tray-module-awesome-tab-face))
-        ((string-equal module-name "evil")
-         (propertize (awesome-tray-module-evil-info) 'face 'awesome-tray-module-evil-face))
-        ))
+  (let* ((func (ignore-errors (cadr (assoc module-name awesome-tray-module-alist))))
+         (face (ignore-errors (cddr (assoc module-name awesome-tray-module-alist))))
+         (info (ignore-errors (propertize (funcall func) 'face face))))
+    (if info
+        info
+      (propertize "" 'face face))))
 
 (defun awesome-tray-module-git-info ()
   (if (executable-find "git")
