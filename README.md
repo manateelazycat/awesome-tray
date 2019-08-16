@@ -28,7 +28,7 @@ You can controll modules through option ```awesome-tray-active-modules```.
 You can find all modules name in the keys of variable ```awesome-tray-module-alist```. Currently we have:
 
 - `awesome-tab`: Show group information of [awesome-tab](https://github.com/manateelazycat/awesome-tab).
-- `buffer-name`, `date`, ...: The name says itself.
+- `buffer-name`: Show buffer name.
 - `circe`: Show circe tracking buffer information.
 - `date`: Show current date.
 - `evil`: Show evil state.
