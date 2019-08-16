@@ -437,9 +437,11 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
   (format "%s" (buffer-name)))
 
 (defun awesome-tray-module-parent-dir-info ()
-  (if (derived-mode-p 'dired-mode)
+  (if (or (derived-mode-p 'dired-mode) (not buffer-file-name))
       ""
-    (format "dir:%s" (file-name-nondirectory (directory-file-name default-directory)))))
+    (format "%sdir:%s"
+            (if (buffer-modified-p) "*" "")
+            (file-name-nondirectory (directory-file-name default-directory)))))
 
 (defun awesome-tray-module-awesome-tab-info ()
   (with-demoted-errors
