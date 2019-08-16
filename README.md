@@ -25,7 +25,17 @@ The load-path is usually `~/elisp/`. It's set in your `~/.emacs` like this:
 ## Customize
 You can controll modules through option ```awesome-tray-active-modules```.
 
-You can find all modules name in the keys of variable ```awesome-tray-module-alist```.
+You can find all modules name in the keys of variable ```awesome-tray-module-alist```. Currently we have:
+
+- `awesome-tab`: Show group information of [awesome-tab](https://github.com/manateelazycat/awesome-tab).
+- `circe`: Show circe tracking buffer information.
+- `evil`: Show evil state.
+- `file-path`: Show file path. Parent directories above 1 level are shown using first letter or `...`.
+- `git`: Show current branch.
+- `location`: Show point position in buffer.
+- `parent-dir`: Show direct parent directory.
+- `rvm`: Show Ruby version information given by `rvm-prompt`.
+- `buffer-name`, `date`, ...: The name says itself.
 
 ## Create a Module
 Let's create a module that says hello to you. With a module you need:
