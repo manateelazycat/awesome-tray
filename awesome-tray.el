@@ -1,4 +1,4 @@
-;;; awesome-tray.el ---  Modular tray bar
+;; awesome-tray.el ---  Modular tray bar
 
 ;; Filename: awesome-tray.el
 ;; Description: Modular tray bar
@@ -261,6 +261,14 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
   "Parent dir face."
   :group 'awesome-tray)
 
+(defface awesome-tray-module-file-path-face
+  '((((background light))
+     :foreground "#5e8e2e" :bold t)
+    (t
+     :foreground "#9ded4d" :bold t))
+  "Parent dir face."
+  :group 'awesome-tray)
+
 (defface awesome-tray-module-awesome-tab-face
   '((((background light))
      :foreground "#b83059" :bold t)
@@ -305,6 +313,7 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
     ("circe" . (awesome-tray-module-circe-info awesome-tray-module-circe-face))
     ("date" . (awesome-tray-module-date-info awesome-tray-module-date-face))
     ("evil" . (awesome-tray-module-evil-info awesome-tray-module-evil-face))
+    ("file-path" . (awesome-tray-module-file-path-info awesome-tray-module-file-path-face))
     ("git" . (awesome-tray-module-git-info awesome-tray-module-git-face))
     ("last-command" . (awesome-tray-module-last-command-info awesome-tray-module-last-command-face))
     ("location" . (awesome-tray-module-location-info awesome-tray-module-location-face))
@@ -434,6 +443,36 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
   (if (derived-mode-p 'dired-mode)
       ""
     (format "dir:%s" (file-name-nondirectory (directory-file-name default-directory)))))
+
+(defun awesome-tray-module-file-path-info ()
+  (if (not buffer-file-name)
+      (format "%s" (buffer-name))
+    (let* ((file-path (split-string (buffer-file-name) "/" t))
+           (lastind (1- (length file-path)))
+           (modp (if (buffer-modified-p) "*" "")))
+      (cond
+       ((>= (length file-path) 5)
+        (concat modp
+                ".../"
+                (string-join
+                 (mapcar (lambda (s) (substring s 0 1))
+                         (cl-subseq file-path -4 -2)) "/")
+                "/"
+                (string-join
+                 (cl-subseq file-path -2) "/")))
+       ((>= (length file-path) 3)
+        (concat modp
+                "/"
+                (string-join
+                 (mapcar (lambda (s) (substring s 0 1))
+                         (cl-subseq file-path 0 -2)) "/")
+                "/"
+                (string-join
+                 (cl-subseq file-path -2) "/")))
+       (t
+        (concat modp
+                "/"
+                (string-join file-path "/")))))))
 
 (defun awesome-tray-module-awesome-tab-info ()
   (with-demoted-errors
