@@ -28,14 +28,17 @@ You can controll modules through option ```awesome-tray-active-modules```.
 You can find all modules name in the keys of variable ```awesome-tray-module-alist```. Currently we have:
 
 - `awesome-tab`: Show group information of [awesome-tab](https://github.com/manateelazycat/awesome-tab).
+- `buffer-name`, `date`, ...: The name says itself.
 - `circe`: Show circe tracking buffer information.
+- `date`: Show current date.
 - `evil`: Show evil state.
 - `file-path`: Show file path. Parent directories above 1 level are shown using first letter or `...`.
 - `git`: Show current branch.
+- `last-command`: Show last execute command.
 - `location`: Show point position in buffer.
 - `parent-dir`: Show direct parent directory.
+- `mode-name`: Show major mode name.
 - `rvm`: Show Ruby version information given by `rvm-prompt`.
-- `buffer-name`, `date`, ...: The name says itself.
 
 ## Create a Module
 Let's create a module that says hello to you. With a module you need:
