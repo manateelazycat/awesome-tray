@@ -446,6 +446,14 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
             (if (buffer-modified-p) "*" "")
             (file-name-nondirectory (directory-file-name default-directory)))))
 
+(defun awesome-tray-shrink-dir-name (name)
+  "Shrink NAME to be its first letter, or the first two if starts \".\"
+
+NAME is a string, typically a directory name."
+  (if (string= "." (substring name 0 1))
+      (substring name 0 2)
+    (substring name 0 1)))
+
 (defun awesome-tray-module-file-path-info ()
   (if (not buffer-file-name)
       (format "%s" (buffer-name))
@@ -457,7 +465,7 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
         (concat modp
                 ".../"
                 (string-join
-                 (mapcar (lambda (s) (substring s 0 1))
+                 (mapcar #'awesome-tray-shrink-dir-name
                          (cl-subseq file-path -4 -2)) "/")
                 "/"
                 (string-join
@@ -466,7 +474,7 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
         (concat modp
                 "/"
                 (string-join
-                 (mapcar (lambda (s) (substring s 0 1))
+                 (mapcar #'awesome-tray-shrink-dir-name
                          (cl-subseq file-path 0 -2)) "/")
                 "/"
                 (string-join
