@@ -16,6 +16,7 @@
 ;; Features that might be required by this library:
 ;;
 ;; `cl-lib'
+;; `subr-x'
 ;;
 
 ;;; This file is NOT part of GNU Emacs
@@ -159,6 +160,7 @@
 
 ;;; Require
 (require 'cl-lib)
+(require 'subr-x)
 
 ;;; Code:
 (defgroup awesome-tray nil
@@ -409,8 +411,8 @@ These goes before those shown in their full names."
 
 (defun awesome-tray-build-info ()
   (condition-case nil
-      (mapconcat 'identity (remove-if #'(lambda (n) (equal (length n) 0))
-                                      (mapcar 'awesome-tray-get-module-info awesome-tray-active-modules)) " ")
+      (mapconcat 'identity (cl-remove-if #'(lambda (n) (equal (length n) 0))
+                                         (mapcar 'awesome-tray-get-module-info awesome-tray-active-modules)) " ")
     (format "Awesome Tray broken.")))
 
 (defun awesome-tray-get-module-info (module-name)
