@@ -32,7 +32,7 @@ You can find all modules name in the keys of variable ```awesome-tray-module-ali
 - `circe`: Show circe tracking buffer information.
 - `date`: Show current date.
 - `evil`: Show evil state.
-- `file-path`: Show file path. Parent directories above 1 level are shown using first letter or `...`.
+- `file-path`: Show file path with full customizability. When the path is long, it can be shrinked into something like `.../.em/el/awesome-tray/awesome-tray.el`. See `awesome-tray-file-path-***` variables for details.
 - `git`: Show current branch.
 - `last-command`: Show last execute command.
 - `location`: Show point position in buffer.

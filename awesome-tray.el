@@ -16,6 +16,7 @@
 ;; Features that might be required by this library:
 ;;
 ;; `cl-lib'
+;; `subr-x'
 ;;
 
 ;;; This file is NOT part of GNU Emacs
@@ -159,6 +160,7 @@
 
 ;;; Require
 (require 'cl-lib)
+(require 'subr-x)
 
 ;;; Code:
 (defgroup awesome-tray nil
@@ -186,6 +188,32 @@
 
 It's very slow start new process in Windows platform.
 Maybe you need set this option with bigger value to speedup on Windows platform."
+  :type 'integer
+  :group 'awesome-tray)
+
+(defcustom awesome-tray-file-path-show-filename nil
+  "Show filename in file-path module or not."
+  :type 'boolean
+  :group 'awesome-tray)
+
+(defcustom awesome-tray-file-path-truncated-name-length 1
+  "In file-path module, how many letters to leave when truncate dirname.
+
+Beginning dots are not counted."
+  :type 'integer
+  :group 'awesome-tray)
+
+(defcustom awesome-tray-file-path-full-dirname-levels 2
+  "In file-path module, how many levels of parent directories should be shown in
+their full name."
+  :type 'integer
+  :group 'awesome-tray)
+
+(defcustom awesome-tray-file-path-truncate-dirname-levels 0
+  "In file-path module, how many levels of parent directories should be shown in
+their first character.
+
+These goes before those shown in their full names."
   :type 'integer
   :group 'awesome-tray)
 
@@ -383,8 +411,8 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
 
 (defun awesome-tray-build-info ()
   (condition-case nil
-      (mapconcat 'identity (remove-if #'(lambda (n) (equal (length n) 0))
-                                      (mapcar 'awesome-tray-get-module-info awesome-tray-active-modules)) " ")
+      (mapconcat 'identity (cl-remove-if #'(lambda (n) (equal (length n) 0))
+                                         (mapcar 'awesome-tray-get-module-info awesome-tray-active-modules)) " ")
     (format "Awesome Tray broken.")))
 
 (defun awesome-tray-get-module-info (module-name)
@@ -450,39 +478,42 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
   "Shrink NAME to be its first letter, or the first two if starts \".\"
 
 NAME is a string, typically a directory name."
-  (if (string= "." (substring name 0 1))
-      (substring name 0 2)
-    (substring name 0 1)))
+  (let ((dot-num (if (string-match "\\.+" name)
+                     (length (match-string 0 name))
+                   0)))
+    (substring name 0 (+ dot-num awesome-tray-file-path-truncated-name-length))))
 
 (defun awesome-tray-module-file-path-info ()
   (if (not buffer-file-name)
       (format "%s" (buffer-name))
     (let* ((file-path (split-string (buffer-file-name) "/" t))
-           (lastind (1- (length file-path)))
-           (modp (if (buffer-modified-p) "*" "")))
-      (cond
-       ((>= (length file-path) 5)
-        (concat modp
-                ".../"
-                (string-join
-                 (mapcar #'awesome-tray-shrink-dir-name
-                         (cl-subseq file-path -4 -2)) "/")
-                "/"
-                (string-join
-                 (cl-subseq file-path -2) "/")))
-       ((>= (length file-path) 3)
-        (concat modp
-                "/"
-                (string-join
-                 (mapcar #'awesome-tray-shrink-dir-name
-                         (cl-subseq file-path 0 -2)) "/")
-                "/"
-                (string-join
-                 (cl-subseq file-path -2) "/")))
-       (t
-        (concat modp
-                "/"
-                (string-join file-path "/")))))))
+           (shown-path)
+           (path-len (length file-path))
+           (modp (if (buffer-modified-p) "*" ""))
+           (full-num awesome-tray-file-path-full-dirname-levels)
+           (trunc-num awesome-tray-file-path-truncate-dirname-levels)
+           (show-name awesome-tray-file-path-show-filename))
+      (when (> path-len (+ 1 full-num))
+        (push (string-join
+               (mapcar #'awesome-tray-shrink-dir-name
+                       (cl-subseq file-path
+                                  (max 0 (- path-len (+ 1 full-num trunc-num)))
+                                  (- path-len (1+ full-num)))) "/")
+              shown-path))
+      (when (> path-len 1)
+        (push (string-join
+               (cl-subseq file-path
+                          (max 0 (- path-len (1+ full-num)))
+                          (1- path-len)) "/")
+              shown-path))
+      (when show-name
+        (push (car (last file-path)) shown-path))
+      (concat modp
+              (if (<= path-len (+ 1 full-num trunc-num))
+                  "/"
+                ".../")
+              (string-join (nreverse (cl-remove "" shown-path)) "/")
+              (when (not show-name) "/")))))
 
 (defun awesome-tray-module-awesome-tab-info ()
   (with-demoted-errors
