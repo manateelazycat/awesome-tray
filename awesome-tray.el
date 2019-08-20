@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 3.1
-;; Last-Updated: 2019-08-14 22:02:35
+;; Version: 3.2
+;; Last-Updated: 2019-08-20 20:27:18
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -74,8 +74,11 @@
 
 ;;; Change log:
 ;;
+;; 2019/08/20
+;;      * Use variable `awesome-tray-mode-line-default-height' fix issue #34.
+;;
 ;; 2019/08/14
-;;      * Remove notify message when toggle awesome-tray status. 
+;;      * Remove notify message when toggle awesome-tray status.
 ;;
 ;; 2019/08/13
 ;;      * Keep tray info align right when message is very long, thanks QiangF.
@@ -335,6 +338,8 @@ These goes before those shown in their full names."
 
 (defvar awesome-tray-last-tray-info nil)
 
+(defvar awesome-tray-mode-line-default-height 1)
+
 (defvar awesome-tray-module-alist
   '(("awesome-tab" . (awesome-tray-module-awesome-tab-info awesome-tray-module-awesome-tab-face))
     ("buffer-name" . (awesome-tray-module-buffer-name-info awesome-tray-module-buffer-name-face))
@@ -364,6 +369,7 @@ These goes before those shown in their full names."
                 (face-attribute 'mode-line-inactive :family)
                 (face-attribute 'mode-line-inactive :box)
                 )))
+  (setq awesome-tray-mode-line-default-height (face-attribute 'mode-line :height))
   ;; Disable mode line.
   (set-face-attribute 'mode-line nil
                       :foreground awesome-tray-mode-line-active-color
@@ -380,7 +386,6 @@ These goes before those shown in their full names."
   (setq awesome-tray-timer
         (run-with-timer 0 0.5 'awesome-tray-show-info))
   (add-hook 'focus-in-hook 'awesome-tray-show-info)
-  ;; Notify user.
   (setq awesome-tray-active-p t))
 
 (defun awesome-tray-disable ()
@@ -390,13 +395,13 @@ These goes before those shown in their full names."
                       :background (nth 1 awesome-tray-mode-line-colors)
                       :family (nth 2 awesome-tray-mode-line-colors)
                       :box (nth 3 awesome-tray-mode-line-colors)
-                      :height 1)
+                      :height awesome-tray-mode-line-default-height)
   (set-face-attribute 'mode-line-inactive nil
                       :foreground (nth 4 awesome-tray-mode-line-colors)
                       :background (nth 5 awesome-tray-mode-line-colors)
                       :family (nth 6 awesome-tray-mode-line-colors)
                       :box (nth 7 awesome-tray-mode-line-colors)
-                      :height 1)
+                      :height awesome-tray-mode-line-default-height)
   ;; Cancel timer.
   (when (timerp awesome-tray-timer)
     (cancel-timer awesome-tray-timer))
@@ -406,7 +411,6 @@ These goes before those shown in their full names."
   (redraw-display)
   (with-current-buffer " *Minibuf-0*"
     (erase-buffer))
-  ;; Notify user.
   (setq awesome-tray-active-p nil))
 
 (defun awesome-tray-build-info ()
