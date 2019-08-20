@@ -561,13 +561,13 @@ Otherwise calculate current frame's width."
   (let* ((tray-info (awesome-tray-build-info)))
     (with-current-buffer " *Minibuf-0*"
       (erase-buffer)
-      (insert (concat (make-string (max 0 (- (awesome-tray-get-frame-width) (length tray-info) awesome-tray-info-padding-right)) ?\ ) tray-info)))))
+      (insert (concat (make-string (max 0 (- (awesome-tray-get-frame-width) (string-width tray-info) awesome-tray-info-padding-right)) ?\ ) tray-info)))))
 
 (defun awesome-tray-get-echo-format-string (message-string)
   (let* ((tray-info (awesome-tray-build-info))
-         (blank-length (- (awesome-tray-get-frame-width) (length tray-info) (length message-string) awesome-tray-info-padding-right))
-         (empty-fill-string (make-string (max 0 (- (awesome-tray-get-frame-width) (length tray-info) awesome-tray-info-padding-right)) ?\ ))
-         (message-fill-string (make-string (max 0 (- (awesome-tray-get-frame-width) (length message-string) (length tray-info) awesome-tray-info-padding-right)) ?\ )))
+         (blank-length (- (awesome-tray-get-frame-width) (string-width tray-info) (string-width message-string) awesome-tray-info-padding-right))
+         (empty-fill-string (make-string (max 0 (- (awesome-tray-get-frame-width) (string-width tray-info) awesome-tray-info-padding-right)) ?\ ))
+         (message-fill-string (make-string (max 0 (- (awesome-tray-get-frame-width) (string-width message-string) (string-width tray-info) awesome-tray-info-padding-right)) ?\ )))
     (prog1
         (if (> blank-length 0)
             ;; Fill message's end with whitespace to keep tray info at right of minibuffer.
