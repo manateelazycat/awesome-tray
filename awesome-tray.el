@@ -482,7 +482,7 @@ These goes before those shown in their full names."
   "Shrink NAME to be its first letter, or the first two if starts \".\"
 
 NAME is a string, typically a directory name."
-  (let ((dot-num (if (string-match "\\.+" name)
+  (let ((dot-num (if (string-match "^\\.+" name)
                      (length (match-string 0 name))
                    0)))
     (substring name 0 (+ dot-num awesome-tray-file-path-truncated-name-length))))
@@ -517,7 +517,7 @@ NAME is a string, typically a directory name."
                   "/"
                 ".../")
               (string-join (nreverse (cl-remove "" shown-path)) "/")
-              (when (not show-name) "/")))))
+              (when (and shown-path (not show-name)) "/")))))
 
 (defun awesome-tray-module-awesome-tab-info ()
   (with-demoted-errors
