@@ -485,7 +485,7 @@ NAME is a string, typically a directory name."
   (let ((dot-num (if (string-match "^\\.+" name)
                      (length (match-string 0 name))
                    0)))
-    (substring name 0 (+ dot-num awesome-tray-file-path-truncated-name-length))))
+    (substring name 0 (min (length name) (+ dot-num awesome-tray-file-path-truncated-name-length)))))
 
 (defun awesome-tray-module-file-path-info ()
   (if (not buffer-file-name)
