@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 3.2
-;; Last-Updated: 2019-08-20 20:27:18
+;; Version: 3.3
+;; Last-Updated: 2020-01-05 22:56:56
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -73,6 +73,9 @@
 ;;
 
 ;;; Change log:
+;;
+;; 2020/01/05
+;;      * Hide awesome-tab info if it is too long.
 ;;
 ;; 2019/08/20
 ;;      * Use variable `awesome-tray-mode-line-default-height' fix issue #34.
@@ -523,7 +526,10 @@ NAME is a string, typically a directory name."
   (with-demoted-errors
       ""
     (if (featurep 'awesome-tab)
-        (format "%s" (cdr (awesome-tab-selected-tab (awesome-tab-current-tabset t))))
+        (let ((tab-info (format "%s" (cdr (awesome-tab-selected-tab (awesome-tab-current-tabset t))))))
+          (if (> (string-width tab-info) 30)
+              ""
+            tab-info))
       "")))
 
 (defun awesome-tray-module-evil-info ()
