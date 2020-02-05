@@ -470,7 +470,7 @@ These goes before those shown in their full names."
     ""))
 
 (defun awesome-tray-module-battery-info ()
-  (format "%s-%s"
+  (format "%s-%s%%"
           (cdr (assoc 76 (funcall battery-status-function)))
           (cdr (assoc 112 (funcall battery-status-function)))
           ))
