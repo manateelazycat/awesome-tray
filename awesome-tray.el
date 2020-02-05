@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 3.3
-;; Last-Updated: 2020-01-05 22:56:56
+;; Version: 3.4
+;; Last-Updated: 2020-02-05 14:54:59
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -17,6 +17,7 @@
 ;;
 ;; `cl-lib'
 ;; `subr-x'
+;; `battery'
 ;;
 
 ;;; This file is NOT part of GNU Emacs
@@ -73,6 +74,9 @@
 ;;
 
 ;;; Change log:
+;;
+;; 2020/02/05
+;;      * Add battery status.
 ;;
 ;; 2020/01/05
 ;;      * Hide awesome-tab info if it is too long.
@@ -167,6 +171,7 @@
 ;;; Require
 (require 'cl-lib)
 (require 'subr-x)
+(require 'battery)
 
 ;;; Code:
 (defgroup awesome-tray nil
@@ -184,7 +189,7 @@
   :group 'awesome-tray)
 
 (defcustom awesome-tray-active-modules
-  '("location" "parent-dir" "mode-name" "awesome-tab" "date")
+  '("location" "parent-dir" "mode-name" "awesome-tab" "battery" "date")
   "Default active modules."
   :type 'list
   :group 'awesome-tray)
@@ -319,6 +324,14 @@ These goes before those shown in their full names."
   "Evil state face."
   :group 'awesome-tray)
 
+(defface awesome-tray-module-battery-face
+  '((((background light))
+     :foreground "#008080" :bold t)
+    (t
+     :foreground "#00ced1" :bold t))
+  "Battery state face."
+  :group 'awesome-tray)
+
 (define-minor-mode awesome-tray-mode
   "Modular tray bar."
   :require 'awesome-tray-mode
@@ -356,6 +369,7 @@ These goes before those shown in their full names."
     ("parent-dir" . (awesome-tray-module-parent-dir-info awesome-tray-module-parent-dir-face))
     ("mode-name" . (awesome-tray-module-mode-name-info awesome-tray-module-mode-name-face))
     ("rvm" . (awesome-tray-module-rvm-info awesome-tray-module-rvm-face))
+    ("battery" . (awesome-tray-module-battery-info awesome-tray-module-battery-face))
     ))
 
 (defun awesome-tray-enable ()
@@ -454,6 +468,12 @@ These goes before those shown in their full names."
                         (nth 1 (awesome-tray-process-exit-code-and-output "rvm-prompt")))
               )
     ""))
+
+(defun awesome-tray-module-battery-info ()
+  (format "%s-%s"
+          (cdr (assoc 76 (funcall battery-status-function)))
+          (cdr (assoc 112 (funcall battery-status-function)))
+          ))
 
 (defun awesome-tray-module-mode-name-info ()
   (format "%s" major-mode))
