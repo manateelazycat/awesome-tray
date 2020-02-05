@@ -39,6 +39,7 @@ You can find all modules name in the keys of variable ```awesome-tray-module-ali
 - `parent-dir`: Show direct parent directory.
 - `mode-name`: Show major mode name.
 - `rvm`: Show Ruby version information given by `rvm-prompt`.
+- `battery`: Show battery status.
 
 ## Create a Module
 Let's create a module that says hello to you. With a module you need:
