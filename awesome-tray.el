@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 3.4
-;; Last-Updated: 2020-02-05 14:54:59
+;; Version: 3.5
+;; Last-Updated: 2020-02-10 01:08:16
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -74,6 +74,9 @@
 ;;
 
 ;;; Change log:
+;;
+;; 2020/02/10
+;;      * Add battery remaining time.
 ;;
 ;; 2020/02/05
 ;;      * Add battery status.
@@ -470,12 +473,7 @@ These goes before those shown in their full names."
     ""))
 
 (defun awesome-tray-module-battery-info ()
-  (let ((battery-status (cdr (assoc 76 (funcall battery-status-function))))
-        (battery-percent (cdr (assoc 112 (funcall battery-status-function)))))
-    (format
-     (if (string-equal battery-percent "N/A") "%s-%s" "%s-%s%%")
-     battery-status
-     battery-percent)))
+  (battery-format "%L-%p%% %t" (funcall battery-status-function)))
 
 (defun awesome-tray-module-mode-name-info ()
   (format "%s" major-mode))
