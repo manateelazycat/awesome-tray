@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 3.5
-;; Last-Updated: 2020-02-10 01:08:16
+;; Version: 3.6
+;; Last-Updated: 2020-02-14 15:43:31
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -74,6 +74,9 @@
 ;;
 
 ;;; Change log:
+;;
+;; 2020/02/14
+;;      * Add `awesome-tray-battery-update-duration' to fix `set-mark-command' failed.
 ;;
 ;; 2020/02/10
 ;;      * Add battery remaining time.
@@ -202,6 +205,13 @@
 
 It's very slow start new process in Windows platform.
 Maybe you need set this option with bigger value to speedup on Windows platform."
+  :type 'integer
+  :group 'awesome-tray)
+
+(defcustom awesome-tray-battery-update-duration 5
+  "Update duration of battery status, in seconds.
+
+It will make command `set-mark-command' failed if not use duration."
   :type 'integer
   :group 'awesome-tray)
 
@@ -355,6 +365,10 @@ These goes before those shown in their full names."
 
 (defvar awesome-tray-git-command-cache "")
 
+(defvar awesome-tray-battery-status-last-time 0)
+
+(defvar awesome-tray-battery-status-cache "")
+
 (defvar awesome-tray-last-tray-info nil)
 
 (defvar awesome-tray-mode-line-default-height 1)
@@ -473,7 +487,12 @@ These goes before those shown in their full names."
     ""))
 
 (defun awesome-tray-module-battery-info ()
-  (battery-format "%L-%p%% %t" (funcall battery-status-function)))
+  (let ((current-seconds (awesome-tray-current-seconds)))
+    (if (> (- current-seconds awesome-tray-battery-status-last-time) awesome-tray-battery-update-duration)
+        (progn
+          (setq awesome-tray-battery-status-last-time current-seconds)
+          (setq awesome-tray-battery-status-cache (battery-format "%L-%p%% %t" (funcall battery-status-function))))
+      awesome-tray-battery-status-cache)))
 
 (defun awesome-tray-module-mode-name-info ()
   (format "%s" major-mode))
