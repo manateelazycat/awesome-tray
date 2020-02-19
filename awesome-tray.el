@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 3.6
-;; Last-Updated: 2020-02-14 15:43:31
+;; Version: 3.7
+;; Last-Updated: 2020-02-19 11:40:09
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -74,6 +74,9 @@
 ;;
 
 ;;; Change log:
+;;
+;; 2020/02/19
+;;      * Add week info in date.
 ;;
 ;; 2020/02/14
 ;;      * Add `awesome-tray-battery-update-duration' to fix `set-mark-command' failed.
@@ -505,7 +508,7 @@ These goes before those shown in their full names."
           ))
 
 (defun awesome-tray-module-date-info ()
-  (format-time-string "[%Y-%m-%d %H:%M]"))
+  (format-time-string "[%Y-%m-%d %H:%M %A]"))
 
 (defun awesome-tray-module-last-command-info ()
   (format "%s" last-command))
