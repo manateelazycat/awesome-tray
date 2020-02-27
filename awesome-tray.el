@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 3.8
-;; Last-Updated: 2020-02-27 19:31:57
+;; Version: 3.9
+;; Last-Updated: 2020-02-27 20:06:54
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -77,6 +77,7 @@
 ;;
 ;; 2020/02/27
 ;;      * Adapter the latest version of the snails.
+;;      * Adjust algorithm of `awesome-tray-get-frame-width'.
 ;;
 ;; 2020/02/19
 ;;      * Add week info in date.
@@ -599,12 +600,8 @@ NAME is a string, typically a directory name."
     (awesome-tray-flush-info)))
 
 (defun awesome-tray-get-frame-width ()
-  "Support `snails' framework.
-When snails active, calculate previous frame's width,
-Otherwise calculate current frame's width."
-  (if (and (featurep 'snails)
-           (snails-frame-is-active-p))
-      (frame-width (previous-frame))
+  "Only calculating a main Frame width, to avoid wrong width when new frame, such as `snails'."
+  (with-selected-frame (car (last (frame-list)))
     (frame-width)))
 
 (defun awesome-tray-flush-info ()
