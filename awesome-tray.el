@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 3.7
-;; Last-Updated: 2020-02-19 11:40:09
+;; Version: 3.8
+;; Last-Updated: 2020-02-27 19:31:57
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -74,6 +74,9 @@
 ;;
 
 ;;; Change log:
+;;
+;; 2020/02/27
+;;      * Adapter the latest version of the snails.
 ;;
 ;; 2020/02/19
 ;;      * Add week info in date.
@@ -600,8 +603,7 @@ NAME is a string, typically a directory name."
 When snails active, calculate previous frame's width,
 Otherwise calculate current frame's width."
   (if (and (featurep 'snails)
-           snails-frame
-           (frame-live-p snails-frame))
+           (snails-frame-is-active-p))
       (frame-width (previous-frame))
     (frame-width)))
 
