@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 3.9
-;; Last-Updated: 2020-02-27 20:06:54
+;; Version: 4.0
+;; Last-Updated: 2020-04-01 23:02:33
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -74,6 +74,9 @@
 ;;
 
 ;;; Change log:
+;;
+;; 2020/04/01
+;;      * Shorter tray info.
 ;;
 ;; 2020/02/27
 ;;      * Adapter the latest version of the snails.
@@ -202,7 +205,7 @@
   :group 'awesome-tray)
 
 (defcustom awesome-tray-active-modules
-  '("location" "parent-dir" "mode-name" "awesome-tab" "battery" "date")
+  '("location" "parent-dir" "mode-name" "battery" "date")
   "Default active modules."
   :type 'list
   :group 'awesome-tray)
@@ -360,7 +363,7 @@ These goes before those shown in their full names."
       (awesome-tray-enable)
     (awesome-tray-disable)))
 
-(defvar awesome-tray-info-padding-right 1)
+(defvar awesome-tray-info-padding-right 0)
 
 (defvar awesome-tray-mode-line-colors nil)
 
@@ -496,23 +499,33 @@ These goes before those shown in their full names."
 (defun awesome-tray-module-battery-info ()
   (let ((current-seconds (awesome-tray-current-seconds)))
     (if (> (- current-seconds awesome-tray-battery-status-last-time) awesome-tray-battery-update-duration)
-        (progn
+        (let* ((battery-info (funcall battery-status-function))
+               (battery-type (battery-format "%L" battery-info))
+               (battery-status (battery-format "-%p%% %t" battery-info)))
           (setq awesome-tray-battery-status-last-time current-seconds)
-          (setq awesome-tray-battery-status-cache (battery-format "%L-%p%% %t" (funcall battery-status-function))))
+
+          ;; Short battery type.
+          (cond ((string-equal battery-type "on-line")
+                 (setq battery-type "ON"))
+                ((string-equal battery-type "off-line")
+                 (setq battery-type "OFF")))
+
+          ;; Update battery cache.
+          (setq awesome-tray-battery-status-cache (concat battery-type battery-status)))
       awesome-tray-battery-status-cache)))
 
 (defun awesome-tray-module-mode-name-info ()
-  (format "%s" major-mode))
+  (car (split-string (format "%s" major-mode) "-mode")))
 
 (defun awesome-tray-module-location-info ()
-  (format "(%s:%s %s)"
+  (format "%s:%s %s"
           (format-mode-line "%l")
           (format-mode-line "%c")
           (format-mode-line "%p")
           ))
 
 (defun awesome-tray-module-date-info ()
-  (format-time-string "[%Y-%m-%d %H:%M %A]"))
+  (format-time-string "%Y-%m-%d %H:%M %A"))
 
 (defun awesome-tray-module-last-command-info ()
   (format "%s" last-command))
@@ -521,11 +534,7 @@ These goes before those shown in their full names."
   (format "%s" (buffer-name)))
 
 (defun awesome-tray-module-parent-dir-info ()
-  (if (or (derived-mode-p 'dired-mode) (not buffer-file-name))
-      ""
-    (format "%sdir:%s"
-            (if (buffer-modified-p) "*" "")
-            (file-name-nondirectory (directory-file-name default-directory)))))
+  (format "/%s" (file-name-nondirectory (directory-file-name default-directory))))
 
 (defun awesome-tray-shrink-dir-name (name)
   "Shrink NAME to be its first letter, or the first two if starts \".\"
