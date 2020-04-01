@@ -534,7 +534,7 @@ These goes before those shown in their full names."
   (format "%s" (buffer-name)))
 
 (defun awesome-tray-module-parent-dir-info ()
-  (format "/%s" (file-name-nondirectory (directory-file-name default-directory))))
+  (format "%s" (file-name-nondirectory (directory-file-name default-directory))))
 
 (defun awesome-tray-shrink-dir-name (name)
   "Shrink NAME to be its first letter, or the first two if starts \".\"
