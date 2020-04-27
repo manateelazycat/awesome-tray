@@ -696,7 +696,8 @@ NAME is a string, typically a directory name."
 (defun awesome-tray-current-message-advice (old-func &rest arguments)
   (let ((message-string (apply old-func arguments)))
     (if (and message-string awesome-tray-last-tray-info)
-        (string-trim-right (replace-regexp-in-string awesome-tray-last-tray-info "" message-string)))))
+        (string-trim-right (replace-regexp-in-string awesome-tray-last-tray-info "" message-string))
+      message-string)))
 
 (advice-add #'current-message :around #'awesome-tray-current-message-advice)
 
