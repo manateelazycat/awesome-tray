@@ -355,6 +355,7 @@ These goes before those shown in their full names."
   "Battery state face."
   :group 'awesome-tray)
 
+;;;###autoload
 (define-minor-mode awesome-tray-mode
   "Modular tray bar."
   :require 'awesome-tray-mode
@@ -662,7 +663,7 @@ NAME is a string, typically a directory name."
 ;; Wrap `message' make tray information visible always
 ;; even other plugins call `message' to flush minibufer.
 (defun awesome-tray-message-advice (old-message &rest arguments)
-  (unless (ignore-errors
+  (if (ignore-errors
             (cond
              ;; Don't wrap tray info if `awesome-tray-active-p' is nil.
              ((not awesome-tray-active-p)
@@ -674,16 +675,31 @@ NAME is a string, typically a directory name."
              ((not (car arguments))
               (apply old-message arguments)
               (awesome-tray-flush-info))
-             ;; Otherwise, wrap message string with tray info.
+             ;; Otherwise, wrap message string with tray info and show it in echo area,
+             ;; logging origin message at `*Messages*' buffer if allowed.
              (t
-              (apply old-message "%s" (cons (awesome-tray-get-echo-format-string (apply 'format arguments)) '()))
-              ))
+              (progn
+                (if message-log-max
+                  (let ((inhibit-message t))
+                    (apply old-message arguments)))
+                (let ((message-log-max nil))
+                  (apply old-message "%s" (cons (awesome-tray-get-echo-format-string (apply 'format arguments)) '()))))))
             ;; Return t if everything is okay.
             t)
-    (apply old-message "Sorry, something error in awesome-tray.")
-    ))
+      ;; Return origin message string. if not, `message' function will always return `nil'.
+      (if (car arguments)
+          (apply 'format arguments))
+    (apply old-message '("Sorry, something error in awesome-tray."))))
 
 (advice-add #'message :around #'awesome-tray-message-advice)
+
+(defun awesome-tray-current-message-advice (old-func &rest arguments)
+  (let ((message-string (apply old-func arguments)))
+    (if (and message-string awesome-tray-last-tray-info)
+        (string-trim-right (replace-regexp-in-string awesome-tray-last-tray-info "" message-string))
+      message-string)))
+
+(advice-add #'current-message :around #'awesome-tray-current-message-advice)
 
 (defun awesome-tray-end-of-buffer-advice (old-func &rest arguments)
   (apply old-func arguments)
