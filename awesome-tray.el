@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 4.0
-;; Last-Updated: 2020-04-01 23:02:33
+;; Version: 4.1
+;; Last-Updated: 2020-05-06 16:29:33
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -74,6 +74,9 @@
 ;;
 
 ;;; Change log:
+;;
+;; 2020/05/06
+;;      * Just show origin message if got any error, easy to debug.
 ;;
 ;; 2020/04/01
 ;;      * Shorter tray info.
@@ -664,32 +667,35 @@ NAME is a string, typically a directory name."
 ;; even other plugins call `message' to flush minibufer.
 (defun awesome-tray-message-advice (old-message &rest arguments)
   (if (ignore-errors
-            (cond
-             ;; Don't wrap tray info if `awesome-tray-active-p' is nil.
-             ((not awesome-tray-active-p)
-              (apply old-message arguments))
-             ;; Don't wrap awesome-tray info if variable `inhibit-message' is non-nil.
-             (inhibit-message
-              (apply old-message arguments))
-             ;; Just flush tray info if message string is empty.
-             ((not (car arguments))
-              (apply old-message arguments)
-              (awesome-tray-flush-info))
-             ;; Otherwise, wrap message string with tray info and show it in echo area,
-             ;; logging origin message at `*Messages*' buffer if allowed.
-             (t
-              (progn
-                (if message-log-max
-                  (let ((inhibit-message t))
-                    (apply old-message arguments)))
-                (let ((message-log-max nil))
-                  (apply old-message "%s" (cons (awesome-tray-get-echo-format-string (apply 'format arguments)) '()))))))
-            ;; Return t if everything is okay.
-            t)
+        (cond
+         ;; Don't wrap tray info if `awesome-tray-active-p' is nil.
+         ((not awesome-tray-active-p)
+          (apply old-message arguments))
+
+         ;; Don't wrap awesome-tray info if variable `inhibit-message' is non-nil.
+         (inhibit-message
+          (apply old-message arguments))
+
+         ;; Just flush tray info if message string is empty.
+         ((not (car arguments))
+          (apply old-message arguments)
+          (awesome-tray-flush-info))
+
+         ;; Otherwise, wrap message string with tray info and show it in echo area,
+         ;; logging origin message at `*Messages*' buffer if allowed.
+         (t
+          (if message-log-max
+              (let ((inhibit-message t))
+                (apply old-message arguments)))
+          (let ((message-log-max nil))
+            (apply old-message "%s" (cons (awesome-tray-get-echo-format-string (apply 'format arguments)) '())))))
+
+        ;; Return t if everything is okay.
+        t)
       ;; Return origin message string. if not, `message' function will always return `nil'.
       (if (car arguments)
           (apply 'format arguments))
-    (apply old-message '("Sorry, something error in awesome-tray."))))
+    (apply old-message arguments)))
 
 (advice-add #'message :around #'awesome-tray-message-advice)
 
