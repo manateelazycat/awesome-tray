@@ -6,8 +6,8 @@
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
-;; Version: 4.1
-;; Last-Updated: 2020-05-06 16:29:33
+;; Version: 4.2
+;; Last-Updated: 2020-06-18 21:02:39
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -74,6 +74,9 @@
 ;;
 
 ;;; Change log:
+;;
+;; 2020/06/18
+;;      * Shorter date info.
 ;;
 ;; 2020/05/06
 ;;      * Just show origin message if got any error, easy to debug.
@@ -529,7 +532,7 @@ These goes before those shown in their full names."
           ))
 
 (defun awesome-tray-module-date-info ()
-  (format-time-string "%Y-%m-%d %H:%M %A"))
+  (format-time-string "%m-%d %H:%M %a"))
 
 (defun awesome-tray-module-last-command-info ()
   (format "%s" last-command))
