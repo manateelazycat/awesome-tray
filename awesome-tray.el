@@ -257,6 +257,10 @@ These goes before those shown in their full names."
   :type 'integer
   :group 'awesome-tray)
 
+(defface awesome-tray-default-face '((t :inherit default))
+  "Face for string constant ouside modules."
+  :group 'awesome-tray)
+
 (defface awesome-tray-module-git-face
   '((((background light))
      :foreground "#cc2444" :bold t)
@@ -473,10 +477,13 @@ These goes before those shown in their full names."
 (defun awesome-tray-get-module-info (module-name)
   (let* ((func (ignore-errors (cadr (assoc module-name awesome-tray-module-alist))))
          (face (ignore-errors (cddr (assoc module-name awesome-tray-module-alist))))
-         (info (ignore-errors (propertize (funcall func) 'face face))))
-    (if info
-        info
-      (propertize "" 'face face))))
+         (raw-info (ignore-errors (funcall func)))
+         (info (ignore-errors (if face (propertize raw-info 'face face) raw-info))))
+    (if func
+        (if info
+            info
+          (propertize "" 'face face))
+      (propertize module-name 'face 'awesome-tray-default-face))))
 
 (defun awesome-tray-module-git-info ()
   (if (executable-find "git")
