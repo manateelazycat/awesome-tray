@@ -68,6 +68,7 @@
 ;; `awesome-tray-mode-line-inactive-color'
 ;; `awesome-tray-active-modules'
 ;; `awesome-tray-git-update-duration'
+;; `awesome-tray-refresh-idle-delay'
 ;;
 ;; All of the above can customize by:
 ;;      M-x customize-group RET awesome-tray RET
@@ -229,6 +230,11 @@ Maybe you need set this option with bigger value to speedup on Windows platform.
 
 It will make command `set-mark-command' failed if not use duration."
   :type 'integer
+  :group 'awesome-tray)
+
+(defcustom awesome-tray-refresh-idle-delay 0.5
+  "Update idle delay of awesome tray, in seconds."
+  :type 'double
   :group 'awesome-tray)
 
 (defcustom awesome-tray-file-path-show-filename nil
@@ -439,7 +445,7 @@ These goes before those shown in their full names."
                       :inherit 'unspecified)
   ;; Add update timer.
   (setq awesome-tray-timer
-        (run-with-timer 0 0.5 'awesome-tray-show-info))
+        (run-with-timer 0 awesome-tray-refresh-idle-delay 'awesome-tray-show-info))
   (add-hook 'focus-in-hook 'awesome-tray-show-info)
   (setq awesome-tray-active-p t))
 
