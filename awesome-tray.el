@@ -71,6 +71,9 @@
 ;; `awesome-tray-refresh-idle-delay'
 ;; `awesome-tray-buffer-name-buffer-changed'
 ;; `awesome-tray-buffer-name-buffer-changed-style'
+;; `awesome-tray-input-method-en-style'
+;; `awesome-tray-input-method-zh-style'
+;; `awesome-tray-buffer-read-only-style'
 ;;
 ;; All of the above can customize by:
 ;;      M-x customize-group RET awesome-tray RET
@@ -249,6 +252,21 @@ It will make command `set-mark-command' failed if not use duration."
   :type 'boolean
   :group 'awesome-tray)
 
+(defcustom awesome-tray-input-method-en-style "EN"
+  "English input method display style for input-method module."
+  :type 'string
+  :group 'awesome-tray)
+
+(defcustom awesome-tray-input-method-zh-style "ZH"
+  "Chinese input method display style for input-method module."
+  :type 'string
+  :group 'awesome-tray)
+
+(defcustom awesome-tray-buffer-read-only-style "R-O"
+  "Display style for buffer-read-only module."
+  :type 'string
+  :group 'awesome-tray)
+
 (defcustom awesome-tray-file-path-show-filename nil
   "Show filename in file-path module or not."
   :type 'boolean
@@ -383,6 +401,22 @@ These goes before those shown in their full names."
   "Battery state face."
   :group 'awesome-tray)
 
+(defface awesome-tray-module-buffer-read-only-face
+  '((((background light))
+     :foreground "#cc2444" :bold t)
+    (t
+     :foreground "#ff2d55" :bold t))
+  "Buffer read only face."
+  :group 'awesome-tray)
+
+(defface awesome-tray-module-input-method-face
+  '((((background light))
+     :foreground "#008080" :bold t)
+    (t
+     :foreground "#00ced1" :bold t))
+  "Input method face."
+  :group 'awesome-tray)
+
 ;;;###autoload
 (define-minor-mode awesome-tray-mode
   "Modular tray bar."
@@ -426,6 +460,8 @@ These goes before those shown in their full names."
     ("mode-name" . (awesome-tray-module-mode-name-info awesome-tray-module-mode-name-face))
     ("rvm" . (awesome-tray-module-rvm-info awesome-tray-module-rvm-face))
     ("battery" . (awesome-tray-module-battery-info awesome-tray-module-battery-face))
+    ("input-method" . (awesome-tray-module-input-method-info awesome-tray-module-input-method-face))
+    ("buffer-read-only" . (awesome-tray-module-buffer-read-only-info awesome-tray-buffer-read-only-face))
     ))
 
 (defun awesome-tray-enable ()
@@ -571,6 +607,16 @@ These goes before those shown in their full names."
           (concat (buffer-name) awesome-tray-buffer-name-buffer-changed-style)
         (buffer-name))
     (format "%s" (buffer-name))))
+
+(defun awesome-tray-module-buffer-read-only-info ()
+  (if (and (eq buffer-read-only t)
+           (not (eq buffer-file-name nil)))
+      (format "%s" awesome-tray-buffer-read-only-style)))
+
+(defun awesome-tray-module-input-method-info ()
+  (if (eq current-input-method nil)
+      (format "%s" awesome-tray-input-method-en-style)
+    (format "%s" awesome-tray-input-method-zh-style)))
 
 (defun awesome-tray-module-parent-dir-info ()
   (format "%s" (file-name-nondirectory (directory-file-name default-directory))))
