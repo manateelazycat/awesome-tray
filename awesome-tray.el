@@ -69,6 +69,8 @@
 ;; `awesome-tray-active-modules'
 ;; `awesome-tray-git-update-duration'
 ;; `awesome-tray-refresh-idle-delay'
+;; `awesome-tray-buffer-name-buffer-changed'
+;; `awesome-tray-buffer-name-buffer-changed-style'
 ;;
 ;; All of the above can customize by:
 ;;      M-x customize-group RET awesome-tray RET
@@ -235,6 +237,16 @@ It will make command `set-mark-command' failed if not use duration."
 (defcustom awesome-tray-refresh-idle-delay 0.5
   "Update idle delay of awesome tray, in seconds."
   :type 'double
+  :group 'awesome-tray)
+
+(defcustom awesome-tray-buffer-name-buffer-changed-style "*"
+  "`awesome-tray-buffer-name-buffer-changed' style."
+  :type 'string
+  :group 'awesome-tray)
+
+(defcustom awesome-tray-buffer-name-buffer-changed nil
+  "Show the current buffer changes after buffer-name."
+  :type 'boolean
   :group 'awesome-tray)
 
 (defcustom awesome-tray-file-path-show-filename nil
@@ -552,8 +564,14 @@ These goes before those shown in their full names."
 (defun awesome-tray-module-last-command-info ()
   (format "%s" last-command))
 
-(defun awesome-tray-module-buffer-name-info ()
-  (format "%s" (buffer-name)))
+(if awesome-tray-buffer-name-buffer-changed
+    (defun awesome-tray-module-buffer-name-info ()
+      (if (and (buffer-modified-p)
+               (not (eq buffer-file-name nil)))
+          (concat (buffer-name) awesome-tray-buffer-name-buffer-changed-style)
+        (buffer-name)))
+  (defun awesome-tray-module-buffer-name-info ()
+    (format "%s" (buffer-name))))
 
 (defun awesome-tray-module-parent-dir-info ()
   (format "%s" (file-name-nondirectory (directory-file-name default-directory))))
