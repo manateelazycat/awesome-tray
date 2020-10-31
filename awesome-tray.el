@@ -564,13 +564,12 @@ These goes before those shown in their full names."
 (defun awesome-tray-module-last-command-info ()
   (format "%s" last-command))
 
-(if awesome-tray-buffer-name-buffer-changed
-    (defun awesome-tray-module-buffer-name-info ()
+(defun awesome-tray-module-buffer-name-info ()
+  (if awesome-tray-buffer-name-buffer-changed
       (if (and (buffer-modified-p)
                (not (eq buffer-file-name nil)))
           (concat (buffer-name) awesome-tray-buffer-name-buffer-changed-style)
-        (buffer-name)))
-  (defun awesome-tray-module-buffer-name-info ()
+        (buffer-name))
     (format "%s" (buffer-name))))
 
 (defun awesome-tray-module-parent-dir-info ()
