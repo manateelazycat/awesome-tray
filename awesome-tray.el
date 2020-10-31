@@ -461,7 +461,7 @@ These goes before those shown in their full names."
     ("rvm" . (awesome-tray-module-rvm-info awesome-tray-module-rvm-face))
     ("battery" . (awesome-tray-module-battery-info awesome-tray-module-battery-face))
     ("input-method" . (awesome-tray-module-input-method-info awesome-tray-module-input-method-face))
-    ("buffer-read-only" . (awesome-tray-module-buffer-read-only-info awesome-tray-buffer-read-only-face))
+    ("buffer-read-only" . (awesome-tray-module-buffer-read-only-info awesome-tray-module-buffer-read-only-face))
     ))
 
 (defun awesome-tray-enable ()
