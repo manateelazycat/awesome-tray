@@ -531,9 +531,9 @@ These goes before those shown in their full names."
 (defun awesome-tray-get-module-info (module-name)
   (let* ((func (ignore-errors (cadr (assoc module-name awesome-tray-module-alist))))
          (face-param (ignore-errors (caddr (assoc module-name awesome-tray-module-alist))))
-				 (face (cond ((functionp face-param) (funcall face-param))
-										 ((facep face-param) face-param)
-										 (t nil)))
+         (face (cond ((functionp face-param) (funcall face-param))
+                     ((facep face-param) face-param)
+                     (t nil)))
          (raw-info (ignore-errors (funcall func)))
          (info (ignore-errors (if face (propertize raw-info 'face face) raw-info))))
     (if func
