@@ -222,6 +222,16 @@
   :type 'list
   :group 'awesome-tray)
 
+(defcustom awesome-tray-buffer-name-max-length 20
+  "Max length of buffer name."
+  :group 'awesome-tray
+  :type 'int)
+
+(defcustom awesome-tray-file-name-max-length 20
+  "Max length of file name."
+  :group 'awesome-tray
+  :type 'int)
+
 (defcustom awesome-tray-git-update-duration 5
   "Update duration of git command, in seconds.
 
@@ -604,12 +614,17 @@ These goes before those shown in their full names."
   (format "%s" last-command))
 
 (defun awesome-tray-module-buffer-name-info ()
-  (if awesome-tray-buffer-name-buffer-changed
-      (if (and (buffer-modified-p)
-               (not (eq buffer-file-name nil)))
-          (concat (buffer-name) awesome-tray-buffer-name-buffer-changed-style)
-        (buffer-name))
-    (format "%s" (buffer-name))))
+  (let ((ellipsis "...")
+        bufname)
+    (setq bufname (if awesome-tray-buffer-name-buffer-changed
+                      (if (and (buffer-modified-p)
+                               (not (eq buffer-file-name nil)))
+                          (concat (buffer-name) awesome-tray-buffer-name-buffer-changed-style)
+                        (buffer-name))
+                    (format "%s" (buffer-name))))
+    (if (> (length bufname) awesome-tray-buffer-name-max-length)
+        (format "%s%s" (substring bufname 0 (- awesome-tray-buffer-name-max-length (length ellipsis))) ellipsis)
+      bufname)))
 
 (defun awesome-tray-module-buffer-read-only-info ()
   (if (and (eq buffer-read-only t)
@@ -635,7 +650,17 @@ NAME is a string, typically a directory name."
 
 (defun awesome-tray-module-file-path-info ()
   (if (not buffer-file-name)
-      (format "%s" (buffer-name))
+      (let ((ellipsis "...")
+            (bufname (buffer-name)))
+        (setq bufname (if awesome-tray-buffer-name-buffer-changed
+                          (if (and (buffer-modified-p)
+                                   (not (eq buffer-file-name nil)))
+                              (concat (buffer-name) awesome-tray-buffer-name-buffer-changed-style)
+                            (buffer-name))
+                        (format "%s" (buffer-name))))
+        (if (> (length bufname) awesome-tray-file-name-max-length)
+            (format "%s%s" (substring bufname 0 (- awesome-tray-file-name-max-length (length ellipsis))) ellipsis)
+          bufname))
     (let* ((file-path (split-string (buffer-file-name) "/" t))
            (shown-path)
            (path-len (length file-path))
