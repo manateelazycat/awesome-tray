@@ -723,7 +723,9 @@ NAME is a string, typically a directory name."
 
 (defun awesome-tray-get-frame-width ()
   "Only calculating a main Frame width, to avoid wrong width when new frame, such as `snails'."
-  (with-selected-frame (car (last (frame-list)))
+  (if (display-graphic-p)
+      (with-selected-frame (car (last (frame-list)))
+        (frame-width))
     (frame-width)))
 
 (defun awesome-tray-flush-info ()
