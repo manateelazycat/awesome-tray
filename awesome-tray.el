@@ -223,7 +223,7 @@
   :group 'awesome-tray)
 
 (defcustom awesome-tray-essential-modules
-  '("location" "buffer-name" "which-func" "file-path")
+  '("location" "buffer-name" "which-class" "which-func" "file-path")
   "Default ellipsis modules, show when minibuffer is too long."
   :type 'list
   :group 'awesome-tray)
