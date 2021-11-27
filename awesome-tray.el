@@ -818,15 +818,18 @@ NAME is a string, typically a directory name."
                                          (string-width tray-info)
                                          awesome-tray-info-padding-right)) ?\ )
                   tray-info))
-         ;; Don't fill whitepsace at end of message if new message is very long.
          (t
-          (let ((essential-info (awesome-tray-build-essential-info)))
-            (concat message-string
-                    (make-string (max 0 (- (awesome-tray-get-frame-width)
-                                           (string-width essential-info)
-                                           (string-width message-string)
-                                           awesome-tray-info-padding-right)) ?\ )
-                    essential-info))))
+          (let* ((essential-info (awesome-tray-build-essential-info))
+                 (fill-string (make-string (max 0 (- (awesome-tray-get-frame-width)
+                                                     (string-width essential-info)
+                                                     (string-width message-string)
+                                                     awesome-tray-info-padding-right)) ?\ )))
+            (if (> (+ (string-width message-string) (string-width fill-string) (string-width essential-info))
+                   (awesome-tray-get-frame-width))
+                ;; Don't show tray information if message is too long.
+                message-string
+              (concat message-string fill-string essential-info))
+            )))
       ;; Record last tray information.
       (setq awesome-tray-last-tray-info tray-info))))
 
