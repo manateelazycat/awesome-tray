@@ -42,8 +42,7 @@ You can find all modules name in the keys of variable ```awesome-tray-module-ali
 - `battery`: Show battery status.
 - `input-method`: Show input method status.
 - `buffer-read-only`: Show read only status.
-- `which-class`: Show which class belong to status, need install `tree-sitter` first.
-- `which-func`: Show which function belong to status, need install `tree-sitter` first.
+- `belong`: Show which class/function status, need install `tree-sitter` first.
 
 ## Create a Module
 Let's create a module that says hello to you. With a module you need:

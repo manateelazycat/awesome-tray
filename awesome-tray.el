@@ -217,13 +217,13 @@
   :group 'awesome-tray)
 
 (defcustom awesome-tray-active-modules
-  '("location" "buffer-name" "which-class" "which-func" "file-path" "mode-name" "input-method" "battery" "date")
+  '("location" "buffer-name" "belong" "file-path" "mode-name" "input-method" "battery" "date")
   "Default active modules."
   :type 'list
   :group 'awesome-tray)
 
 (defcustom awesome-tray-essential-modules
-  '("location" "buffer-name" "which-class" "which-func" "file-path")
+  '("location" "buffer-name" "belong" "file-path")
   "Default ellipsis modules, show when minibuffer is too long."
   :type 'list
   :group 'awesome-tray)
@@ -243,6 +243,11 @@
 
 It's very slow start new process in Windows platform.
 Maybe you need set this option with bigger value to speedup on Windows platform."
+  :type 'integer
+  :group 'awesome-tray)
+
+(defcustom awesome-tray-belong-update-duration 5
+  "Update duration of which class, in seconds."
   :type 'integer
   :group 'awesome-tray)
 
@@ -425,15 +430,7 @@ These goes before those shown in their full names."
   "Buffer read only face."
   :group 'awesome-tray)
 
-(defface awesome-tray-module-which-class-face
-  '((((background light))
-     :foreground "#cc2444" :bold t)
-    (t
-     :foreground "#ff2d55" :bold t))
-  "Buffer read only face."
-  :group 'awesome-tray)
-
-(defface awesome-tray-module-which-func-face
+(defface awesome-tray-module-belong-face
   '((((background light))
      :foreground "#cc2444" :bold t)
     (t
@@ -470,6 +467,12 @@ These goes before those shown in their full names."
 
 (defvar awesome-tray-git-command-cache "")
 
+(defvar awesome-tray-belong-last-time 0)
+
+(defvar awesome-tray-belong-last-buffer nil)
+
+(defvar awesome-tray-belong-cache "")
+
 (defvar awesome-tray-battery-status-last-time 0)
 
 (defvar awesome-tray-battery-status-cache "")
@@ -494,8 +497,7 @@ These goes before those shown in their full names."
     ("battery" . (awesome-tray-module-battery-info awesome-tray-module-battery-face))
     ("input-method" . (awesome-tray-module-input-method-info awesome-tray-module-input-method-face))
     ("buffer-read-only" . (awesome-tray-module-buffer-read-only-info awesome-tray-module-buffer-read-only-face))
-    ("which-func" . (awesome-tray-module-which-func-info awesome-tray-module-which-func-face))
-    ("which-class" . (awesome-tray-module-which-class-info awesome-tray-module-which-class-face))
+    ("belong" . (awesome-tray-module-belong-info awesome-tray-module-belong-face))
     ))
 
 (defun awesome-tray-enable ()
@@ -746,31 +748,46 @@ NAME is a string, typically a directory name."
           state)
       "")))
 
-(defun awesome-tray-module-which-class-info ()
+(defun awesome-tray-module-belong-info ()
   (if (featurep 'tree-sitter)
-      (let* ((function-nodes (append (awesome-tray-get-match-nodes "(class_definition name: (symbol) @x)")
-                                     (awesome-tray-get-match-nodes "(class_definition name: (identifier) @x)")))
-             match-node)
-        (catch 'found
-          (dolist (function-node function-nodes)
-            (when (and (> (point) (tsc-node-start-position (tsc-get-parent function-node)))
-                       (< (point) (tsc-node-end-position (tsc-get-parent function-node))))
-              (throw 'found (format "[%s]" (tsc-node-text function-node))))
-            )))
+      (let ((current-seconds (awesome-tray-current-seconds)))
+        (if (or (not (eq (current-buffer) awesome-tray-belong-last-buffer))
+                (> (- current-seconds awesome-tray-belong-last-time) awesome-tray-belong-update-duration))
+            (progn
+              (setq awesome-tray-belong-last-time current-seconds)
+              (setq awesome-tray-belong-last-buffer (current-buffer))
+              (awesome-tray-update-belong-cache))
+          awesome-tray-belong-cache))
     ""))
 
-(defun awesome-tray-module-which-func-info ()
-  (if (featurep 'tree-sitter)
-      (let* ((function-nodes (append (awesome-tray-get-match-nodes "(function_definition name: (symbol) @x)")
-                                     (awesome-tray-get-match-nodes "(function_definition name: (identifier) @x)")))
-             match-node)
-        (catch 'found
-          (dolist (function-node function-nodes)
-            (when (and (> (point) (tsc-node-start-position (tsc-get-parent function-node)))
-                       (< (point) (tsc-node-end-position (tsc-get-parent function-node))))
-              (throw 'found (format "(%s)" (tsc-node-text function-node))))
-            )))
-    ""))
+(defun awesome-tray-update-belong-cache ()
+  (setq awesome-tray-belong-cache
+        (let* ((class-nodes (append (awesome-tray-get-match-nodes "(class_definition name: (symbol) @x)")
+                                    (awesome-tray-get-match-nodes "(class_definition name: (identifier) @x)")))
+               (function-nodes (append (awesome-tray-get-match-nodes "(function_definition name: (symbol) @x)")
+                                       (awesome-tray-get-match-nodes "(function_definition name: (identifier) @x)")))
+               which-belong-info
+               which-class-info
+               which-func-info)
+          (setq which-class-info (catch 'found
+                                   (dolist (class-node class-nodes)
+                                     (when (and (> (point) (tsc-node-start-position (tsc-get-parent class-node)))
+                                                (< (point) (tsc-node-end-position (tsc-get-parent class-node))))
+                                       (throw 'found (tsc-node-text class-node)))
+                                     )
+                                   (throw 'found "")))
+          (setq which-func-info (catch 'found
+                                  (dolist (function-node function-nodes)
+                                    (when (and (> (point) (tsc-node-start-position (tsc-get-parent function-node)))
+                                               (< (point) (tsc-node-end-position (tsc-get-parent function-node))))
+                                      (throw 'found (tsc-node-text function-node)))
+                                    )
+                                  (throw 'found "")))
+          (setq which-belong-info (string-trim (concat which-class-info " " which-func-info)))
+          (if (string-equal which-belong-info "")
+              ""
+            (format "[%s]" which-belong-info))))
+  awesome-tray-belong-cache)
 
 (defun awesome-tray-get-match-nodes (match-rule)
   (ignore-errors
