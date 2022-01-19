@@ -217,13 +217,13 @@
   :group 'awesome-tray)
 
 (defcustom awesome-tray-active-modules
-  '("location" "buffer-name" "belong" "file-path" "mode-name" "input-method" "battery" "date")
+  '("location" "belong" "file-path" "mode-name" "input-method" "battery" "date")
   "Default active modules."
   :type 'list
   :group 'awesome-tray)
 
 (defcustom awesome-tray-essential-modules
-  '("location" "buffer-name" "belong" "file-path")
+  '("location" "belong" "file-path")
   "Default ellipsis modules, show when minibuffer is too long."
   :type 'list
   :group 'awesome-tray)
@@ -718,7 +718,7 @@ NAME is a string, typically a directory name."
       (concat modp
               (if (<= path-len (+ 1 full-num trunc-num))
                   "/"
-                ".../")
+                "./")
               (string-join (nreverse (cl-remove "" shown-path)) "/")
               (when (and shown-path (not show-name)) "/")))))
 
