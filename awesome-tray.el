@@ -217,7 +217,7 @@
   :group 'awesome-tray)
 
 (defcustom awesome-tray-active-modules
-  '("location" "belong" "file-path" "mode-name" "input-method" "battery" "date")
+  '("location" "belong" "file-path" "mode-name" "battery" "date")
   "Default active modules."
   :type 'list
   :group 'awesome-tray)
