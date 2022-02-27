@@ -22,7 +22,13 @@ The load-path is usually `~/elisp/`. It's set in your `~/.emacs` like this:
 (awesome-tray-mode 1)
 ```
 
-## Customize
+## Customize Mode line.
+
+- `awesome-tray-mode-line-active-color`: Use for customize active color.
+- `awesome-tray-mode-line-inactive-color`: Use for customize inactive color.
+- `awesome-tray-mode-line-height`: Mode line height, default is 0.1
+
+## Customize Module
 You can controll modules through option ```awesome-tray-active-modules```.
 
 You can find all modules name in the keys of variable ```awesome-tray-module-alist```. Currently we have:

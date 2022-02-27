@@ -216,6 +216,11 @@
   :type 'string
   :group 'awesome-tray)
 
+(defcustom awesome-tray-mode-line-height 0.1
+  "Height of mode line."
+  :type 'integer
+  :group 'awesome-tray)
+
 (defcustom awesome-tray-active-modules
   '("location" "belong" "file-path" "mode-name" "battery" "date")
   "Default active modules."
@@ -519,12 +524,12 @@ These goes before those shown in their full names."
   (set-face-attribute 'mode-line nil
                       :foreground awesome-tray-mode-line-active-color
                       :background awesome-tray-mode-line-active-color
-                      :height 0.1
+                      :height awesome-tray-mode-line-height
                       :box nil)
   (set-face-attribute 'mode-line-inactive nil
                       :foreground awesome-tray-mode-line-inactive-color
                       :background awesome-tray-mode-line-inactive-color
-                      :height 0.1
+                      :height awesome-tray-mode-line-height
                       :box nil
                       :inherit 'unspecified)
   ;; Add update timer.
