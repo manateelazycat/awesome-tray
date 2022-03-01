@@ -589,11 +589,13 @@ These goes before those shown in their full names."
   (car (split-string (format "%s" major-mode) "-mode")))
 
 (defun awesome-tray-module-location-info ()
-  (format "%s:%s %s"
-          (format-mode-line "%l")
-          (format-mode-line "%c")
-          (format-mode-line "%p")
-          ))
+  (if (equal major-mode 'eaf-mode)
+      ""
+    (format "%s:%s %s"
+            (format-mode-line "%l")
+            (format-mode-line "%c")
+            (format-mode-line "%p")
+            )))
 
 (defun awesome-tray-module-date-info ()
   (format-time-string "%m-%d %H:%M %a"))
