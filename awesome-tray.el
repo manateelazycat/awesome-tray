@@ -7,7 +7,7 @@
 ;; Copyright (C) 2018, Andy Stewart, all rights reserved.
 ;; Created: 2018-10-07 07:30:16
 ;; Version: 4.2
-;; Last-Updated: 2020-06-18 21:02:39
+;; Last-Updated: 2022-03-01 11:02:39
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
@@ -80,6 +80,9 @@
 ;;
 
 ;;; Change log:
+;;
+;; 2022/03/01
+;;      * Use overlay re-implement tray information render.
 ;;
 ;; 2020/06/18
 ;;      * Shorter date info.
@@ -200,11 +203,26 @@
 (require 'cl-lib)
 (require 'subr-x)
 (require 'battery)
+(require 'timer)
+(require 'minibuffer)
+(require 'overlay)
 
 ;;; Code:
 (defgroup awesome-tray nil
   "Modular tray bar."
   :group 'awesome-tray)
+
+(defcustom awesome-tray-minibuffer t
+  "If non-nil, also display the awesome-tray when in the minibuffer."
+  :group 'awesome-tray
+  :type 'boolean)
+
+(defcustom awesome-tray-update-interval 1
+  "Interval in seconds between updating the awesome-tray contents.
+
+If nil, don't update the awesome-tray automatically."
+  :group 'awesome-tray
+  :type 'number)
 
 (defcustom awesome-tray-mode-line-active-color "DarkRed"
   "Active color."
@@ -451,22 +469,13 @@ These goes before those shown in their full names."
   "Input method face."
   :group 'awesome-tray)
 
-;;;###autoload
-(define-minor-mode awesome-tray-mode
-  "Modular tray bar."
-  :require 'awesome-tray-mode
-  :global t
-  (if awesome-tray-mode
-      (awesome-tray-enable)
-    (awesome-tray-disable)))
+(defvar awesome-tray-text nil
+  "The text currently displayed in the awesome-tray.")
 
-(defvar awesome-tray-info-padding-right 0)
+(defvar awesome-tray-overlays nil
+  "List of overlays displaying the awesome-tray contents.")
 
 (defvar awesome-tray-mode-line-colors nil)
-
-(defvar awesome-tray-timer nil)
-
-(defvar awesome-tray-active-p nil)
 
 (defvar awesome-tray-git-command-last-time 0)
 
@@ -504,64 +513,6 @@ These goes before those shown in their full names."
     ("buffer-read-only" . (awesome-tray-module-buffer-read-only-info awesome-tray-module-buffer-read-only-face))
     ("belong" . (awesome-tray-module-belong-info awesome-tray-module-belong-face))
     ))
-
-(defun awesome-tray-enable ()
-  ;; Save mode-line colors when first time.
-  ;; Don't change `awesome-tray-mode-line-colors' anymore.
-  (unless awesome-tray-mode-line-colors
-    (setq awesome-tray-mode-line-colors
-          (list (face-attribute 'mode-line :foreground)
-                (face-attribute 'mode-line :background)
-                (face-attribute 'mode-line :family)
-                (face-attribute 'mode-line :box)
-                (face-attribute 'mode-line-inactive :foreground)
-                (face-attribute 'mode-line-inactive :background)
-                (face-attribute 'mode-line-inactive :family)
-                (face-attribute 'mode-line-inactive :box)
-                )))
-  (setq awesome-tray-mode-line-default-height (face-attribute 'mode-line :height))
-  ;; Disable mode line.
-  (set-face-attribute 'mode-line nil
-                      :foreground awesome-tray-mode-line-active-color
-                      :background awesome-tray-mode-line-active-color
-                      :height awesome-tray-mode-line-height
-                      :box nil)
-  (set-face-attribute 'mode-line-inactive nil
-                      :foreground awesome-tray-mode-line-inactive-color
-                      :background awesome-tray-mode-line-inactive-color
-                      :height awesome-tray-mode-line-height
-                      :box nil
-                      :inherit 'unspecified)
-  ;; Add update timer.
-  (setq awesome-tray-timer
-        (run-with-timer 0 awesome-tray-refresh-idle-delay 'awesome-tray-show-info))
-  (add-hook 'focus-in-hook 'awesome-tray-show-info)
-  (setq awesome-tray-active-p t))
-
-(defun awesome-tray-disable ()
-  ;; Restore mode-line colors.
-  (set-face-attribute 'mode-line nil
-                      :foreground (nth 0 awesome-tray-mode-line-colors)
-                      :background (nth 1 awesome-tray-mode-line-colors)
-                      :family (nth 2 awesome-tray-mode-line-colors)
-                      :box (nth 3 awesome-tray-mode-line-colors)
-                      :height awesome-tray-mode-line-default-height)
-  (set-face-attribute 'mode-line-inactive nil
-                      :foreground (nth 4 awesome-tray-mode-line-colors)
-                      :background (nth 5 awesome-tray-mode-line-colors)
-                      :family (nth 6 awesome-tray-mode-line-colors)
-                      :box (nth 7 awesome-tray-mode-line-colors)
-                      :height awesome-tray-mode-line-default-height)
-  ;; Cancel timer.
-  (when (timerp awesome-tray-timer)
-    (cancel-timer awesome-tray-timer))
-  (remove-hook 'focus-in-hook 'awesome-tray-show-info)
-  ;; Update mode-line.
-  (force-mode-line-update)
-  (redraw-display)
-  (with-current-buffer " *Minibuf-0*"
-    (erase-buffer))
-  (setq awesome-tray-active-p nil))
 
 (defun awesome-tray-build-active-info ()
   (condition-case nil
@@ -801,59 +752,12 @@ NAME is a string, typically a directory name."
            (captures (mapcar #'cdr (tsc-query-captures query root-node #'tsc--buffer-substring-no-properties))))
       captures)))
 
-(defun awesome-tray-show-info ()
-  ;; Only flush tray info when current message is empty.
-  (unless (current-message)
-    (awesome-tray-flush-info)))
-
 (defun awesome-tray-get-frame-width ()
   "Only calculating a main Frame width, to avoid wrong width when new frame, such as `snails'."
   (if (display-graphic-p)
       (with-selected-frame (car (last (frame-list)))
         (frame-width))
     (frame-width)))
-
-(defun awesome-tray-flush-info ()
-  (let* ((tray-info (awesome-tray-build-active-info)))
-    (with-current-buffer " *Minibuf-0*"
-      (erase-buffer)
-      (insert (concat (make-string (max 0 (- (awesome-tray-get-frame-width) (string-width tray-info) awesome-tray-info-padding-right)) ?\ ) tray-info)))))
-
-(defun awesome-tray-get-echo-format-string (message-string)
-  (let* ((tray-info (awesome-tray-build-active-info))
-         (blank-length (- (awesome-tray-get-frame-width) (string-width tray-info) (string-width message-string) awesome-tray-info-padding-right)))
-    (prog1
-        (cond
-         ;; Fill message's end with whitespace to keep tray info at right of minibuffer.
-         ((> blank-length 0)
-          (concat message-string
-                  (make-string (max 0 (- (awesome-tray-get-frame-width)
-                                         (string-width message-string)
-                                         (string-width tray-info)
-                                         awesome-tray-info-padding-right)) ?\ )
-                  tray-info))
-         ;; Fill empty whitespace if new message contain duplicate tray-info (cause by move mouse on minibuffer window).
-         ((and awesome-tray-last-tray-info
-               message-string
-               (string-suffix-p awesome-tray-last-tray-info message-string))
-          (concat (make-string (max 0 (- (awesome-tray-get-frame-width)
-                                         (string-width tray-info)
-                                         awesome-tray-info-padding-right)) ?\ )
-                  tray-info))
-         (t
-          (let* ((essential-info (awesome-tray-build-essential-info))
-                 (fill-string (make-string (max 0 (- (awesome-tray-get-frame-width)
-                                                     (string-width essential-info)
-                                                     (string-width message-string)
-                                                     awesome-tray-info-padding-right)) ?\ )))
-            (if (> (+ (string-width message-string) (string-width fill-string) (string-width essential-info))
-                   (awesome-tray-get-frame-width))
-                ;; Don't show tray information if message is too long.
-                message-string
-              (concat message-string fill-string essential-info))
-            )))
-      ;; Record last tray information.
-      (setq awesome-tray-last-tray-info tray-info))))
 
 (defun awesome-tray-process-exit-code-and-output (program &rest args)
   "Run PROGRAM with ARGS and return the exit code and output in a list."
@@ -874,61 +778,133 @@ NAME is a string, typically a directory name."
             ""))
     awesome-tray-git-command-cache))
 
-;; Wrap `message' make tray information visible always
-;; even other plugins call `message' to flush minibufer.
-(defun awesome-tray-message-advice (old-message &rest arguments)
-  (if (ignore-errors
-        (cond
-         ;; Don't wrap tray info if `awesome-tray-active-p' is nil.
-         ((not awesome-tray-active-p)
-          (apply old-message arguments))
+;;;###autoload
+(define-minor-mode awesome-tray-mode
+  "Display text at the end of the echo area."
+  :global t
+  (if awesome-tray-mode
+      (awesome-tray-enable)
+    (awesome-tray-disable)))
 
-         ;; Don't wrap awesome-tray info if variable `inhibit-message' is non-nil.
-         (inhibit-message
-          (apply old-message arguments))
+;;;###autoload
+(defun awesome-tray-enable ()
+  "Turn on the awesome-tray."
+  (interactive)
+  ;; Disable any existing awesome-tray to remove conflicts
+  (awesome-tray-disable)
 
-         ;; Just flush tray info if message string is empty.
-         ((not (car arguments))
-          (apply old-message arguments)
-          (awesome-tray-flush-info))
+  ;; Save mode-line colors when first time.
+  ;; Don't change `awesome-tray-mode-line-colors' anymore.
+  (unless awesome-tray-mode-line-colors
+    (setq awesome-tray-mode-line-colors
+          (list (face-attribute 'mode-line :foreground)
+                (face-attribute 'mode-line :background)
+                (face-attribute 'mode-line :family)
+                (face-attribute 'mode-line :box)
+                (face-attribute 'mode-line-inactive :foreground)
+                (face-attribute 'mode-line-inactive :background)
+                (face-attribute 'mode-line-inactive :family)
+                (face-attribute 'mode-line-inactive :box)
+                )))
+  (setq awesome-tray-mode-line-default-height (face-attribute 'mode-line :height))
 
-         ;; Otherwise, wrap message string with tray info and show it in echo area,
-         ;; logging origin message at `*Messages*' buffer if allowed.
-         (t
-          (if message-log-max
-              (let ((inhibit-message t))
-                (apply old-message arguments)))
-          (let ((message-log-max nil))
-            (apply old-message "%s" (cons (awesome-tray-get-echo-format-string (apply 'format arguments)) '())))))
+  ;; Disable mode line.
+  (set-face-attribute 'mode-line nil
+                      :foreground awesome-tray-mode-line-active-color
+                      :background awesome-tray-mode-line-active-color
+                      :height awesome-tray-mode-line-height
+                      :box nil)
+  (set-face-attribute 'mode-line-inactive nil
+                      :foreground awesome-tray-mode-line-inactive-color
+                      :background awesome-tray-mode-line-inactive-color
+                      :height awesome-tray-mode-line-height
+                      :box nil
+                      :inherit 'unspecified)
 
-        ;; Return t if everything is okay.
-        t)
-      ;; Return origin message string. if not, `message' function will always return `nil'.
-      (if (car arguments)
-          (apply 'format arguments))
-    (apply old-message arguments)))
+  ;; Create overlays in each echo area buffer
+  (dolist (buf '(" *Echo Area 0*" " *Echo Area 1*"))
+    (with-current-buffer buf
+      (remove-overlays (point-min) (point-max))
+      (push (make-overlay (point-min) (point-max) nil nil t)
+            awesome-tray-overlays)))
 
-(advice-add #'message :around #'awesome-tray-message-advice)
+  ;; Start the timer to automatically update
+  (when awesome-tray-update-interval
+    (run-with-timer 0 awesome-tray-update-interval 'awesome-tray-update))
 
-(defun awesome-tray-current-message-advice (old-func &rest arguments)
-  (let ((message-string (apply old-func arguments)))
-    (if (and message-string awesome-tray-last-tray-info)
-        (string-trim-right (replace-regexp-in-string awesome-tray-last-tray-info "" message-string))
-      message-string)))
+  ;; Add the setup function to the minibuffer hook
+  (when awesome-tray-minibuffer
+    (add-hook 'minibuffer-setup-hook #'awesome-tray--minibuffer-setup)))
 
-(advice-add #'current-message :around #'awesome-tray-current-message-advice)
+;;;###autoload
+(defun awesome-tray-disable ()
+  "Turn off the awesome-tray."
+  (interactive)
+  ;; Restore mode-line colors.
+  (set-face-attribute 'mode-line nil
+                      :foreground (nth 0 awesome-tray-mode-line-colors)
+                      :background (nth 1 awesome-tray-mode-line-colors)
+                      :family (nth 2 awesome-tray-mode-line-colors)
+                      :box (nth 3 awesome-tray-mode-line-colors)
+                      :height awesome-tray-mode-line-default-height)
+  (set-face-attribute 'mode-line-inactive nil
+                      :foreground (nth 4 awesome-tray-mode-line-colors)
+                      :background (nth 5 awesome-tray-mode-line-colors)
+                      :family (nth 6 awesome-tray-mode-line-colors)
+                      :box (nth 7 awesome-tray-mode-line-colors)
+                      :height awesome-tray-mode-line-default-height)
 
-(defun awesome-tray-end-of-buffer-advice (old-func &rest arguments)
-  (apply old-func arguments)
-  (message ""))
+  ;; Remove awesome-tray overlays
+  (mapc 'delete-overlay awesome-tray-overlays)
+  (setq awesome-tray-overlays nil)
 
-(advice-add #'end-of-buffer :around #'awesome-tray-end-of-buffer-advice)
+  ;; Remove text from Minibuf-0
+  (with-current-buffer " *Minibuf-0*"
+    (delete-region (point-min) (point-max)))
 
-(defun awesome-tray-beginning-of-buffer-advice (old-func &rest arguments)
-  (apply old-func arguments)
-  (message ""))
+  ;; Cancel the update timer
+  (cancel-function-timers #'awesome-tray-update)
 
-(advice-add #'beginning-of-buffer :around #'awesome-tray-beginning-of-buffer-advice)
+  ;; Remove the setup function from the minibuffer hook
+  (remove-hook 'minibuffer-setup-hook #'awesome-tray--minibuffer-setup))
+
+(defun awesome-tray-set-text (text)
+  "Set the text displayed by the awesome-tray to TEXT."
+  (let* ((wid (string-width text))
+         (spc (propertize " " 'cursor 1 'display
+                          `(space :align-to (- right-fringe ,wid)))))
+
+    (setq awesome-tray-text (concat spc text))
+
+    ;; Remove any dead overlays from the minibuffer from the beginning of the list
+    (while (null (overlay-buffer (car awesome-tray-overlays)))
+      (pop awesome-tray-overlays))
+
+    ;; Add the correct text to each awesome-tray overlay
+    (dolist (o awesome-tray-overlays)
+      (when (overlay-buffer o)
+        (overlay-put o 'after-string awesome-tray-text)))
+
+    ;; Display the text in Minibuf-0
+    (with-current-buffer " *Minibuf-0*"
+      (delete-region (point-min) (point-max))
+      (insert awesome-tray-text))))
+
+(defun awesome-tray--minibuffer-setup ()
+  "Setup the awesome-tray in the minibuffer."
+  (push (make-overlay (point-max) (point-max) nil t t) awesome-tray-overlays)
+  (overlay-put (car awesome-tray-overlays) 'priority 1)
+  (awesome-tray-update))
+
+(defun awesome-tray-update ()
+  "Get new text to be displayed."
+  (interactive)
+  (let* ((tray-info (awesome-tray-build-active-info))
+         (minibuffer-info (current-message))
+         (blank-length (- (awesome-tray-get-frame-width)
+                          (string-width tray-info)
+                          (string-width (if minibuffer-info minibuffer-info "")))))
+    (awesome-tray-set-text (if (> blank-length 0) (awesome-tray-build-active-info) (awesome-tray-build-essential-info)))))
 
 (provide 'awesome-tray)
 
