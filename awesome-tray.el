@@ -574,12 +574,12 @@ These goes before those shown in their full names."
           (setq awesome-tray-battery-status-last-time current-seconds)
 
           ;; Short battery type.
-          (cond ((string-equal battery-type "on-line")
+          (cond ((member battery-type '("on-line" "AC"))
                  (setq battery-type "ON")
-                 (setq battery-status (battery-format "-%p%%" battery-info)))
-                ((string-equal battery-type "off-line")
+                 (setq battery-status (battery-format " [%p%%]" battery-info)))
+                ((member battery-type '("off-line" "BAT"))
                  (setq battery-type "OFF")
-                 (setq battery-status (battery-format "-%p%% %t" battery-info))))
+                 (setq battery-status (battery-format " [%p%% %t]" battery-info))))
 
           ;; Update battery cache.
           (setq awesome-tray-battery-status-cache (concat battery-type battery-status)))
