@@ -873,9 +873,8 @@ NAME is a string, typically a directory name."
 (defun awesome-tray-set-text (text)
   "Set the text displayed by the awesome-tray to TEXT."
   (let* ((wid (string-width text))
-         (spc (propertize
-               " "
-               'display `(space :align-to (- right-fringe ,wid)))))
+         (spc (propertize " " 'cursor 1 'display
+                          `(space :align-to (- right-fringe ,wid)))))
 
     (setq awesome-tray-text (concat spc text))
 
