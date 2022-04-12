@@ -830,7 +830,7 @@ NAME is a string, typically a directory name."
 
   ;; Create overlays in each echo area buffer
   (dolist (buf '(" *Echo Area 0*" " *Echo Area 1*"))
-    (with-current-buffer buf
+    (with-current-buffer (get-buffer-create buf)
       (remove-overlays (point-min) (point-max))
       (push (make-overlay (point-min) (point-max) nil nil t)
             awesome-tray-overlays)))
