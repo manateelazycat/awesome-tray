@@ -337,6 +337,11 @@ These goes before those shown in their full names."
   :type 'integer
   :group 'awesome-tray)
 
+(defcustom awesome-tray-info-padding-right 0
+  "You can customize right padding to avoid awesome-tray wrap sometimes."
+  :type 'integer
+  :group 'awesome-tray)
+
 (defface awesome-tray-default-face '((t :inherit default))
   "Face for string constant ouside modules."
   :group 'awesome-tray)
@@ -872,7 +877,7 @@ NAME is a string, typically a directory name."
 
 (defun awesome-tray-set-text (text)
   "Set the text displayed by the awesome-tray to TEXT."
-  (let* ((wid (string-width text))
+  (let* ((wid (+ (string-width text) awesome-tray-info-padding-right))
          (spc (propertize " " 'cursor 1 'display
                           `(space :align-to (- right-fringe ,wid)))))
 
