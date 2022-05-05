@@ -614,7 +614,7 @@ These goes before those shown in their full names."
           (cond ((member battery-type '("on-line" "AC"))
                  (setq battery-type "ON")
                  (setq battery-status (battery-format " [%p%%]" battery-info)))
-                ((member battery-type '("off-line" "BAT"))
+                ((member battery-type '("off-line" "BAT" "Battery"))
                  (setq battery-type "OFF")
                  (setq battery-status (battery-format " [%p%% %t]" battery-info))))
 
