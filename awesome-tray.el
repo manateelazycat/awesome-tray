@@ -474,6 +474,14 @@ These goes before those shown in their full names."
   "Input method face."
   :group 'awesome-tray)
 
+(defface awesome-tray-module-clock-face
+  '((((background light))
+     :foreground "#000000" :bold t)
+    (t
+     :foreground "#FFFFFF" :bold t))
+  "Org clock face."
+  :group 'awesome-tray)
+
 (defvar awesome-tray-text nil
   "The text currently displayed in the awesome-tray.")
 
@@ -517,7 +525,31 @@ These goes before those shown in their full names."
     ("input-method" . (awesome-tray-module-input-method-info awesome-tray-module-input-method-face))
     ("buffer-read-only" . (awesome-tray-module-buffer-read-only-info awesome-tray-module-buffer-read-only-face))
     ("belong" . (awesome-tray-module-belong-info awesome-tray-module-belong-face))
+    ("clock" . (awesome-tray-module-clock-info awesome-tray-module-clock-face))
     ))
+
+(with-eval-after-load 'mu4e-alert
+  (add-hook 'mu4e-index-updated-hook #'mu4e-alert-update-mail-count-modeline)
+  (add-hook 'mu4e-message-changed-hook #'mu4e-alert-update-mail-count-modeline)
+  (advice-add #'mu4e-context-switch :around #'mu4e-alert--context-switch)
+  (mu4e-alert-update-mail-count-modeline)
+
+  (defun awesome-tray-module-mail-info ()
+    (if (member "all-the-icons" (font-family-list))
+	(concat (all-the-icons-material "mail" :v-adjust -0.1) ":" (substring mu4e-alert-mode-line 7 -2))
+      mu4e-alert-mode-line))
+
+  (add-to-list 'awesome-tray-module-alist
+	       '("mail" . (awesome-tray-module-mail-info awesome-tray-module-belong-face))))
+
+(defun awesome-tray-module-clock-info ()
+  (if (org-clocking-p)
+      (format " [%s] (%s)"
+	      (org-duration-from-minutes
+	       (floor (org-time-convert-to-integer
+		       (org-time-since org-clock-start-time))
+		      60))
+	      org-clock-heading)))
 
 (defun awesome-tray-build-active-info ()
   (condition-case nil
