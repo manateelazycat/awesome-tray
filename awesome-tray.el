@@ -519,6 +519,20 @@ These goes before those shown in their full names."
     ("belong" . (awesome-tray-module-belong-info awesome-tray-module-belong-face))
     ))
 
+(with-eval-after-load 'mu4e-alert
+  (add-hook 'mu4e-index-updated-hook #'mu4e-alert-update-mail-count-modeline)
+  (add-hook 'mu4e-message-changed-hook #'mu4e-alert-update-mail-count-modeline)
+  (advice-add #'mu4e-context-switch :around #'mu4e-alert--context-switch)
+  (mu4e-alert-update-mail-count-modeline)
+
+  (defun awesome-tray-module-mail-info ()
+    (if (member "all-the-icons" (font-family-list))
+	(concat (all-the-icons-material "mail" :v-adjust -0.1) ":" (substring mu4e-alert-mode-line 7 -2))
+      mu4e-alert-mode-line))
+
+  (add-to-list 'awesome-tray-module-alist
+	       '("mail" . (awesome-tray-module-mail-info awesome-tray-module-belong-face))))
+
 (defun awesome-tray-build-active-info ()
   (condition-case nil
       (mapconcat 'identity (cl-remove-if #'(lambda (n) (equal (length n) 0))
