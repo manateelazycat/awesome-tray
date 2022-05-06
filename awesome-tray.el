@@ -482,6 +482,14 @@ These goes before those shown in their full names."
   "Org clock face."
   :group 'awesome-tray)
 
+(defface awesome-tray-module-org-pomodoro-face
+  '((((background light))
+     :foreground "#5317ac" :bold t)
+    (t
+     :foreground "#f7768e" :bold t))
+  "Org-pomodoro face."
+  :group 'awesome-tray)
+
 (defvar awesome-tray-text nil
   "The text currently displayed in the awesome-tray.")
 
@@ -526,6 +534,7 @@ These goes before those shown in their full names."
     ("buffer-read-only" . (awesome-tray-module-buffer-read-only-info awesome-tray-module-buffer-read-only-face))
     ("belong" . (awesome-tray-module-belong-info awesome-tray-module-belong-face))
     ("clock" . (awesome-tray-module-clock-info awesome-tray-module-clock-face))
+    ("org-pomodoro" . (awesome-tray-module-org-pomodoro-info awesome-tray-module-org-pomodoro-face))
     ))
 
 (with-eval-after-load 'mu4e-alert
@@ -783,6 +792,18 @@ NAME is a string, typically a directory name."
               ""
             (format "[%s]" which-belong-info))))
   awesome-tray-belong-cache)
+
+(defun awesome-tray-module-org-pomodoro-info ()
+  (with-demoted-errors
+      ""
+    (if (featurep 'org-pomodoro)
+        (let ((state
+               (cond ((eq org-pomodoro-state :pomodoro) (concat "[" (org-pomodoro-format-seconds) "]"))
+                     ((eq org-pomodoro-state :short-break) (concat "(" (org-pomodoro-format-seconds) ")"))
+                     ((eq org-pomodoro-state :long-break) (concat "{" (org-pomodoro-format-seconds) "}"))
+                     (t ""))))
+          state)
+      "")))
 
 (defun awesome-tray-get-match-nodes (match-rule)
   (ignore-errors
