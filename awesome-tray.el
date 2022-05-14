@@ -490,6 +490,14 @@ These goes before those shown in their full names."
   "Org-pomodoro face."
   :group 'awesome-tray)
 
+(defface awesome-tray-module-pdf-view-page-face
+  '((((background light))
+     :foreground "#fd971f" :bold t)
+    (t
+     :foreground "#fb2874" :bold t))
+  "Pdf-view-page face."
+  :group 'awesome-tray)
+
 (defvar awesome-tray-text nil
   "The text currently displayed in the awesome-tray.")
 
@@ -535,6 +543,7 @@ These goes before those shown in their full names."
     ("belong" . (awesome-tray-module-belong-info awesome-tray-module-belong-face))
     ("clock" . (awesome-tray-module-clock-info awesome-tray-module-clock-face))
     ("org-pomodoro" . (awesome-tray-module-org-pomodoro-info awesome-tray-module-org-pomodoro-face))
+    ("pdf-view-page" . (awesome-tray-module-pdf-view-page-info awesome-tray-module-pdf-view-page-face))
     ))
 
 (with-eval-after-load 'mu4e-alert
@@ -801,6 +810,16 @@ NAME is a string, typically a directory name."
                (cond ((eq org-pomodoro-state :pomodoro) (concat "[" (org-pomodoro-format-seconds) "]"))
                      ((eq org-pomodoro-state :short-break) (concat "(" (org-pomodoro-format-seconds) ")"))
                      ((eq org-pomodoro-state :long-break) (concat "{" (org-pomodoro-format-seconds) "}"))
+                     (t ""))))
+          state)
+      "")))
+
+(defun awesome-tray-module-pdf-view-page-info ()
+  (with-demoted-errors
+      ""
+    (if (featurep 'pdf-view)
+        (let ((state
+               (cond ((derived-mode-p 'pdf-view-mode) (format "%d/%d" (eval '(pdf-view-current-page)) (pdf-cache-number-of-pages)))
                      (t ""))))
           state)
       "")))
