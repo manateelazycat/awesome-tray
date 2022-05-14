@@ -49,7 +49,8 @@ You can find all modules name in the keys of variable ```awesome-tray-module-ali
 - `input-method`: Show input method status.
 - `buffer-read-only`: Show read only status.
 - `belong`: Show which class/function status, need install `tree-sitter` first.
-- `org-pomodoro`: Show `org-pomodoro` status. Denote the rest time of pomodoro by `[.]`, short break by `(.)`and long break by `{.}`.
+- `org-pomodoro`: Show `org-pomodoro` status. Denote the rest time of pomodoro by `[.]`, short break by `(.)` and long break by `{.}`.
+- `pdf-view-page`: Show page number in pdf-view-mode.
 
 ## Create a Module
 Let's create a module that says hello to you. With a module you need:
