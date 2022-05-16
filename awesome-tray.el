@@ -844,7 +844,8 @@ NAME is a string, typically a directory name."
   "A module for showing Flymake state."
   ;; Parts of the code are from doom-modeline package
   (with-demoted-errors
-      (if (featurep 'flymake)
+      ""
+      (if (and (featurep 'flymake) flymake--state)
           (let* ((known (hash-table-keys flymake--state))
                  (running (flymake-running-backends))
                  (disabled (flymake-disabled-backends))
