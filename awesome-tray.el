@@ -498,6 +498,21 @@ These goes before those shown in their full names."
   "Pdf-view-page face."
   :group 'awesome-tray)
 
+(defface awesome-tray-module-flymake-error
+  '((t (:foreground "#FF564A")))
+  "Flymake error face."
+  :group 'awesome-tray)
+
+(defface awesome-tray-module-flymake-warning
+  '((t (:foreground "#FF9800")))
+  "Flymake warning face."
+  :group 'awesome-tray)
+
+(defface awesome-tray-module-flymake-note
+  '((t (:foreground "#2196F3")))
+  "Flymake note face."
+  :group 'awesome-tray)
+
 (defvar awesome-tray-text nil
   "The text currently displayed in the awesome-tray.")
 
@@ -544,6 +559,7 @@ These goes before those shown in their full names."
     ("clock" . (awesome-tray-module-clock-info awesome-tray-module-clock-face))
     ("org-pomodoro" . (awesome-tray-module-org-pomodoro-info awesome-tray-module-org-pomodoro-face))
     ("pdf-view-page" . (awesome-tray-module-pdf-view-page-info awesome-tray-module-pdf-view-page-face))
+    ("flymake" . (awesome-tray-module-flymake-info nil))
     ))
 
 (with-eval-after-load 'mu4e-alert
@@ -823,6 +839,53 @@ NAME is a string, typically a directory name."
                      (t ""))))
           state)
       "")))
+
+(defun awesome-tray-module-flymake-info ()
+  "A module for showing Flymake state."
+  ;; Parts of the code are from doom-modeline package
+  (with-demoted-errors
+      (if (featurep 'flymake)
+          (let* ((known (hash-table-keys flymake--state))
+                 (running (flymake-running-backends))
+                 (disabled (flymake-disabled-backends))
+                 (reported (flymake-reporting-backends))
+                 (disabledp (and disabled (null running)))
+                 (waiting (cl-set-difference running reported)))
+            (when-let
+                ((flymake-state
+                  (cond
+                   (waiting "⏳")
+                   ((null known) "❔")
+                   (disabledp "❕")
+                   (t (let ((.error 0)
+                            (.warning 0)
+                            (.note 0))
+                        (cl-loop
+                         with warning-level = (warning-numeric-level :warning)
+                         with note-level = (warning-numeric-level :debug)
+                         for state being the hash-values of flymake--state
+                         do (cl-loop
+                             with diags = (flymake--state-diags state)
+                             for diag in diags do
+                             (let ((severity (flymake--lookup-type-property (flymake--diag-type diag) 'severity
+                                                                            (warning-numeric-level :error))))
+                               (cond ((> severity warning-level) (cl-incf .error))
+                                     ((> severity note-level)    (cl-incf .warning))
+                                     (t                          (cl-incf .note))))))
+                        (let ((num (+ .error .warning .note)))
+                          (if (> num 0)
+                              (string-clean-whitespace
+                               (string-join
+                                (list
+                                 (when (> .note 0)
+                                   (concat "🔵:" (propertize (number-to-string .note) 'face 'my/awesome-tray-flymake-note)))
+                                 (when (> .warning 0)
+                                   (concat "🟠:" (propertize (number-to-string .warning) 'face 'my/awesome-tray-flymake-warning)))
+                                 (when (> .error 0)
+                                   (concat "🔴:" (propertize (number-to-string .error) 'face 'my/awesome-tray-flymake-error))))
+                                " "))
+                            "🟢")))))))
+              flymake-state)))))
 
 (defun awesome-tray-get-match-nodes (match-rule)
   (ignore-errors
