@@ -879,11 +879,11 @@ NAME is a string, typically a directory name."
                                (string-join
                                 (list
                                  (when (> .note 0)
-                                   (concat "🔵:" (propertize (number-to-string .note) 'face 'my/awesome-tray-flymake-note)))
+                                   (concat "🔵:" (propertize (number-to-string .note) 'face 'awesome-tray-module-flymake-note)))
                                  (when (> .warning 0)
-                                   (concat "🟠:" (propertize (number-to-string .warning) 'face 'my/awesome-tray-flymake-warning)))
+                                   (concat "🟠:" (propertize (number-to-string .warning) 'face 'awesome-tray-module-flymake-warning)))
                                  (when (> .error 0)
-                                   (concat "🔴:" (propertize (number-to-string .error) 'face 'my/awesome-tray-flymake-error))))
+                                   (concat "🔴:" (propertize (number-to-string .error) 'face 'awesome-tray-module-flymake-error))))
                                 " "))
                             "🟢")))))))
               flymake-state)))))
