@@ -251,6 +251,11 @@ If nil, don't update the awesome-tray automatically."
   :type 'list
   :group 'awesome-tray)
 
+(defcustom awesome-tray-date-format "%m-%d %H:%M %a"
+  "Format string of the date module."
+  :group 'awesome-tray
+  :type 'string)
+
 (defcustom awesome-tray-buffer-name-max-length 20
   "Max length of buffer name."
   :group 'awesome-tray
@@ -669,7 +674,8 @@ These goes before those shown in their full names."
             )))
 
 (defun awesome-tray-module-date-info ()
-  (format-time-string "%m-%d %H:%M %a"))
+  "Displays the date."
+  (format-time-string awesome-tray-date-format))
 
 (defun awesome-tray-module-last-command-info ()
   (format "%s" last-command))
