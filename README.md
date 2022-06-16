@@ -52,6 +52,7 @@ You can find all modules name in the keys of variable ```awesome-tray-module-ali
 - `org-pomodoro`: Show `org-pomodoro` status. Denote the rest time of pomodoro by `[.]`, short break by `(.)` and long break by `{.}`.
 - `pdf-view-page`: Show page number in pdf-view-mode.
 - `flymake`: Show Flymake state.
+- `mpd-current`: Show mpd current track filename using mpc.
 
 ## Create a Module
 Let's create a module that says hello to you. With a module you need:

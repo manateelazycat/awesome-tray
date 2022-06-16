@@ -261,6 +261,11 @@ If nil, don't update the awesome-tray automatically."
   :group 'awesome-tray
   :type 'int)
 
+(defcustom awesome-tray-mpd-current-max-length 20
+  "Max length of current track name."
+  :group 'awesome-tray
+  :type 'int)
+
 (defcustom awesome-tray-file-name-max-length 20
   "Max length of file name."
   :group 'awesome-tray
@@ -389,6 +394,14 @@ These goes before those shown in their full names."
     (t
      :foreground "#ff9500" :bold t))
   "Location face."
+  :group 'awesome-tray)
+
+(defface awesome-tray-module-mpd-current-face
+  '((((background light))
+     :foreground "#008080" :bold t)
+    (t
+     :foreground "#00ced1" :bold t))
+  "Mpd current track face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-date-face
@@ -565,6 +578,7 @@ These goes before those shown in their full names."
     ("org-pomodoro" . (awesome-tray-module-org-pomodoro-info awesome-tray-module-org-pomodoro-face))
     ("pdf-view-page" . (awesome-tray-module-pdf-view-page-info awesome-tray-module-pdf-view-page-face))
     ("flymake" . (awesome-tray-module-flymake-info nil))
+    ("mpd-current" . (awesome-tray-module-mpd-current-info awesome-tray-module-mpd-current-face))
     ))
 
 (with-eval-after-load 'mu4e-alert
@@ -672,6 +686,14 @@ These goes before those shown in their full names."
             (format-mode-line "%c")
             (format-mode-line "%p")
             )))
+
+(defun awesome-tray-module-mpd-current-info ()
+  "Displays the current track in mpd."
+  (string-truncate-left
+   (replace-regexp-in-string ".*/" ""
+                             (replace-regexp-in-string "\\..*\n*" ""
+                                                       (shell-command-to-string "mpc current -f %file%")))
+   awesome-tray-mpd-current-max-length))
 
 (defun awesome-tray-module-date-info ()
   "Displays the date."
