@@ -256,13 +256,20 @@ If nil, don't update the awesome-tray automatically."
   :group 'awesome-tray
   :type 'string)
 
+(defcustom awesome-tray-mpc-custom-command ""
+  "Define a custom mpc command, new lines will be removed.
+
+If empty, get the current filename without folder and file extension."
+  :group 'awesome-tray
+  :type 'string)
+
 (defcustom awesome-tray-buffer-name-max-length 20
   "Max length of buffer name."
   :group 'awesome-tray
   :type 'int)
 
-(defcustom awesome-tray-mpd-current-max-length 20
-  "Max length of current track name."
+(defcustom awesome-tray-mpc-max-length 20
+  "Max length of mpc module."
   :group 'awesome-tray
   :type 'int)
 
@@ -276,6 +283,11 @@ If nil, don't update the awesome-tray automatically."
 
 It's very slow start new process in Windows platform.
 Maybe you need set this option with bigger value to speedup on Windows platform."
+  :type 'integer
+  :group 'awesome-tray)
+
+(defcustom awesome-tray-mpc-update-duration 5
+  "Update duration of mpc command, in seconds."
   :type 'integer
   :group 'awesome-tray)
 
@@ -396,12 +408,12 @@ These goes before those shown in their full names."
   "Location face."
   :group 'awesome-tray)
 
-(defface awesome-tray-module-mpd-current-face
+(defface awesome-tray-module-mpc-face
   '((((background light))
      :foreground "#008080" :bold t)
     (t
      :foreground "#00ced1" :bold t))
-  "Mpd current track face."
+  "Mpc face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-date-face
@@ -543,6 +555,10 @@ These goes before those shown in their full names."
 
 (defvar awesome-tray-git-command-cache "")
 
+(defvar awesome-tray-mpc-command-last-time 0)
+
+(defvar awesome-tray-mpc-command-cache "")
+
 (defvar awesome-tray-belong-last-time 0)
 
 (defvar awesome-tray-belong-last-buffer nil)
@@ -578,7 +594,7 @@ These goes before those shown in their full names."
     ("org-pomodoro" . (awesome-tray-module-org-pomodoro-info awesome-tray-module-org-pomodoro-face))
     ("pdf-view-page" . (awesome-tray-module-pdf-view-page-info awesome-tray-module-pdf-view-page-face))
     ("flymake" . (awesome-tray-module-flymake-info nil))
-    ("mpd-current" . (awesome-tray-module-mpd-current-info awesome-tray-module-mpd-current-face))
+    ("mpc" . (awesome-tray-module-mpc-info awesome-tray-module-mpc-face))
     ))
 
 (with-eval-after-load 'mu4e-alert
@@ -687,13 +703,26 @@ These goes before those shown in their full names."
             (format-mode-line "%p")
             )))
 
-(defun awesome-tray-module-mpd-current-info ()
-  "Displays the current track in mpd."
-  (string-truncate-left
-   (replace-regexp-in-string ".*/" ""
-                             (replace-regexp-in-string "\\..*\n*" ""
-                                                       (shell-command-to-string "mpc current -f %file%")))
-   awesome-tray-mpd-current-max-length))
+(defun awesome-tray-module-mpc-info ()
+  (if (executable-find "mpc")
+      (let ((current-seconds (awesome-tray-current-seconds)))
+        (if (> (- current-seconds awesome-tray-mpc-command-last-time) awesome-tray-mpc-update-duration)
+            (progn
+              (setq awesome-tray-mpc-command-last-time current-seconds)
+              (awesome-tray-mpc-command-update-cache))
+          awesome-tray-mpc-command-cache))
+    ""))
+
+(defun awesome-tray-mpc-command-update-cache ()
+  (if (string= awesome-tray-mpc-custom-command "")
+      (setq awesome-tray-mpc-command-cache (string-truncate-left
+                                            (file-name-sans-extension
+                                             (replace-regexp-in-string ".*/" ""
+                                              (replace-regexp-in-string "\n" ""
+                                               (shell-command-to-string "mpc current -f %file%"))))
+                                            awesome-tray-mpc-max-length))
+      (setq awesome-tray-mpc-command-cache (replace-regexp-in-string "\n" ""
+                                          (shell-command-to-string awesome-tray-mpc-custom-command)))))
 
 (defun awesome-tray-module-date-info ()
   "Displays the date."
