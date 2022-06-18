@@ -18,7 +18,6 @@
 ;; `cl-lib'
 ;; `subr-x'
 ;; `battery'
-;; `libmpdel'
 ;;
 
 ;;; This file is NOT part of GNU Emacs
@@ -207,7 +206,6 @@
 (require 'timer)
 (require 'minibuffer)
 (require 'overlay)
-(require 'libmpdel nil t)
 
 ;;; Code:
 (defgroup awesome-tray nil
@@ -709,11 +707,11 @@ These goes before those shown in their full names."
   (add-hook 'libmpdel-current-song-changed-hook 'awesome-tray-mpd-command-update-cache))
 
 (defun awesome-tray-module-mpd-info ()
-  (if (executable-find "mpd")
-      (if (libmpdel-connected-p)
-          awesome-tray-mpd-command-cache
-        "not connected to mpd")
-    ""))
+  (if (and (ignore-errors (require 'libmpdel)) (executable-find "mpd")
+           (if (libmpdel-connected-p)
+               awesome-tray-mpd-command-cache
+             "not connected to mpd")
+           "")))
 
 (defun awesome-tray-mpd-command-update-cache ()
   (let* ((mpd-info (libmpdel-current-song))
