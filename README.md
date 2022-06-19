@@ -29,6 +29,7 @@ The load-path is usually `~/elisp/`. It's set in your `~/.emacs` like this:
 - `awesome-tray-mode-line-height`: Mode line height, default is 0.1
 - `awesome-tray-date-format`: Use to customize the date string format.
 - `awesome-tray-mpd-format`: Use to customize the mpd string format, see the variable docstring for details.
+- `awesome-tray-ellipsis`: Use to customize the ellipses used when truncating.
 
 ## Customize Module
 You can control modules through option ```awesome-tray-active-modules```.

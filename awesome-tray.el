@@ -251,6 +251,11 @@ If nil, don't update the awesome-tray automatically."
   :type 'list
   :group 'awesome-tray)
 
+(defcustom awesome-tray-ellipsis "…"
+  "Default string for the ellipsis when something is truncated."
+  :group 'awesome-tray
+  :type 'string)
+
 (defcustom awesome-tray-date-format "%m-%d %H:%M %a"
   "Format string of the date module."
   :group 'awesome-tray
@@ -721,17 +726,16 @@ These goes before those shown in their full names."
          (position (or (+ (libmpdel-song-position mpd-info) 1) ""))
          (playlist-length (or (libmpdel-playlist-length) ""))
          (filename (or (libmpdel-song-file mpd-info) "")))
-    (setq title (string-truncate-left title awesome-tray-mpd-title-max-length))
-    (setq real-filename (string-truncate-left filename awesome-tray-mpd-title-max-length))
-    (setq filename
-        (string-truncate-left
-         (file-name-sans-extension
-          (replace-regexp-in-string ".*/" "" filename))
-         awesome-tray-mpd-title-max-length))
+    (setq title (awesome-tray-truncate-string title awesome-tray-mpd-max-length))
+    (setq cut-filename (awesome-tray-truncate-string
+                        (file-name-sans-extension
+                         (replace-regexp-in-string ".*/" "" filename))
+                        awesome-tray-mpd-max-length))
+    (setq filename (awesome-tray-truncate-string filename awesome-tray-mpd-max-length))
   (setq awesome-tray-mpd-command-cache
         (format-spec awesome-tray-mpd-format
                      (format-spec-make ?t title ?a artist ?A album ?p position
-                                       ?P playlist-length ?f filename ?F real-filename)))))
+                                       ?P playlist-length ?f cut-filename ?F filename)))))
 
 (defun awesome-tray-module-date-info ()
   "Displays the date."
@@ -741,17 +745,14 @@ These goes before those shown in their full names."
   (format "%s" last-command))
 
 (defun awesome-tray-module-buffer-name-info ()
-  (let ((ellipsis "...")
-        bufname)
+  (let (bufname)
     (setq bufname (if awesome-tray-buffer-name-buffer-changed
                       (if (and (buffer-modified-p)
                                (not (eq buffer-file-name nil)))
                           (concat (buffer-name) awesome-tray-buffer-name-buffer-changed-style)
                         (buffer-name))
                     (format "%s" (buffer-name))))
-    (if (> (length bufname) awesome-tray-buffer-name-max-length)
-        (format "%s%s" (substring bufname 0 (- awesome-tray-buffer-name-max-length (length ellipsis))) ellipsis)
-      bufname)))
+    (awesome-tray-truncate-string bufname awesome-tray-buffer-name-max-length t)))
 
 (defun awesome-tray-module-buffer-read-only-info ()
   (if (and (eq buffer-read-only t)
@@ -777,17 +778,14 @@ NAME is a string, typically a directory name."
 
 (defun awesome-tray-module-file-path-info ()
   (if (not buffer-file-name)
-      (let ((ellipsis "...")
-            (bufname (buffer-name)))
+      (let ((bufname (buffer-name)))
         (setq bufname (if awesome-tray-buffer-name-buffer-changed
                           (if (and (buffer-modified-p)
                                    (not (eq buffer-file-name nil)))
                               (concat (buffer-name) awesome-tray-buffer-name-buffer-changed-style)
                             (buffer-name))
                         (format "%s" (buffer-name))))
-        (if (> (length bufname) awesome-tray-file-name-max-length)
-            (format "%s%s" (substring bufname 0 (- awesome-tray-file-name-max-length (length ellipsis))) ellipsis)
-          bufname))
+        (awesome-tray-truncate-string bufname awesome-tray-file-name-max-length t))
     (let* ((file-path (split-string (buffer-file-name) "/" t))
            (shown-path)
            (path-len (length file-path))
@@ -960,6 +958,18 @@ NAME is a string, typically a directory name."
            (root-node (tsc-root-node tree-sitter-tree))
            (captures (mapcar #'cdr (tsc-query-captures query root-node #'tsc--buffer-substring-no-properties))))
       captures)))
+
+(defun awesome-tray-truncate-string (string length &optional right)
+  "Truncate STRING to LENGTH, replacing the surplus with an ellipsis.
+
+If right is non nil, replace to the right"
+  (let ((strlen (length string)))
+    (if (<= strlen length)
+        string
+      (setq length (max 0 (- length (length awesome-tray-ellipsis))))
+      (if right
+          (format "%s%s" (substring string 0 length) awesome-tray-ellipsis)
+        (format "%s%s" awesome-tray-ellipsis (substring string (max 0 (- strlen length))))))))
 
 (defun awesome-tray-get-frame-width ()
   "Only calculating a main Frame width, to avoid wrong width when new frame, such as `snails'."
