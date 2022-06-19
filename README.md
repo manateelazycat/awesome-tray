@@ -27,6 +27,9 @@ The load-path is usually `~/elisp/`. It's set in your `~/.emacs` like this:
 - `awesome-tray-mode-line-active-color`: Use for customize active color.
 - `awesome-tray-mode-line-inactive-color`: Use for customize inactive color.
 - `awesome-tray-mode-line-height`: Mode line height, default is 0.1
+- `awesome-tray-date-format`: Use to customize the date string format.
+- `awesome-tray-mpd-format`: Use to customize the mpd string format, see the variable docstring for details.
+- `awesome-tray-ellipsis`: Use to customize the ellipses used when truncating.
 
 ## Customize Module
 You can control modules through option ```awesome-tray-active-modules```.
@@ -52,7 +55,7 @@ You can find all modules name in the keys of variable ```awesome-tray-module-ali
 - `org-pomodoro`: Show `org-pomodoro` status. Denote the rest time of pomodoro by `[.]`, short break by `(.)` and long break by `{.}`.
 - `pdf-view-page`: Show page number in pdf-view-mode.
 - `flymake`: Show Flymake state.
-- `mpd`: Show mpd information using [libmpdel](https://github.com/mpdel/libmpdel), you need to connect to a mpd profile, use `(libmpdel-connect-profile (libmpdel--select-profile))` if you don't have multiple profiles, you can customize it using `awesome-tray-mpd-format`. see the variable for details.
+- `mpd`: Show mpd information using [libmpdel](https://github.com/mpdel/libmpdel), you need to connect to a mpd profile, use `(libmpdel-connect-profile (libmpdel--select-profile))` unless you have multiple profiles.
 
 ## Create a Module
 Let's create a module that says hello to you. With a module you need:
