@@ -11,7 +11,7 @@
 ;;           By: Andy Stewart
 ;; URL: http://www.emacswiki.org/emacs/download/awesome-tray.el
 ;; Keywords:
-;; Compatibility: GNU Emacs 27.0.50
+;; Compatibility: GNU Emacs 28.1
 ;;
 ;; Features that might be required by this library:
 ;;
@@ -256,10 +256,16 @@ If nil, don't update the awesome-tray automatically."
   :group 'awesome-tray
   :type 'string)
 
-(defcustom awesome-tray-mpc-custom-command ""
-  "Define a custom mpc command, new lines will be removed.
+(defcustom awesome-tray-mpd-format "%a - %t"
+  "Format string of the mpd module.
 
-If empty, get the current filename without folder and file extension."
+%t title
+%a artist
+%A album
+%p position on the playlist
+%P playlist-length
+%f filename without the folder and file extension
+%F regular filename"
   :group 'awesome-tray
   :type 'string)
 
@@ -268,8 +274,8 @@ If empty, get the current filename without folder and file extension."
   :group 'awesome-tray
   :type 'int)
 
-(defcustom awesome-tray-mpc-max-length 20
-  "Max length of mpc module."
+(defcustom awesome-tray-mpd-title-max-length 20
+  "Max length of mpd song title."
   :group 'awesome-tray
   :type 'int)
 
@@ -283,11 +289,6 @@ If empty, get the current filename without folder and file extension."
 
 It's very slow start new process in Windows platform.
 Maybe you need set this option with bigger value to speedup on Windows platform."
-  :type 'integer
-  :group 'awesome-tray)
-
-(defcustom awesome-tray-mpc-update-duration 5
-  "Update duration of mpc command, in seconds."
   :type 'integer
   :group 'awesome-tray)
 
@@ -408,12 +409,12 @@ These goes before those shown in their full names."
   "Location face."
   :group 'awesome-tray)
 
-(defface awesome-tray-module-mpc-face
+(defface awesome-tray-module-mpd-face
   '((((background light))
      :foreground "#008080" :bold t)
     (t
      :foreground "#00ced1" :bold t))
-  "Mpc face."
+  "Mpd face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-date-face
@@ -555,9 +556,7 @@ These goes before those shown in their full names."
 
 (defvar awesome-tray-git-command-cache "")
 
-(defvar awesome-tray-mpc-command-last-time 0)
-
-(defvar awesome-tray-mpc-command-cache "")
+(defvar awesome-tray-mpd-command-cache "")
 
 (defvar awesome-tray-belong-last-time 0)
 
@@ -594,7 +593,7 @@ These goes before those shown in their full names."
     ("org-pomodoro" . (awesome-tray-module-org-pomodoro-info awesome-tray-module-org-pomodoro-face))
     ("pdf-view-page" . (awesome-tray-module-pdf-view-page-info awesome-tray-module-pdf-view-page-face))
     ("flymake" . (awesome-tray-module-flymake-info nil))
-    ("mpc" . (awesome-tray-module-mpc-info awesome-tray-module-mpc-face))
+    ("mpd" . (awesome-tray-module-mpd-info awesome-tray-module-mpd-face))
     ))
 
 (with-eval-after-load 'mu4e-alert
@@ -703,26 +702,36 @@ These goes before those shown in their full names."
             (format-mode-line "%p")
             )))
 
-(defun awesome-tray-module-mpc-info ()
-  (if (executable-find "mpc")
-      (let ((current-seconds (awesome-tray-current-seconds)))
-        (if (> (- current-seconds awesome-tray-mpc-command-last-time) awesome-tray-mpc-update-duration)
-            (progn
-              (setq awesome-tray-mpc-command-last-time current-seconds)
-              (awesome-tray-mpc-command-update-cache))
-          awesome-tray-mpc-command-cache))
-    ""))
+(with-eval-after-load 'libmpdel
+  (add-hook 'libmpdel-current-playlist-changed-hook 'awesome-tray-mpd-command-update-cache)
+  (add-hook 'libmpdel-current-song-changed-hook 'awesome-tray-mpd-command-update-cache))
 
-(defun awesome-tray-mpc-command-update-cache ()
-  (if (string= awesome-tray-mpc-custom-command "")
-      (setq awesome-tray-mpc-command-cache (string-truncate-left
-                                            (file-name-sans-extension
-                                             (replace-regexp-in-string ".*/" ""
-                                              (replace-regexp-in-string "\n" ""
-                                               (shell-command-to-string "mpc current -f %file%"))))
-                                            awesome-tray-mpc-max-length))
-      (setq awesome-tray-mpc-command-cache (replace-regexp-in-string "\n" ""
-                                          (shell-command-to-string awesome-tray-mpc-custom-command)))))
+(defun awesome-tray-module-mpd-info ()
+  (if (and (ignore-errors (require 'libmpdel)) (executable-find "mpd"))
+           (if (libmpdel-connected-p)
+               awesome-tray-mpd-command-cache
+             "not connected to mpd")
+           ""))
+
+(defun awesome-tray-mpd-command-update-cache ()
+  (let* ((mpd-info (libmpdel-current-song))
+         (title (or (libmpdel-entity-name mpd-info) ""))
+         (artist (or (libmpdel-artist-name mpd-info) ""))
+         (album (or (libmpdel-album-name mpd-info) ""))
+         (position (or (+ (libmpdel-song-position mpd-info) 1) ""))
+         (playlist-length (or (libmpdel-playlist-length) ""))
+         (filename (or (libmpdel-song-file mpd-info) "")))
+    (setq title (string-truncate-left title awesome-tray-mpd-title-max-length))
+    (setq real-filename (string-truncate-left filename awesome-tray-mpd-title-max-length))
+    (setq filename
+        (string-truncate-left
+         (file-name-sans-extension
+          (replace-regexp-in-string ".*/" "" filename))
+         awesome-tray-mpd-title-max-length))
+  (setq awesome-tray-mpd-command-cache
+        (format-spec awesome-tray-mpd-format
+                     (format-spec-make ?t title ?a artist ?A album ?p position
+                                       ?P playlist-length ?f filename ?F real-filename)))))
 
 (defun awesome-tray-module-date-info ()
   "Displays the date."
