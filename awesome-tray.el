@@ -247,7 +247,7 @@ If nil, don't update the awesome-tray automatically."
 
 (defcustom awesome-tray-essential-modules
   '("location" "belong" "file-path")
-  "Default ellipsis modules, show when minibuffer is too long."
+  "Default essential modules, show when minibuffer is too long."
   :type 'list
   :group 'awesome-tray)
 
@@ -275,7 +275,7 @@ If nil, don't update the awesome-tray automatically."
   :type 'int)
 
 (defcustom awesome-tray-mpd-title-max-length 20
-  "Max length of mpd song title."
+  "Max length of mpd song title and filename."
   :group 'awesome-tray
   :type 'int)
 
