@@ -42,7 +42,7 @@ You can find all modules name in the keys of variable ```awesome-tray-module-ali
 - `date`: Show current date.
 - `evil`: Show evil state.
 - `file-path`: Show file path with full customizability. When the path is long, it can be shrinked into something like `.../.em/el/awesome-tray/awesome-tray.el`. See `awesome-tray-file-path-***` variables for details.
-- `git`: Show current branch.
+- `git-branch`: Show current branch.
 - `last-command`: Show last execute command.
 - `location`: Show point position in buffer.
 - `parent-dir`: Show direct parent directory.

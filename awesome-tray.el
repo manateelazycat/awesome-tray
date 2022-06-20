@@ -289,14 +289,6 @@ If nil, don't update the awesome-tray automatically."
   :group 'awesome-tray
   :type 'int)
 
-(defcustom awesome-tray-git-update-duration 5
-  "Update duration of git command, in seconds.
-
-It's very slow start new process in Windows platform.
-Maybe you need set this option with bigger value to speedup on Windows platform."
-  :type 'integer
-  :group 'awesome-tray)
-
 (defcustom awesome-tray-belong-update-duration 5
   "Update duration of which class, in seconds."
   :type 'integer
@@ -557,10 +549,6 @@ These goes before those shown in their full names."
 
 (defvar awesome-tray-mode-line-colors nil)
 
-(defvar awesome-tray-git-command-last-time 0)
-
-(defvar awesome-tray-git-command-cache "")
-
 (defvar awesome-tray-mpd-command-cache "")
 
 (defvar awesome-tray-belong-last-time 0)
@@ -584,7 +572,7 @@ These goes before those shown in their full names."
     ("date" . (awesome-tray-module-date-info awesome-tray-module-date-face))
     ("evil" . (awesome-tray-module-evil-info awesome-tray-module-evil-face))
     ("file-path" . (awesome-tray-module-file-path-info awesome-tray-module-file-path-face))
-    ("git" . (awesome-tray-module-git-info awesome-tray-module-git-face))
+    ("git-branch" . (awesome-tray-module-git-branch-info awesome-tray-module-git-face))
     ("last-command" . (awesome-tray-module-last-command-info awesome-tray-module-last-command-face))
     ("location" . (awesome-tray-module-location-info awesome-tray-module-location-face))
     ("parent-dir" . (awesome-tray-module-parent-dir-info awesome-tray-module-parent-dir-face))
@@ -650,14 +638,9 @@ These goes before those shown in their full names."
           (propertize "" 'face face))
       (propertize module-name 'face 'awesome-tray-default-face))))
 
-(defun awesome-tray-module-git-info ()
+(defun awesome-tray-module-git-branch-info ()
   (if (executable-find "git")
-      (let ((current-seconds (awesome-tray-current-seconds)))
-        (if (> (- current-seconds awesome-tray-git-command-last-time) awesome-tray-git-update-duration)
-            (progn
-              (setq awesome-tray-git-command-last-time current-seconds)
-              (awesome-tray-update-git-command-cache))
-          awesome-tray-git-command-cache))
+      (format "git:%s" (car(vc-git-branches)))
     ""))
 
 (defun awesome-tray-module-circe-info ()
@@ -986,16 +969,6 @@ If right is non nil, replace to the right"
 
 (defun awesome-tray-current-seconds ()
   (string-to-number (format-time-string "%s")))
-
-(defun awesome-tray-update-git-command-cache ()
-  (let* ((git-info (awesome-tray-process-exit-code-and-output "git" "symbolic-ref" "--short" "HEAD"))
-         (status (nth 0 git-info))
-         (result (format "git:%s" (nth 1 git-info))))
-    (setq awesome-tray-git-command-cache
-          (if (equal status 0)
-              (replace-regexp-in-string "\n" "" result)
-            ""))
-    awesome-tray-git-command-cache))
 
 ;;;###autoload
 (define-minor-mode awesome-tray-mode
