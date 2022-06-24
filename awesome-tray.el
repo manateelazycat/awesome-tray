@@ -251,6 +251,11 @@ If nil, don't update the awesome-tray automatically."
   :type 'list
   :group 'awesome-tray)
 
+(defcustom awesome-tray-separator " "
+  "Default string for the separator between modules."
+  :group 'awesome-tray
+  :type 'string)
+
 (defcustom awesome-tray-ellipsis "…"
   "Default string for the ellipsis when something is truncated."
   :group 'awesome-tray
@@ -650,13 +655,13 @@ These goes before those shown in their full names."
 (defun awesome-tray-build-active-info ()
   (condition-case nil
       (mapconcat 'identity (cl-remove-if #'(lambda (n) (equal (length n) 0))
-                                         (mapcar 'awesome-tray-get-module-info awesome-tray-active-modules)) " ")
+                                         (mapcar 'awesome-tray-get-module-info awesome-tray-active-modules)) awesome-tray-separator)
     (format "Awesome Tray broken.")))
 
 (defun awesome-tray-build-essential-info ()
   (condition-case nil
       (mapconcat 'identity (cl-remove-if #'(lambda (n) (equal (length n) 0))
-                                         (mapcar 'awesome-tray-get-module-info awesome-tray-essential-modules)) " ")
+                                         (mapcar 'awesome-tray-get-module-info awesome-tray-essential-modules)) awesome-tray-separator)
     (format "Awesome Tray broken.")))
 
 (defun awesome-tray-get-module-info (module-name)
