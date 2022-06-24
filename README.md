@@ -31,6 +31,7 @@ The load-path is usually `~/elisp/`. It's set in your `~/.emacs` like this:
 - `awesome-tray-mpd-format`: Use to customize the mpd string format, see the variable docstring for details.
 - `awesome-tray-git-format`: Use to customize the git string format, see the variable docstring for details.
 - `awesome-tray-ellipsis`: Use to customize the ellipses used when truncating.
+- `awesome-tray-separator`: Use to customize the separator between modules.
 
 ## Customize Module
 You can control modules through option ```awesome-tray-active-modules```.
