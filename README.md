@@ -29,6 +29,7 @@ The load-path is usually `~/elisp/`. It's set in your `~/.emacs` like this:
 - `awesome-tray-mode-line-height`: Mode line height, default is 0.1
 - `awesome-tray-date-format`: Use to customize the date string format.
 - `awesome-tray-mpd-format`: Use to customize the mpd string format, see the variable docstring for details.
+- `awesome-tray-git-format`: Use to customize the git string format, see the variable docstring for details.
 - `awesome-tray-ellipsis`: Use to customize the ellipses used when truncating.
 
 ## Customize Module
@@ -42,7 +43,7 @@ You can find all modules name in the keys of variable ```awesome-tray-module-ali
 - `date`: Show current date.
 - `evil`: Show evil state.
 - `file-path`: Show file path with full customizability. When the path is long, it can be shrinked into something like `.../.em/el/awesome-tray/awesome-tray.el`. See `awesome-tray-file-path-***` variables for details.
-- `git-branch`: Show current branch.
+- `git`: Show git information.
 - `last-command`: Show last execute command.
 - `location`: Show point position in buffer.
 - `parent-dir`: Show direct parent directory.
@@ -56,6 +57,7 @@ You can find all modules name in the keys of variable ```awesome-tray-module-ali
 - `pdf-view-page`: Show page number in pdf-view-mode.
 - `flymake`: Show Flymake state.
 - `mpd`: Show mpd information using [libmpdel](https://github.com/mpdel/libmpdel), you need to connect to a mpd profile, use `(libmpdel-connect-profile (libmpdel--select-profile))` unless you have multiple profiles.
+- `volume`: Show current volume using amixer.
 
 ## Create a Module
 Let's create a module that says hello to you. With a module you need:
