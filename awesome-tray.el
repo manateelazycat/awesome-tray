@@ -297,6 +297,11 @@ If nil, don't update the awesome-tray automatically."
   :group 'awesome-tray
   :type 'int)
 
+(defcustom awesome-tray-volume-update-duration 5
+  "Update duration of volume status, in seconds."
+  :type 'integer
+  :group 'awesome-tray)
+
 (defcustom awesome-tray-git-update-duration 5
   "Update duration of which class, in seconds."
   :type 'integer
@@ -417,6 +422,14 @@ These goes before those shown in their full names."
     (t
      :foreground "#ff9500" :bold t))
   "Location face."
+  :group 'awesome-tray)
+
+(defface awesome-tray-module-volume-face
+  '((((background light))
+     :foreground "#008080" :bold t)
+    (t
+     :foreground "#00ced1" :bold t))
+  "Volume face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-mpd-face
@@ -562,6 +575,10 @@ These goes before those shown in their full names."
 
 (defvar awesome-tray-mode-line-colors nil)
 
+(defvar awesome-tray-volume-cache "")
+
+(defvar awesome-tray-volume-last-time 0)
+
 (defvar awesome-tray-mpd-command-cache "")
 
 (defvar awesome-tray-git-last-time 0)
@@ -604,6 +621,7 @@ These goes before those shown in their full names."
     ("pdf-view-page" . (awesome-tray-module-pdf-view-page-info awesome-tray-module-pdf-view-page-face))
     ("flymake" . (awesome-tray-module-flymake-info nil))
     ("mpd" . (awesome-tray-module-mpd-info awesome-tray-module-mpd-face))
+    ("volume" . (awesome-tray-module-volume-info awesome-tray-module-volume-face))
     ))
 
 (with-eval-after-load 'mu4e-alert
@@ -654,6 +672,17 @@ These goes before those shown in their full names."
             info
           (propertize "" 'face face))
       (propertize module-name 'face 'awesome-tray-default-face))))
+
+(defun awesome-tray-module-volume-info ()
+  (if (executable-find "amixer")
+      (let ((current-seconds (awesome-tray-current-seconds)))
+        (if (> (- current-seconds awesome-tray-volume-last-time) awesome-tray-volume-update-duration)
+            (let ((command (shell-command-to-string "amixer sget Master")))
+              (setq awesome-tray-volume-last-time current-seconds)
+              (string-match "\\[\\([0-9]+\\)%\\]" command)
+              (setq awesome-tray-volume-cache (concat (match-string 1 command) "%")))
+          awesome-tray-volume-cache))
+    ""))
 
 (defun awesome-tray-module-git-info ()
   (if (executable-find "git")
