@@ -206,6 +206,7 @@
 (require 'timer)
 (require 'minibuffer)
 (require 'overlay)
+(require 'format-spec)
 
 ;;; Code:
 (defgroup awesome-tray nil
@@ -783,12 +784,12 @@ These goes before those shown in their full names."
          (position (or (+ (libmpdel-song-position mpd-info) 1) ""))
          (playlist-length (or (libmpdel-playlist-length) ""))
          (filename (or (libmpdel-song-file mpd-info) "")))
-    (setq title (awesome-tray-truncate-string title awesome-tray-mpd-max-length))
+    (setq title (awesome-tray-truncate-string title awesome-tray-mpd-title-max-length))
     (setq cut-filename (awesome-tray-truncate-string
                         (file-name-sans-extension
                          (replace-regexp-in-string ".*/" "" filename))
-                        awesome-tray-mpd-max-length))
-    (setq filename (awesome-tray-truncate-string filename awesome-tray-mpd-max-length))
+                        awesome-tray-mpd-title-max-length))
+    (setq filename (awesome-tray-truncate-string filename awesome-tray-mpd-title-max-length))
   (setq awesome-tray-mpd-command-cache
         (format-spec awesome-tray-mpd-format
                      (format-spec-make ?t title ?a artist ?A album ?p position
