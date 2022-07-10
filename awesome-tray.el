@@ -206,7 +206,7 @@
 (require 'timer)
 (require 'minibuffer)
 (require 'overlay)
-(require 'format-spec)
+(require 'vc-git)
 
 ;;; Code:
 (defgroup awesome-tray nil
@@ -215,6 +215,11 @@
 
 (defcustom awesome-tray-minibuffer t
   "If non-nil, also display the awesome-tray when in the minibuffer."
+  :group 'awesome-tray
+  :type 'boolean)
+
+(defcustom awesome-tray-git-show-status nil
+  "If non-nil, display the current file status in the git module."
   :group 'awesome-tray
   :type 'boolean)
 
@@ -252,6 +257,15 @@ If nil, don't update the awesome-tray automatically."
   :type 'list
   :group 'awesome-tray)
 
+(defcustom awesome-tray-git-update-hooks
+  '(after-save-hook
+    after-revert-hook
+    vc-checkin-hook
+    text-scale-mode-hook)
+  "Hook points to update the git module."
+  :type '(list (hook :tag "HookPoint")
+               (repeat :inline t (hook :tag "HookPoint"))))
+
 (defcustom awesome-tray-separator " "
   "Default string for the separator between modules."
   :group 'awesome-tray
@@ -280,11 +294,10 @@ If nil, don't update the awesome-tray automatically."
   :group 'awesome-tray
   :type 'string)
 
-(defcustom awesome-tray-git-format "git:%b"
+(defcustom awesome-tray-git-format "git:%s"
   "Format string of the git module.
 
-%b branch
-%s file status indicator"
+%s branch and file status if enabled with `awesome-tray-git-show-status'"
   :group 'awesome-tray
   :type 'string)
 
@@ -305,11 +318,6 @@ If nil, don't update the awesome-tray automatically."
 
 (defcustom awesome-tray-volume-update-duration 5
   "Update duration of volume status, in seconds."
-  :type 'integer
-  :group 'awesome-tray)
-
-(defcustom awesome-tray-git-update-duration 5
-  "Update duration of which class, in seconds."
   :type 'integer
   :group 'awesome-tray)
 
@@ -587,9 +595,9 @@ These goes before those shown in their full names."
 
 (defvar awesome-tray-mpd-command-cache "")
 
-(defvar awesome-tray-git-last-time 0)
-
 (defvar awesome-tray-git-command-cache "")
+
+(defvar awesome-tray-git-buffer-filename "")
 
 (defvar awesome-tray-belong-last-time 0)
 
@@ -638,20 +646,20 @@ These goes before those shown in their full names."
 
   (defun awesome-tray-module-mail-info ()
     (if (member "all-the-icons" (font-family-list))
-	(concat (all-the-icons-material "mail" :v-adjust -0.1) ":" (substring mu4e-alert-mode-line 7 -2))
+	    (concat (all-the-icons-material "mail" :v-adjust -0.1) ":" (substring mu4e-alert-mode-line 7 -2))
       mu4e-alert-mode-line))
 
   (add-to-list 'awesome-tray-module-alist
-	       '("mail" . (awesome-tray-module-mail-info awesome-tray-module-belong-face))))
+	           '("mail" . (awesome-tray-module-mail-info awesome-tray-module-belong-face))))
 
 (defun awesome-tray-module-clock-info ()
   (if (org-clocking-p)
       (format " [%s] (%s)"
-	      (org-duration-from-minutes
-	       (floor (org-time-convert-to-integer
-		       (org-time-since org-clock-start-time))
-		      60))
-	      org-clock-heading)))
+	          (org-duration-from-minutes
+	           (floor (org-time-convert-to-integer
+		               (org-time-since org-clock-start-time))
+		              60))
+	          org-clock-heading)))
 
 (defun awesome-tray-build-active-info ()
   (condition-case nil
@@ -692,31 +700,38 @@ These goes before those shown in their full names."
 
 (defun awesome-tray-module-git-info ()
   (if (executable-find "git")
-  (let ((current-seconds (awesome-tray-current-seconds)))
-    (if (> (- current-seconds awesome-tray-git-last-time) awesome-tray-git-update-duration)
-        (let ((status (vc-git-state (buffer-file-name)))
-              (branch (car (vc-git-branches))))
-          (setq awesome-tray-git-last-time current-seconds)
-
-          (cond ((string= status "up-to-date") (setq status ""))
-                ((string= status "edited") (setq status "!"))
-                ((string= status "needs-update") (setq status "⇣"))
-                ((string= status "needs-merge") (setq status "⇡"))
-                ((string= status "unlocked-changes") (setq status ""))
-                ((string= status "added") (setq status "+"))
-                ((string= status "removed") (setq status "-"))
-                ((string= status "conflict") (setq status "="))
-                ((string= status "missing") (setq status "?"))
-                ((string= status "ignored") (setq status ""))
-                ((string= status "unregistered") (setq status "?"))
-                ((not status) (setq status "")))
-                (if (not branch) (setq branch ""))
-
-        (setq awesome-tray-git-command-cache
-                (format-spec awesome-tray-git-format
-                        (format-spec-make ?b branch ?s status))))
-        awesome-tray-git-command-cache))
+      (progn
+        (if (not (string= (buffer-file-name) awesome-tray-git-buffer-filename))
+            (awesome-tray-git-command-update-cache))
+        awesome-tray-git-command-cache)
     ""))
+
+(defun awesome-tray-git-command-update-cache ()
+  (if (file-exists-p (buffer-file-name))
+      (let* ((filename (buffer-file-name))
+             (status (vc-git-state filename))
+             (branch (car (vc-git-branches))))
+
+        (cond ((string= status "up-to-date") (setq status ""))
+              ((string= status "edited") (setq status "!"))
+              ((string= status "needs-update") (setq status "⇣"))
+              ((string= status "needs-merge") (setq status "⇡"))
+              ((string= status "unlocked-changes") (setq status ""))
+              ((string= status "added") (setq status "+"))
+              ((string= status "removed") (setq status "-"))
+              ((string= status "conflict") (setq status "="))
+              ((string= status "missing") (setq status "?"))
+              ((string= status "ignored") (setq status ""))
+              ((string= status "unregistered") (setq status "?"))
+              ((not status) (setq status "")))
+        (if (not branch) (setq branch ""))
+
+        (setq awesome-tray-git-buffer-filename filename)
+
+        (setq awesome-tray-git-command-cache (if awesome-tray-git-show-status
+                                                 (format awesome-tray-git-format (concat branch " " status))
+                                               (format awesome-tray-git-format branch))))
+    (setq awesome-tray-git-command-cache "?")))
 
 (defun awesome-tray-module-circe-info ()
   "Display circe tracking buffers"
@@ -1101,7 +1116,12 @@ If right is non nil, replace to the right"
 
   ;; Add the setup function to the minibuffer hook
   (when awesome-tray-minibuffer
-    (add-hook 'minibuffer-setup-hook #'awesome-tray--minibuffer-setup)))
+    (add-hook 'minibuffer-setup-hook #'awesome-tray--minibuffer-setup))
+
+  ;; Add git hooks
+  (if (or (member "git" awesome-tray-active-modules) (member "git" awesome-tray-essential-modules))
+      (dolist (hook awesome-tray-git-update-hooks)
+        (add-hook hook 'awesome-tray-git-command-update-cache))))
 
 ;;;###autoload
 (defun awesome-tray-disable ()
@@ -1133,7 +1153,11 @@ If right is non nil, replace to the right"
   (cancel-function-timers #'awesome-tray-update)
 
   ;; Remove the setup function from the minibuffer hook
-  (remove-hook 'minibuffer-setup-hook #'awesome-tray--minibuffer-setup))
+  (remove-hook 'minibuffer-setup-hook #'awesome-tray--minibuffer-setup)
+
+  ;; Remove git hooks
+  (dolist (hook awesome-tray-git-update-hooks)
+    (remove-hook hook 'awesome-tray-git-command-update-cache)))
 
 (defun awesome-tray-set-text (text)
   "Set the text displayed by the awesome-tray to TEXT."
