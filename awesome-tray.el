@@ -206,7 +206,6 @@
 (require 'timer)
 (require 'minibuffer)
 (require 'overlay)
-(require 'format-spec)
 (require 'vc-git)
 
 ;;; Code:
@@ -216,6 +215,11 @@
 
 (defcustom awesome-tray-minibuffer t
   "If non-nil, also display the awesome-tray when in the minibuffer."
+  :group 'awesome-tray
+  :type 'boolean)
+
+(defcustom awesome-tray-git-show-status nil
+  "If non-nil, display the current file status in the git module."
   :group 'awesome-tray
   :type 'boolean)
 
@@ -291,11 +295,10 @@ If nil, don't update the awesome-tray automatically."
   :group 'awesome-tray
   :type 'string)
 
-(defcustom awesome-tray-git-format "git:%b"
+(defcustom awesome-tray-git-format "git:%s"
   "Format string of the git module.
 
-%b branch
-%s file status indicator"
+%s branch and file status if enabled with `awesome-tray-git-show-status'"
   :group 'awesome-tray
   :type 'string)
 
@@ -725,9 +728,9 @@ These goes before those shown in their full names."
 
     (setq awesome-tray-git-buffer-filename filename)
 
-    (setq awesome-tray-git-command-cache
-          (format-spec awesome-tray-git-format
-                       (format-spec-make ?b branch ?s status)))))
+    (setq awesome-tray-git-command-cache (if awesome-tray-git-show-status
+                                             (format awesome-tray-git-format (concat branch " " status))
+                                           (format awesome-tray-git-format branch)))))
 
 (defun awesome-tray-module-circe-info ()
   "Display circe tracking buffers"

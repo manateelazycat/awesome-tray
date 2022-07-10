@@ -29,7 +29,8 @@ The load-path is usually `~/elisp/`. It's set in your `~/.emacs` like this:
 - `awesome-tray-mode-line-height`: Mode line height, default is 0.1
 - `awesome-tray-date-format`: Use to customize the date string format.
 - `awesome-tray-mpd-format`: Use to customize the mpd string format, see the variable docstring for details.
-- `awesome-tray-git-format`: Use to customize the git string format, see the variable docstring for details.
+- `awesome-tray-git-format`: Use to customize the git string format.
+- `awesome-tray-git-show-status`: If non-nil, show current file status on the git module.
 - `awesome-tray-ellipsis`: Use to customize the ellipses used when truncating.
 - `awesome-tray-separator`: Use to customize the separator between modules.
 
