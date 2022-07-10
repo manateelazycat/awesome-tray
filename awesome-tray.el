@@ -595,6 +595,8 @@ These goes before those shown in their full names."
 
 (defvar awesome-tray-git-command-cache "")
 
+(defvar awesome-tray-git-buffer-filename "")
+
 (defvar awesome-tray-belong-last-time 0)
 
 (defvar awesome-tray-belong-last-buffer nil)
@@ -642,20 +644,20 @@ These goes before those shown in their full names."
 
   (defun awesome-tray-module-mail-info ()
     (if (member "all-the-icons" (font-family-list))
-	(concat (all-the-icons-material "mail" :v-adjust -0.1) ":" (substring mu4e-alert-mode-line 7 -2))
+	    (concat (all-the-icons-material "mail" :v-adjust -0.1) ":" (substring mu4e-alert-mode-line 7 -2))
       mu4e-alert-mode-line))
 
   (add-to-list 'awesome-tray-module-alist
-	       '("mail" . (awesome-tray-module-mail-info awesome-tray-module-belong-face))))
+	           '("mail" . (awesome-tray-module-mail-info awesome-tray-module-belong-face))))
 
 (defun awesome-tray-module-clock-info ()
   (if (org-clocking-p)
       (format " [%s] (%s)"
-	      (org-duration-from-minutes
-	       (floor (org-time-convert-to-integer
-		       (org-time-since org-clock-start-time))
-		      60))
-	      org-clock-heading)))
+	          (org-duration-from-minutes
+	           (floor (org-time-convert-to-integer
+		               (org-time-since org-clock-start-time))
+		              60))
+	          org-clock-heading)))
 
 (defun awesome-tray-build-active-info ()
   (condition-case nil
@@ -696,12 +698,16 @@ These goes before those shown in their full names."
 
 (defun awesome-tray-module-git-info ()
   (if (executable-find "git")
-      awesome-tray-git-command-cache
+      (progn
+        (if (not (string= (buffer-file-name) awesome-tray-git-buffer-filename))
+            (awesome-tray-git-command-update-cache))
+        awesome-tray-git-command-cache)
     ""))
 
 (defun awesome-tray-git-command-update-cache ()
-  (let ((status (vc-git-state (buffer-file-name)))
-        (branch (car (vc-git-branches))))
+  (let* ((filename (buffer-file-name))
+         (status (vc-git-state filename))
+         (branch (car (vc-git-branches))))
 
     (cond ((string= status "up-to-date") (setq status ""))
           ((string= status "edited") (setq status "!"))
@@ -716,6 +722,8 @@ These goes before those shown in their full names."
           ((string= status "unregistered") (setq status "?"))
           ((not status) (setq status "")))
     (if (not branch) (setq branch ""))
+
+    (setq awesome-tray-git-buffer-filename filename)
 
     (setq awesome-tray-git-command-cache
           (format-spec awesome-tray-git-format
