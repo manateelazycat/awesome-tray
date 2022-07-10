@@ -36,6 +36,8 @@ The load-path is usually `~/elisp/`. It's set in your `~/.emacs` like this:
 ## Customize Module
 You can control modules through option ```awesome-tray-active-modules```.
 
+**When removing the git module load the awesome-tray-mode after setting the modules to prevent useless hooks**
+
 You can find all modules name in the keys of variable ```awesome-tray-module-alist```. Currently we have:
 
 - `awesome-tab`: Show group information of [awesome-tab](https://github.com/manateelazycat/awesome-tab).
