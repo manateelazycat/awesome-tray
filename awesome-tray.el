@@ -261,8 +261,7 @@ If nil, don't update the awesome-tray automatically."
   '(after-save-hook
     after-revert-hook
     vc-checkin-hook
-    text-scale-mode-hook
-    find-file-hook)
+    text-scale-mode-hook)
   "Hook points to update the git module."
   :type '(list (hook :tag "HookPoint")
                (repeat :inline t (hook :tag "HookPoint"))))
@@ -708,29 +707,31 @@ These goes before those shown in their full names."
     ""))
 
 (defun awesome-tray-git-command-update-cache ()
-  (let* ((filename (buffer-file-name))
-         (status (vc-git-state filename))
-         (branch (car (vc-git-branches))))
+  (if (file-exists-p (buffer-file-name))
+      (let* ((filename (buffer-file-name))
+             (status (vc-git-state filename))
+             (branch (car (vc-git-branches))))
 
-    (cond ((string= status "up-to-date") (setq status ""))
-          ((string= status "edited") (setq status "!"))
-          ((string= status "needs-update") (setq status "⇣"))
-          ((string= status "needs-merge") (setq status "⇡"))
-          ((string= status "unlocked-changes") (setq status ""))
-          ((string= status "added") (setq status "+"))
-          ((string= status "removed") (setq status "-"))
-          ((string= status "conflict") (setq status "="))
-          ((string= status "missing") (setq status "?"))
-          ((string= status "ignored") (setq status ""))
-          ((string= status "unregistered") (setq status "?"))
-          ((not status) (setq status "")))
-    (if (not branch) (setq branch ""))
+        (cond ((string= status "up-to-date") (setq status ""))
+              ((string= status "edited") (setq status "!"))
+              ((string= status "needs-update") (setq status "⇣"))
+              ((string= status "needs-merge") (setq status "⇡"))
+              ((string= status "unlocked-changes") (setq status ""))
+              ((string= status "added") (setq status "+"))
+              ((string= status "removed") (setq status "-"))
+              ((string= status "conflict") (setq status "="))
+              ((string= status "missing") (setq status "?"))
+              ((string= status "ignored") (setq status ""))
+              ((string= status "unregistered") (setq status "?"))
+              ((not status) (setq status "")))
+        (if (not branch) (setq branch ""))
 
-    (setq awesome-tray-git-buffer-filename filename)
+        (setq awesome-tray-git-buffer-filename filename)
 
-    (setq awesome-tray-git-command-cache (if awesome-tray-git-show-status
-                                             (format awesome-tray-git-format (concat branch " " status))
-                                           (format awesome-tray-git-format branch)))))
+        (setq awesome-tray-git-command-cache (if awesome-tray-git-show-status
+                                                 (format awesome-tray-git-format (concat branch " " status))
+                                               (format awesome-tray-git-format branch))))
+    (setq awesome-tray-git-command-cache "?")))
 
 (defun awesome-tray-module-circe-info ()
   "Display circe tracking buffers"
