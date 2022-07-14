@@ -446,6 +446,14 @@ These goes before those shown in their full names."
   "Word count face."
   :group 'awesome-tray)
 
+(defface awesome-tray-module-anzu-face
+  '((((background light))
+     :foreground "#cc7700" :bold t)
+    (t
+     :foreground "#ff9500" :bold t))
+  "anzu face."
+  :group 'awesome-tray)
+
 (defface awesome-tray-module-volume-face
   '((((background light))
      :foreground "#008080" :bold t)
@@ -645,6 +653,7 @@ These goes before those shown in their full names."
     ("mpd" . (awesome-tray-module-mpd-info awesome-tray-module-mpd-face))
     ("volume" . (awesome-tray-module-volume-info awesome-tray-module-volume-face))
     ("word-count" . (awesome-tray-module-word-count-info awesome-tray-module-word-count-face))
+    ("anzu" . (awesome-tray-module-anzu-info awesome-tray-module-anzu-face))
     ))
 
 (with-eval-after-load 'mu4e-alert
@@ -675,6 +684,49 @@ These goes before those shown in their full names."
     (if (region-active-p)
         (format "%d/%dW" (count-words-region (region-beginning) (region-end)) f-count)
       (format "%dW" f-count))))
+
+(defun awesome-tray--fix-anzu-count (positions here)
+  "Calulate anzu count via POSITIONS and HERE."
+  (cl-loop for (start . end) in positions
+           collect t into before
+           when (and (>= here start) (<= here end))
+           return (length before)
+           finally return 0))
+
+(if (featurep 'anzu)
+    (progn (advice-add #'anzu--where-is-here :override #'awesome-tray-fix-anzu-count)
+           ;; manage modeline segment ourselves
+           (setq anzu-cons-mode-line-p nil)))
+;; Ensure anzu state is cleared when searches
+(with-eval-after-load 'anzu
+  (add-hook 'isearch-mode-end-hook #'anzu--reset-status t)
+  (add-hook 'iedit-mode-end-hook #'anzu--reset-status)
+  (advice-add #'evil-force-normal-state :after #'anzu--reset-status)
+  ;; Fix matches segment mirroring across all buffers
+  (mapc #'make-variable-buffer-local
+        '(anzu--total-matched
+          anzu--current-position anzu--state anzu--cached-count
+          anzu--cached-positions anzu--last-command
+          anzu--last-isearch-string anzu--overflow-p)))
+
+(defun awesome-tray-module-anzu-info ()
+  "Show the match index and total number thereof.
+Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
+`evil-search'."
+  (if (featurep 'anzu)
+      (when (and (bound-and-true-p anzu--state)
+                 (not (bound-and-true-p iedit-mode)))
+        (let ((here anzu--current-position)
+              (total anzu--total-matched))
+          (cond ((eq anzu--state 'replace-query)
+                 (format "%d replace" anzu--cached-count))
+                ((eq anzu--state 'replace)
+                 (format "[%d/%d]" here total))
+                (anzu--overflow-p
+                 (format "%s+" total))
+                (t
+                 (format "[%s/%d]" here total)))))
+    ""))
 
 (defun awesome-tray-build-active-info ()
   (condition-case nil

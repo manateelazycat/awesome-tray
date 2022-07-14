@@ -63,6 +63,7 @@ You can find all modules name in the keys of variable ```awesome-tray-module-ali
 - `mpd`: Show mpd information using [libmpdel](https://github.com/mpdel/libmpdel), you need to connect to a mpd profile, use `(libmpdel-connect-profile (libmpdel--select-profile))` unless you have multiple profiles.
 - `volume`: Show current volume using amixer.
 - `word-count`: Show file and selected region word-count.
+- `anzu`: Show searched word count and current index using [anzu](https://github.com/emacsorphanage/anzu).
 
 ## Create a Module
 Let's create a module that says hello to you. With a module you need:
