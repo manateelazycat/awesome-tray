@@ -62,6 +62,7 @@ You can find all modules name in the keys of variable ```awesome-tray-module-ali
 - `flymake`: Show Flymake state.
 - `mpd`: Show mpd information using [libmpdel](https://github.com/mpdel/libmpdel), you need to connect to a mpd profile, use `(libmpdel-connect-profile (libmpdel--select-profile))` unless you have multiple profiles.
 - `volume`: Show current volume using amixer.
+- `word-count`: Show file and selected region word-count.
 
 ## Create a Module
 Let's create a module that says hello to you. With a module you need:
