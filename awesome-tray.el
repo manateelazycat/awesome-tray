@@ -223,6 +223,16 @@
   :group 'awesome-tray
   :type 'boolean)
 
+(defcustom awesome-tray-evil-show-macro t
+  "If non-nil, display the current file status in the git module."
+  :group 'awesome-tray
+  :type 'boolean)
+
+(defcustom awesome-tray-evil-show-cursor-count t
+  "If non-nil, display the current file status in the git module."
+  :group 'awesome-tray
+  :type 'boolean)
+
 (defcustom awesome-tray-update-interval 1
   "Interval in seconds between updating the awesome-tray contents.
 
@@ -978,8 +988,30 @@ NAME is a string, typically a directory name."
                      ((evil-operator-state-p) "<O>")
                      ((evil-replace-state-p) "<R>")
                      (t ""))))
+          (if awesome-tray-evil-show-macro
+              (setq state (s-trim (concat (awesome-tray--macro-recording) " " state))))
+          (if awesome-tray-evil-show-cursor-count
+              (setq state (s-trim (concat (awesome-tray--count-multiple-cursors) " " state))))
           state)
       "")))
+
+(defun awesome-tray--macro-recording ()
+  "Display current evil macro being recorded."
+  (if (featurep 'evil)
+      (when (or defining-kbd-macro executing-kbd-macro)
+        (if (bound-and-true-p evil-this-macro)
+            (format "recording @%s" (char-to-string evil-this-macro))
+          "Macro"))
+    ""))
+
+(defun awesome-tray--count-multiple-cursors ()
+  "Show the number of multiple cursors."
+  (let (count)
+    (cond ((featurep 'evil-mc) (if (bound-and-true-p evil-mc-cursor-list)
+                                   (format "mc:%s" (number-to-string (+ (length evil-mc-cursor-list) 1)))))
+          ((featurep 'multiple-cursors) (if (bound-and-true-p multiple-cursors-mode)
+                                            (format "mc:%s" (number-to-string (mc/num-cursors)))))
+          (t ""))))
 
 (defun awesome-tray-module-belong-info ()
   (if (featurep 'tree-sitter)

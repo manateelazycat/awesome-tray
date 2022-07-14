@@ -33,6 +33,8 @@ The load-path is usually `~/elisp/`. It's set in your `~/.emacs` like this:
 - `awesome-tray-git-show-status`: If non-nil, show current file status on the git module.
 - `awesome-tray-ellipsis`: Use to customize the ellipses used when truncating.
 - `awesome-tray-separator`: Use to customize the separator between modules.
+- `awesome-tray-evil-show-macro`: If non-nil, show recording macro in the evil module.
+- `awesome-tray-evil-show-cursor-count`: If non-nil, show multiple cursors count in the evil module.
 
 ## Customize Module
 You can control modules through option ```awesome-tray-active-modules```.
@@ -45,7 +47,7 @@ You can find all modules name in the keys of variable ```awesome-tray-module-ali
 - `buffer-name`: Show buffer name.
 - `circe`: Show circe tracking buffer information.
 - `date`: Show current date.
-- `evil`: Show evil state.
+- `evil`: Show evil state, recording macro and multiple cursors count in both [evil-mc](https://github.com/gabesoft/evil-mc) and [multiple-cursors](https://github.com/magnars/multiple-cursors.el).
 - `file-path`: Show file path with full customizability. When the path is long, it can be shrinked into something like `.../.em/el/awesome-tray/awesome-tray.el`. See `awesome-tray-file-path-***` variables for details.
 - `git`: Show git information.
 - `last-command`: Show last execute command.
