@@ -438,6 +438,14 @@ These goes before those shown in their full names."
   "Location face."
   :group 'awesome-tray)
 
+(defface awesome-tray-module-word-count-face
+  '((((background light))
+     :foreground "#cc7700" :bold t)
+    (t
+     :foreground "#ff9500" :bold t))
+  "Word count face."
+  :group 'awesome-tray)
+
 (defface awesome-tray-module-volume-face
   '((((background light))
      :foreground "#008080" :bold t)
@@ -636,6 +644,7 @@ These goes before those shown in their full names."
     ("flymake" . (awesome-tray-module-flymake-info nil))
     ("mpd" . (awesome-tray-module-mpd-info awesome-tray-module-mpd-face))
     ("volume" . (awesome-tray-module-volume-info awesome-tray-module-volume-face))
+    ("word-count" . (awesome-tray-module-word-count-info awesome-tray-module-word-count-face))
     ))
 
 (with-eval-after-load 'mu4e-alert
@@ -660,6 +669,12 @@ These goes before those shown in their full names."
 		               (org-time-since org-clock-start-time))
 		              60))
 	          org-clock-heading)))
+
+(defun awesome-tray-module-word-count-info ()
+  (let ((f-count (count-words (point-min) (point-max))))
+    (if (region-active-p)
+        (format "%d/%dW" (count-words-region (region-beginning) (region-end)) f-count)
+      (format "%dW" f-count))))
 
 (defun awesome-tray-build-active-info ()
   (condition-case nil
