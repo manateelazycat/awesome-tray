@@ -695,19 +695,6 @@ These goes before those shown in their full names."
         (format "%d/%dW" (count-words-region (region-beginning) (region-end)) f-count)
       (format "%dW" f-count))))
 
-(defun awesome-tray--fix-anzu-count (positions here)
-  "Calulate anzu count via POSITIONS and HERE."
-  (cl-loop for (start . end) in positions
-           collect t into before
-           when (and (>= here start) (<= here end))
-           return (length before)
-           finally return 0))
-
-(if (featurep 'anzu)
-    (progn (advice-add #'anzu--where-is-here :override #'awesome-tray-fix-anzu-count)
-           ;; manage modeline segment ourselves
-           (setq anzu-cons-mode-line-p nil)))
-;; Ensure anzu state is cleared when searches
 (with-eval-after-load 'anzu
   (add-hook 'isearch-mode-end-hook #'anzu--reset-status t)
   (add-hook 'iedit-mode-end-hook #'anzu--reset-status)
@@ -718,6 +705,14 @@ These goes before those shown in their full names."
           anzu--current-position anzu--state anzu--cached-count
           anzu--cached-positions anzu--last-command
           anzu--last-isearch-string anzu--overflow-p)))
+
+(defun awesome-tray--fix-anzu-count (positions here)
+  "Calulate anzu count via POSITIONS and HERE."
+  (cl-loop for (start . end) in positions
+           collect t into before
+           when (and (>= here start) (<= here end))
+           return (length before)
+           finally return 0))
 
 (defun awesome-tray-module-anzu-info ()
   "Show the match index and total number thereof.
@@ -1220,7 +1215,13 @@ If right is non nil, replace to the right"
   ;; Add git hooks
   (if (or (member "git" awesome-tray-active-modules) (member "git" awesome-tray-essential-modules))
       (dolist (hook awesome-tray-git-update-hooks)
-        (add-hook hook 'awesome-tray-git-command-update-cache))))
+        (add-hook hook 'awesome-tray-git-command-update-cache)))
+
+  ;; Add anzu advice
+  (if (or (member "anzu" awesome-tray-active-modules) (member "anzu" awesome-tray-essential-modules))
+      (progn (advice-add #'anzu--where-is-here :override #'awesome-tray--fix-anzu-count)
+             ;; manage modeline segment ourselves
+             (setq anzu-cons-mode-line-p nil))))
 
 ;;;###autoload
 (defun awesome-tray-disable ()
