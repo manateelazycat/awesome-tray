@@ -223,6 +223,11 @@
   :group 'awesome-tray
   :type 'boolean)
 
+(defcustom awesome-tray-evil-show-mode t
+  "If non-nil, display the current evil mode in the evil module."
+  :group 'awesome-tray
+  :type 'boolean)
+
 (defcustom awesome-tray-evil-show-macro t
   "If non-nil, display the current recording macro in the evil module."
   :group 'awesome-tray
@@ -978,7 +983,8 @@ NAME is a string, typically a directory name."
       ""
     (if (featurep 'evil)
         (let ((state
-               (cond ((evil-normal-state-p) "<N>")
+               (cond ((not awesome-tray-evil-show-mode) "")
+                     ((evil-normal-state-p) "<N>")
                      ((evil-emacs-state-p) "<E>")
                      ((evil-insert-state-p) "<I>")
                      ((evil-motion-state-p) "<M>")
