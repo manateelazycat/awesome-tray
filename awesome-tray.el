@@ -224,12 +224,12 @@
   :type 'boolean)
 
 (defcustom awesome-tray-evil-show-macro t
-  "If non-nil, display the current file status in the git module."
+  "If non-nil, display the current recording macro in the evil module."
   :group 'awesome-tray
   :type 'boolean)
 
 (defcustom awesome-tray-evil-show-cursor-count t
-  "If non-nil, display the current file status in the git module."
+  "If non-nil, display the current multiple cursors count in the evil module."
   :group 'awesome-tray
   :type 'boolean)
 
