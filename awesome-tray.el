@@ -311,6 +311,13 @@ If nil, don't update the awesome-tray automatically."
   :group 'awesome-tray
   :type 'string)
 
+(defcustom awesome-tray-location-format "%l:%c %p"
+  "Format string of the location module.
+
+See `mode-line-format'"
+  :group 'awesome-tray
+  :type 'string)
+
 (defcustom awesome-tray-buffer-name-max-length 20
   "Max length of buffer name."
   :group 'awesome-tray
@@ -846,11 +853,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 (defun awesome-tray-module-location-info ()
   (if (equal major-mode 'eaf-mode)
       ""
-    (format "%s:%s %s"
-            (format-mode-line "%l")
-            (format-mode-line "%c")
-            (format-mode-line "%p")
-            )))
+    (concat (format-mode-line awesome-tray-location-format))))
 
 (with-eval-after-load 'libmpdel
   (add-hook 'libmpdel-current-playlist-changed-hook 'awesome-tray-mpd-command-update-cache)
