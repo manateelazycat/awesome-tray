@@ -813,7 +813,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
         (setq awesome-tray-git-buffer-filename filename)
 
         (setq awesome-tray-git-command-cache (if awesome-tray-git-show-status
-                                                 (format awesome-tray-git-format (concat branch " " status))
+                                                 (format awesome-tray-git-format (s-trim (concat branch " " status)))
                                                (format awesome-tray-git-format branch))))
     (setq awesome-tray-git-command-cache "?")))
 
