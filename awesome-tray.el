@@ -813,7 +813,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
         (setq awesome-tray-git-buffer-filename filename)
 
         (setq awesome-tray-git-command-cache (if awesome-tray-git-show-status
-                                                 (format awesome-tray-git-format (s-trim (concat branch " " status)))
+                                                 (format awesome-tray-git-format (string-trim (concat branch " " status)))
                                                (format awesome-tray-git-format branch))))
     (setq awesome-tray-git-command-cache "?")))
 
@@ -993,9 +993,9 @@ NAME is a string, typically a directory name."
                      ((evil-replace-state-p) "<R>")
                      (t ""))))
           (if awesome-tray-evil-show-macro
-              (setq state (s-trim (concat (awesome-tray--macro-recording) " " state))))
+              (setq state (string-trim (concat (awesome-tray--macro-recording) " " state))))
           (if awesome-tray-evil-show-cursor-count
-              (setq state (s-trim (concat (awesome-tray--count-multiple-cursors) " " state))))
+              (setq state (string-trim (concat (awesome-tray--count-multiple-cursors) " " state))))
           state)
       "")))
 
