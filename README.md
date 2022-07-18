@@ -30,9 +30,11 @@ The load-path is usually `~/elisp/`. It's set in your `~/.emacs` like this:
 - `awesome-tray-date-format`: Use to customize the date string format.
 - `awesome-tray-mpd-format`: Use to customize the mpd string format, see the variable docstring for details.
 - `awesome-tray-git-format`: Use to customize the git string format.
+- `awesome-tray-location-format`: Use to customize the location string format, see `mode-line-format`.
 - `awesome-tray-git-show-status`: If non-nil, show current file status on the git module.
 - `awesome-tray-ellipsis`: Use to customize the ellipses used when truncating.
 - `awesome-tray-separator`: Use to customize the separator between modules.
+- `awesome-tray-evil-show-mode`: If non-nil, show current evil mode in the evil module.
 - `awesome-tray-evil-show-macro`: If non-nil, show recording macro in the evil module.
 - `awesome-tray-evil-show-cursor-count`: If non-nil, show multiple cursors count in the evil module.
 

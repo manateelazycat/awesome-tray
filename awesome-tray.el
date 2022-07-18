@@ -223,13 +223,18 @@
   :group 'awesome-tray
   :type 'boolean)
 
+(defcustom awesome-tray-evil-show-mode t
+  "If non-nil, display the current evil mode in the evil module."
+  :group 'awesome-tray
+  :type 'boolean)
+
 (defcustom awesome-tray-evil-show-macro t
-  "If non-nil, display the current file status in the git module."
+  "If non-nil, display the current recording macro in the evil module."
   :group 'awesome-tray
   :type 'boolean)
 
 (defcustom awesome-tray-evil-show-cursor-count t
-  "If non-nil, display the current file status in the git module."
+  "If non-nil, display the current multiple cursors count in the evil module."
   :group 'awesome-tray
   :type 'boolean)
 
@@ -308,6 +313,13 @@ If nil, don't update the awesome-tray automatically."
   "Format string of the git module.
 
 %s branch and file status if enabled with `awesome-tray-git-show-status'"
+  :group 'awesome-tray
+  :type 'string)
+
+(defcustom awesome-tray-location-format "%l:%c %p"
+  "Format string of the location module.
+
+See `mode-line-format'"
   :group 'awesome-tray
   :type 'string)
 
@@ -801,7 +813,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
         (setq awesome-tray-git-buffer-filename filename)
 
         (setq awesome-tray-git-command-cache (if awesome-tray-git-show-status
-                                                 (format awesome-tray-git-format (concat branch " " status))
+                                                 (format awesome-tray-git-format (string-trim (concat branch " " status)))
                                                (format awesome-tray-git-format branch))))
     (setq awesome-tray-git-command-cache "?")))
 
@@ -846,11 +858,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 (defun awesome-tray-module-location-info ()
   (if (equal major-mode 'eaf-mode)
       ""
-    (format "%s:%s %s"
-            (format-mode-line "%l")
-            (format-mode-line "%c")
-            (format-mode-line "%p")
-            )))
+    (concat (format-mode-line awesome-tray-location-format))))
 
 (with-eval-after-load 'libmpdel
   (add-hook 'libmpdel-current-playlist-changed-hook 'awesome-tray-mpd-command-update-cache)
@@ -975,7 +983,8 @@ NAME is a string, typically a directory name."
       ""
     (if (featurep 'evil)
         (let ((state
-               (cond ((evil-normal-state-p) "<N>")
+               (cond ((not awesome-tray-evil-show-mode) "")
+                     ((evil-normal-state-p) "<N>")
                      ((evil-emacs-state-p) "<E>")
                      ((evil-insert-state-p) "<I>")
                      ((evil-motion-state-p) "<M>")
@@ -984,9 +993,9 @@ NAME is a string, typically a directory name."
                      ((evil-replace-state-p) "<R>")
                      (t ""))))
           (if awesome-tray-evil-show-macro
-              (setq state (s-trim (concat (awesome-tray--macro-recording) " " state))))
+              (setq state (string-trim (concat (awesome-tray--macro-recording) " " state))))
           (if awesome-tray-evil-show-cursor-count
-              (setq state (s-trim (concat (awesome-tray--count-multiple-cursors) " " state))))
+              (setq state (string-trim (concat (awesome-tray--count-multiple-cursors) " " state))))
           state)
       "")))
 
