@@ -68,6 +68,7 @@ You can find all modules name in the keys of variable ```awesome-tray-module-ali
 - `volume`: Show current volume using amixer.
 - `word-count`: Show file and selected region word-count.
 - `anzu`: Show searched word count and current index using [anzu](https://github.com/emacsorphanage/anzu).
+- `github`: Show github notifications using [async](https://github.com/jwiegley/emacs-async) and [ghub](https://github.com/magit/ghub).
 
 ## Create a Module
 Let's create a module that says hello to you. With a module you need:
