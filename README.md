@@ -37,6 +37,8 @@ The load-path is usually `~/elisp/`. It's set in your `~/.emacs` like this:
 - `awesome-tray-evil-show-mode`: If non-nil, show current evil mode in the evil module.
 - `awesome-tray-evil-show-macro`: If non-nil, show recording macro in the evil module.
 - `awesome-tray-evil-show-cursor-count`: If non-nil, show multiple cursors count in the evil module.
+- `awesome-tray-github-update-duration`: Update duration of the github notification, in seconds.
+- `awesome-tray-github-erase-duration`: Github notification time before it gets removed from the bar, in seconds.
 
 ## Customize Module
 You can control modules through option ```awesome-tray-active-modules```.
@@ -68,6 +70,8 @@ You can find all modules name in the keys of variable ```awesome-tray-module-ali
 - `volume`: Show current volume using amixer.
 - `word-count`: Show file and selected region word-count.
 - `anzu`: Show searched word count and current index using [anzu](https://github.com/emacsorphanage/anzu).
+- `github`: Show github notifications using [async](https://github.com/jwiegley/emacs-async) and [ghub](https://github.com/magit/ghub).
+- `hostname`: Show remote buffers hostname.
 
 ## Create a Module
 Let's create a module that says hello to you. With a module you need:

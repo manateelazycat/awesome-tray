@@ -343,6 +343,16 @@ See `mode-line-format'"
   :type 'integer
   :group 'awesome-tray)
 
+(defcustom awesome-tray-github-update-duration 120
+  "Update duration of github notification, in seconds."
+  :type 'integer
+  :group 'awesome-tray)
+
+(defcustom awesome-tray-github-erase-duration 30
+  "Github notification time before it gets removed from the bar, in seconds."
+  :type 'integer
+  :group 'awesome-tray)
+
 (defcustom awesome-tray-belong-update-duration 5
   "Update duration of which class, in seconds."
   :type 'integer
@@ -474,6 +484,22 @@ These goes before those shown in their full names."
     (t
      :foreground "#ff9500" :bold t))
   "anzu face."
+  :group 'awesome-tray)
+
+(defface awesome-tray-module-github-face
+  '((((background light))
+     :foreground "#008080" :bold t)
+    (t
+     :foreground "#00ced1" :bold t))
+  "Github face."
+  :group 'awesome-tray)
+
+(defface awesome-tray-module-hostname-face
+  '((((background light))
+     :foreground "#008080" :bold t)
+    (t
+     :foreground "#00ced1" :bold t))
+  "Hostname face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-volume-face
@@ -625,6 +651,16 @@ These goes before those shown in their full names."
 (defvar awesome-tray-overlays nil
   "List of overlays displaying the awesome-tray contents.")
 
+(defvar awesome-tray-before-github-fetch-notification-hook nil
+  "Hooks before fetching GitHub notifications.
+Example:
+  (add-hook \\='awesome-tray-before-github-fetch-notification-hook
+            #\\='auth-source-pass-enable)")
+
+(defvar awesome-tray--github-notification-number 0)
+
+(defvar awesome-tray-github-last-time 0)
+
 (defvar awesome-tray-mode-line-colors nil)
 
 (defvar awesome-tray-volume-cache "")
@@ -676,6 +712,8 @@ These goes before those shown in their full names."
     ("volume" . (awesome-tray-module-volume-info awesome-tray-module-volume-face))
     ("word-count" . (awesome-tray-module-word-count-info awesome-tray-module-word-count-face))
     ("anzu" . (awesome-tray-module-anzu-info awesome-tray-module-anzu-face))
+    ("github" . (awesome-tray-module-github-info awesome-tray-module-github-face))
+    ("hostname" . (awesome-tray-module-hostname-info awesome-tray-module-hostname-face))
     ))
 
 (with-eval-after-load 'mu4e-alert
@@ -700,6 +738,46 @@ These goes before those shown in their full names."
 		               (org-time-since org-clock-start-time))
 		              60))
 	          org-clock-heading)))
+
+(defun awesome-tray-module-github-info ()
+  (let ((current-seconds (awesome-tray-current-seconds)))
+    (if (> (- current-seconds awesome-tray-github-last-time) awesome-tray-github-update-duration)
+        (progn (setq awesome-tray-github-last-time current-seconds)
+               (awesome-tray--github-fetch-notifications))
+      (if (> (- current-seconds awesome-tray-github-last-time) awesome-tray-github-erase-duration)
+          (setq awesome-tray--github-notification-number 0))
+      (if (and (numberp awesome-tray--github-notification-number)
+               (> awesome-tray--github-notification-number 0))
+          (format "%s github" awesome-tray--github-notification-number)
+        ""))))
+
+(defun awesome-tray--github-fetch-notifications ()
+  "Fetch GitHub notifications."
+  (when (require 'async nil t)
+    (async-start
+     `(lambda ()
+        ,(async-inject-variables
+          "\\`\\(load-path\\|auth-sources\\|awesome-tray-before-github-fetch-notification-hook\\)\\'")
+        (run-hooks 'awesome-tray-before-github-fetch-notification-hook)
+        (when (require 'ghub nil t)
+          (with-timeout (10)
+            (ignore-errors
+              (when-let* ((username (ghub--username ghub-default-host))
+                          (token (ghub--token ghub-default-host username 'ghub t)))
+                (ghub-get "/notifications" nil
+                          :query '((notifications . "true"))
+                          :username username
+                          :auth token
+                          :noerror t))))))
+     (lambda (result)
+       (message "")                     ; suppress message
+       (setq awesome-tray--github-notification-number (length result))))))
+
+(defun awesome-tray-module-hostname-info ()
+  "Hostname for remote buffers."
+  (when default-directory
+    (when-let ((host (file-remote-p default-directory 'host)))
+      (concat "@" host))))
 
 (defun awesome-tray-module-word-count-info ()
   (let ((f-count (count-words (point-min) (point-max))))
