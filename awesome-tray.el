@@ -343,8 +343,13 @@ See `mode-line-format'"
   :type 'integer
   :group 'awesome-tray)
 
-(defcustom awesome-tray-github-update-duration 600
+(defcustom awesome-tray-github-update-duration 120
   "Update duration of github notification, in seconds."
+  :type 'integer
+  :group 'awesome-tray)
+
+(defcustom awesome-tray-github-erase-duration 30
+  "Github notification time before it gets removed from the bar, in seconds."
   :type 'integer
   :group 'awesome-tray)
 
@@ -739,6 +744,8 @@ Example:
     (if (> (- current-seconds awesome-tray-github-last-time) awesome-tray-github-update-duration)
         (progn (setq awesome-tray-github-last-time current-seconds)
                (awesome-tray--github-fetch-notifications))
+      (if (> (- current-seconds awesome-tray-github-last-time) awesome-tray-github-erase-duration)
+          (setq awesome-tray--github-notification-number 0))
       (if (and (numberp awesome-tray--github-notification-number)
                (> awesome-tray--github-notification-number 0))
           (format "%s github" awesome-tray--github-notification-number)
