@@ -489,6 +489,14 @@ These goes before those shown in their full names."
   "Github face."
   :group 'awesome-tray)
 
+(defface awesome-tray-module-hostname-face
+  '((((background light))
+     :foreground "#008080" :bold t)
+    (t
+     :foreground "#00ced1" :bold t))
+  "Hostname face."
+  :group 'awesome-tray)
+
 (defface awesome-tray-module-volume-face
   '((((background light))
      :foreground "#008080" :bold t)
@@ -700,6 +708,7 @@ Example:
     ("word-count" . (awesome-tray-module-word-count-info awesome-tray-module-word-count-face))
     ("anzu" . (awesome-tray-module-anzu-info awesome-tray-module-anzu-face))
     ("github" . (awesome-tray-module-github-info awesome-tray-module-github-face))
+    ("hostname" . (awesome-tray-module-hostname-info awesome-tray-module-hostname-face))
     ))
 
 (with-eval-after-load 'mu4e-alert
@@ -756,6 +765,12 @@ Example:
      (lambda (result)
        (message "")                     ; suppress message
        (setq awesome-tray--github-notification-number (length result))))))
+
+(defun awesome-tray-module-hostname-info ()
+  "Hostname for remote buffers."
+  (when default-directory
+    (when-let ((host (file-remote-p default-directory 'host)))
+      (concat "@" host))))
 
 (defun awesome-tray-module-word-count-info ()
   (let ((f-count (count-words (point-min) (point-max))))
