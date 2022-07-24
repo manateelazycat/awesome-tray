@@ -869,7 +869,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
     ""))
 
 (defun awesome-tray-git-command-update-cache ()
-  (if (file-exists-p (buffer-file-name))
+  (if (file-exists-p (format "%s" (buffer-file-name)))
       (let* ((filename (buffer-file-name))
              (status (vc-git-state filename))
              (branch (car (vc-git-branches))))
