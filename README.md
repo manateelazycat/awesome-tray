@@ -67,7 +67,7 @@ You can find all modules name in the keys of variable ```awesome-tray-module-ali
 - `pdf-view-page`: Show page number in pdf-view-mode.
 - `flymake`: Show Flymake state.
 - `mpd`: Show mpd information using [libmpdel](https://github.com/mpdel/libmpdel), you need to connect to a mpd profile, use `(libmpdel-connect-profile (libmpdel--select-profile))` unless you have multiple profiles.
-- `volume`: Show current volume using amixer.
+- `volume`: Show current volume using [volume.el](https://github.com/dbrock/volume.el).
 - `word-count`: Show file and selected region word-count.
 - `anzu`: Show searched word count and current index using [anzu](https://github.com/emacsorphanage/anzu).
 - `github`: Show github notifications using [async](https://github.com/jwiegley/emacs-async) and [ghub](https://github.com/magit/ghub).

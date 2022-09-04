@@ -663,10 +663,6 @@ Example:
 
 (defvar awesome-tray-mode-line-colors nil)
 
-(defvar awesome-tray-volume-cache "")
-
-(defvar awesome-tray-volume-last-time 0)
-
 (defvar awesome-tray-mpd-command-cache "")
 
 (defvar awesome-tray-git-command-cache "")
@@ -850,14 +846,8 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
       (propertize module-name 'face 'awesome-tray-default-face))))
 
 (defun awesome-tray-module-volume-info ()
-  (if (executable-find "amixer")
-      (let ((current-seconds (awesome-tray-current-seconds)))
-        (if (> (- current-seconds awesome-tray-volume-last-time) awesome-tray-volume-update-duration)
-            (let ((command (shell-command-to-string "amixer sget Master")))
-              (setq awesome-tray-volume-last-time current-seconds)
-              (string-match "\\[\\([0-9]+\\)%\\]" command)
-              (setq awesome-tray-volume-cache (concat (match-string 1 command) "%")))
-          awesome-tray-volume-cache))
+  (if (ignore-errors (require 'volume))
+      (concat (number-to-string (truncate (volume-get))) "%")
     ""))
 
 (defun awesome-tray-module-git-info ()
