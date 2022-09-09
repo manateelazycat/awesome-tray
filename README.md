@@ -47,8 +47,8 @@ Please read the docstring for those variables
 
 **Those options can make your awesome-tray look weird, if your minibuffer looks weird disable them**
 
-- `awesome-tray-second-line`: [screenshot](./screenshots/screenshot2.png), Displays awesome-tray in a second line keeping the minibuffer messages readable, works better with `awesome-tray-center` disabled.
-- `awesome-tray-center`: [screenshot](./screenshots/centered.png), Displays awesome-tray in the center, better to be used with `awesome-tray-second-line` enabled.
+- `awesome-tray-second-line`: [screenshot](./screenshots/screenshot2.png), Displays awesome-tray in a second line keeping the minibuffer messages readable.
+- `awesome-tray-position`: [screenshot](./screenshots/centered.png), Displays awesome-tray in the left, right or center, better to be used with `awesome-tray-second-line` enabled.
 
 ## Customize Module
 You can control modules through option ```awesome-tray-active-modules```.

@@ -6,6 +6,6 @@
 
 <img src="./screenshot2.png">
 
-# With `awesome-tray-center` enabled
+# With `awesome-tray-position` set to center
 
 <img src="./centered.png">

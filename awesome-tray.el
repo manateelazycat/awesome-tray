@@ -221,20 +221,19 @@
 (defcustom awesome-tray-second-line nil
   "If non-nil, display awesome-tray in a second line.
 
-WARNING! Works better by itself without `awesome-tray-center',
-This makes a lot of minibuffer interactions look weird,
+WARNING! This makes a lot of minibuffer interactions look weird,
 disable it if you have any problems with your minibuffer appearence."
   :group 'awesome-tray
   :type 'boolean)
 
-(defcustom awesome-tray-center nil
-  "If non-nil, display awesome-tray in the center.
+(defcustom awesome-tray-position 'right
+  "Position to display awesome-tray.
 
-WARNING! Better to be used with `awesome-tray-second-line' enabled but it looks very bad in a lot of occasions,
+WARNING! Better to be used with `awesome-tray-second-line' enabled,
 This makes a lot of minibuffer interactions look weird,
 disable it if you have any problems with your minibuffer appearence."
   :group 'awesome-tray
-  :type 'boolean)
+  :type 'symbol)
 
 (defcustom awesome-tray-git-show-status nil
   "If non-nil, display the current file status in the git module."
@@ -1357,9 +1356,15 @@ If right is non nil, replace to the right"
 (defun awesome-tray-set-text (text)
   "Set the text displayed by the awesome-tray to TEXT."
   (let* ((wid (+ (string-width text) awesome-tray-info-padding-right))
-         (wid (if awesome-tray-center (/ wid 0.5) wid))
-         (spc (propertize " " 'cursor 1 'display
-                          `(space :align-to (- right-fringe ,wid)))))
+         (spc (cond ((eq awesome-tray-position 'center)
+                     (propertize "  " 'cursor 1 'display
+                                 `(space :align-to (- center ,(/ wid 2)))))
+                    ((eq awesome-tray-position 'left)
+                     (propertize "  " 'cursor 1 'display
+                                 `(space :align-to (- left-fringe ,wid))))
+                    ((eq awesome-tray-position 'right)
+                     (propertize "  " 'cursor 1 'display
+                                 `(space :align-to (- right-fringe ,wid)))))))
 
     (setq awesome-tray-text (concat (if awesome-tray-second-line "\n") spc text))
 
