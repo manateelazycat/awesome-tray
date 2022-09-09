@@ -1,4 +1,6 @@
-<img src="./screenshot.png">
+<img src="./screenshots/screenshot.png">
+
+[More screenshots](./screenshots/README.md)
 
 ### What's this?
 I don't like the mode-line, it's too high and affect me to read the code.
@@ -39,6 +41,14 @@ The load-path is usually `~/elisp/`. It's set in your `~/.emacs` like this:
 - `awesome-tray-evil-show-cursor-count`: If non-nil, show multiple cursors count in the evil module.
 - `awesome-tray-github-update-duration`: Update duration of the github notification, in seconds.
 - `awesome-tray-github-erase-duration`: Github notification time before it gets removed from the bar, in seconds.
+
+## Dangerous options
+Please read the docstring for those variables
+
+**Those options can make your awesome-tray look weird, if your minibuffer looks weird disable them**
+
+- `awesome-tray-second-line`: [screenshot](./screenshots/screenshot2.png), Displays awesome-tray in a second line keeping the minibuffer messages readable, works better with `awesome-tray-center` disabled.
+- `awesome-tray-center`: [screenshot](./screenshots/centered.png), Displays awesome-tray in the center, better to be used with `awesome-tray-second-line` enabled.
 
 ## Customize Module
 You can control modules through option ```awesome-tray-active-modules```.
