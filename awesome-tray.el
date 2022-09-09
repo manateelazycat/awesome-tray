@@ -218,6 +218,24 @@
   :group 'awesome-tray
   :type 'boolean)
 
+(defcustom awesome-tray-second-line nil
+  "If non-nil, display awesome-tray in a second line.
+
+WARNING! Works better by itself without `awesome-tray-center',
+This makes a lot of minibuffer interactions look weird,
+disable it if you have any problems with your minibuffer appearence."
+  :group 'awesome-tray
+  :type 'boolean)
+
+(defcustom awesome-tray-center nil
+  "If non-nil, display awesome-tray in the center.
+
+WARNING! Better to be used with `awesome-tray-second-line' enabled but it looks very bad in a lot of occasions,
+This makes a lot of minibuffer interactions look weird,
+disable it if you have any problems with your minibuffer appearence."
+  :group 'awesome-tray
+  :type 'boolean)
+
 (defcustom awesome-tray-git-show-status nil
   "If non-nil, display the current file status in the git module."
   :group 'awesome-tray
@@ -1339,10 +1357,11 @@ If right is non nil, replace to the right"
 (defun awesome-tray-set-text (text)
   "Set the text displayed by the awesome-tray to TEXT."
   (let* ((wid (+ (string-width text) awesome-tray-info-padding-right))
+         (wid (if awesome-tray-center (/ wid 0.5) wid))
          (spc (propertize " " 'cursor 1 'display
                           `(space :align-to (- right-fringe ,wid)))))
 
-    (setq awesome-tray-text (concat spc text))
+    (setq awesome-tray-text (concat (if awesome-tray-second-line "\n") spc text))
 
     ;; Remove any dead overlays from the minibuffer from the beginning of the list
     (while (null (overlay-buffer (car awesome-tray-overlays)))
