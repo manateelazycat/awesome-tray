@@ -881,18 +881,19 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
              (status (vc-git-state filename))
              (branch (car (vc-git-branches))))
 
-        (cond ((string= status "up-to-date") (setq status ""))
-              ((string= status "edited") (setq status "!"))
-              ((string= status "needs-update") (setq status "⇣"))
-              ((string= status "needs-merge") (setq status "⇡"))
-              ((string= status "unlocked-changes") (setq status ""))
-              ((string= status "added") (setq status "+"))
-              ((string= status "removed") (setq status "-"))
-              ((string= status "conflict") (setq status "="))
-              ((string= status "missing") (setq status "?"))
-              ((string= status "ignored") (setq status ""))
-              ((string= status "unregistered") (setq status "?"))
-              ((not status) (setq status "")))
+        (pcase status
+          ('up-to-date (setq status ""))
+          ('edited (setq status "!"))
+          ('needs-update (setq status "⇣"))
+          ('needs-merge (setq status "⇡"))
+          ('unlocked-changes (setq status ""))
+          ('added (setq status "+"))
+          ('removed (setq status "-"))
+          ('conflict (setq status "="))
+          ('missing (setq status "?"))
+          ('ignored (setq status ""))
+          ('unregistered (setq status "?"))
+          (_ (setq status "")))
         (if (not branch) (setq branch ""))
 
         (setq awesome-tray-git-buffer-filename filename)
@@ -1356,14 +1357,12 @@ If right is non nil, replace to the right"
 (defun awesome-tray-set-text (text)
   "Set the text displayed by the awesome-tray to TEXT."
   (let* ((wid (+ (string-width text) awesome-tray-info-padding-right))
-         (spc (cond ((eq awesome-tray-position 'center)
-                     (propertize "  " 'cursor 1 'display
+         (spc (pcase awesome-tray-position 
+                     ('center (propertize "  " 'cursor 1 'display
                                  `(space :align-to (- center ,(/ wid 2)))))
-                    ((eq awesome-tray-position 'left)
-                     (propertize "  " 'cursor 1 'display
+                     ('left (propertize "  " 'cursor 1 'display
                                  `(space :align-to (- left-fringe ,wid))))
-                    ((eq awesome-tray-position 'right)
-                     (propertize "  " 'cursor 1 'display
+                     ('right (propertize "  " 'cursor 1 'display
                                  `(space :align-to (- right-fringe ,wid)))))))
 
     (setq awesome-tray-text (concat (if awesome-tray-second-line "\n") spc text))
