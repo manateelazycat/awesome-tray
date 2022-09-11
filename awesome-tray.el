@@ -235,7 +235,7 @@ disable it if you have any problems with your minibuffer appearence."
   :group 'awesome-tray
   :type 'symbol)
 
-(defcustom awesome-tray-git-show-status nil
+(defcustom awesome-tray-git-show-status t
   "If non-nil, display the current file status in the git module."
   :group 'awesome-tray
   :type 'boolean)
