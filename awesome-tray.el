@@ -901,7 +901,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
         (setq awesome-tray-git-command-cache (if awesome-tray-git-show-status
                                                  (format awesome-tray-git-format (string-trim (concat branch " " status)))
                                                (format awesome-tray-git-format branch))))
-    (setq awesome-tray-git-command-cache "?")))
+    (setq awesome-tray-git-command-cache "")))
 
 (defun awesome-tray-module-circe-info ()
   "Display circe tracking buffers"
