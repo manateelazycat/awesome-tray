@@ -58,10 +58,8 @@
   :group 'awesome-tray)
 
 (defface awesome-tray-blue-bright-face
-  '((((background light))
-     :foreground "#0061cc" :bold t)
-    (t
-     :foreground "#007aff" :bold t))
+  '((((background light)) :foreground "#0061cc" :bold t)
+    (t :foreground "#007aff" :bold t))
   "Date face."
   :group 'awesome-tray)
 
