@@ -516,217 +516,173 @@ These goes before those shown in their full names."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-git-face
-  '((((background light))
-     :foreground "#cc2444" :bold t)
-    (t
-     :foreground "#ff2d55" :bold t))
+  '((((background light)) :inherit awesome-tray-red-face)
+    (t :inherit awesome-tray-red-face))
   "Git face."
   :group 'awesome-tray)
 
+(defface awesome-tray-module-awesome-tab-face
+  '((((background light)) :inherit awesome-tray-pink-face)
+    (t :inherit awesome-tray-pink-face))
+  "Awesome tab face."
+  :group 'awesome-tray)
+
 (defface awesome-tray-module-rvm-face
-  '((((background light))
-     :foreground "#2832cc" :bold t)
-    (t
-     :foreground "#333fff" :bold t))
+  '((((background light)) :inherit awesome-tray-blue-face)
+    (t :inherit awesome-tray-blue-face))
   "RVM face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-circe-face
-  '((((background light))
-     :foreground "#2832cc" :bold t)
-    (t
-     :foreground "#333fff" :bold t))
+  '((((background light)) :inherit awesome-tray-blue-face)
+    (t :inherit awesome-tray-blue-face))
   "Circe face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-mode-name-face
-  '((((background light))
-     :foreground "#00a400" :bold t)
-    (t
-     :foreground "green3" :bold t))
+  '((((background light)) :inherit awesome-tray-green-face)
+    (t :inherit awesome-tray-green-face))
   "Mode name face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-location-face
-  '((((background light))
-     :foreground "#cc7700" :bold t)
-    (t
-     :foreground "#ff9500" :bold t))
+  '((((background light)) :inherit awesome-tray-orange-face)
+    (t :inherit awesome-tray-orange-face))
   "Location face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-word-count-face
-  '((((background light))
-     :foreground "#cc7700" :bold t)
-    (t
-     :foreground "#ff9500" :bold t))
+  '((((background light)) :inherit awesome-tray-orange-face)
+    (t :inherit awesome-tray-orange-face))
   "Word count face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-anzu-face
-  '((((background light))
-     :foreground "#cc7700" :bold t)
-    (t
-     :foreground "#ff9500" :bold t))
-  "anzu face."
+  '((((background light)) :inherit awesome-tray-orange-face)
+    (t :inherit awesome-tray-orange-face))
+  "Anzu face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-github-face
-  '((((background light))
-     :foreground "#008080" :bold t)
-    (t
-     :foreground "#00ced1" :bold t))
+  '((((background light)) :inherit awesome-tray-cyan-face)
+    (t :inherit awesome-tray-cyan-face))
   "Github face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-hostname-face
-  '((((background light))
-     :foreground "#008080" :bold t)
-    (t
-     :foreground "#00ced1" :bold t))
+  '((((background light)) :inherit awesome-tray-cyan-face)
+    (t :inherit awesome-tray-cyan-face))
   "Hostname face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-volume-face
-  '((((background light))
-     :foreground "#008080" :bold t)
-    (t
-     :foreground "#00ced1" :bold t))
+  '((((background light)) :inherit awesome-tray-cyan-face)
+    (t :inherit awesome-tray-cyan-face))
   "Volume face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-mpd-face
-  '((((background light))
-     :foreground "#008080" :bold t)
-    (t
-     :foreground "#00ced1" :bold t))
+  '((((background light)) :inherit awesome-tray-cyan-face)
+    (t :inherit awesome-tray-cyan-face))
   "Mpd face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-date-face
-  '((((background light))
-     :foreground "#717175" :bold t)
-    (t
-     :foreground "#8e8e93" :bold t))
+  '((((background light)) :inherit awesome-tray-grey-face)
+    (t :inherit awesome-tray-grey-face))
   "Date face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-last-command-face
-  '((((background light))
-     :foreground "#0061cc" :bold t)
-    (t
-     :foreground "#007aff" :bold t))
+  '((((background light)) :inherit awesome-tray-blue-bright-face)
+    (t :inherit awesome-tray-blue-bright-face))
   "Date face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-buffer-name-face
-  '((((background light))
-     :foreground "#cc7700" :bold t)
-    (t
-     :foreground "#ff9500" :bold t))
+  '((((background light)) :inherit awesome-tray-orange-face)
+    (t :inherit awesome-tray-orange-face))
   "Buffer name face."
   :group 'awesome-tray)
 
-(defface awesome-tray-module-parent-dir-face
-  '((((background light))
-     :foreground "#5e8e2e" :bold t)
-    (t
-     :foreground "#9ded4d" :bold t))
+(defface awesome-tray-module-file-path-face
+  '((((background light)) :inherit awesome-tray-green-path-face)
+    (t :inherit awesome-tray-green-path-face))
   "Parent dir face."
   :group 'awesome-tray)
 
-(defface awesome-tray-module-file-path-face
-  '((((background light))
-     :foreground "#5e8e2e" :bold t)
-    (t
-     :foreground "#9ded4d" :bold t))
+(defface awesome-tray-module-parent-dir-face
+  '((((background light)) :inherit awesome-tray-green-path-face)
+    (t :inherit awesome-tray-green-path-face))
   "Parent dir face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-awesome-tab-face
-  '((((background light))
-     :foreground "#b83059" :bold t)
-    (t
-     :foreground "#e73c70" :bold t))
+  '((((background light)) :inherit awesome-tray-pink-face)
+    (t :inherit awesome-tray-pink-face))
   "Awesome tab face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-evil-face
-  '((((background light))
-     :foreground "#008080" :bold t)
-    (t
-     :foreground "#00ced1" :bold t))
+  '((((background light)) :inherit awesome-tray-cyan)
+    (t :inherit awesome-tray-cyan))
   "Evil state face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-battery-face
-  '((((background light))
-     :foreground "#008080" :bold t)
-    (t
-     :foreground "#00ced1" :bold t))
+  '((((background light)) :inherit awesome-tray-cyan)
+    (t :inherit awesome-tray-cyan))
   "Battery state face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-buffer-read-only-face
-  '((((background light))
-     :foreground "#cc2444" :bold t)
-    (t
-     :foreground "#ff2d55" :bold t))
+  '((((background light)) :inherit awesome-tray-red)
+    (t :inherit awesome-tray-red))
   "Buffer read only face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-belong-face
-  '((((background light))
-     :foreground "#cc2444" :bold t)
-    (t
-     :foreground "#ff2d55" :bold t))
+  '((((background light)) :inherit awesome-tray-red)
+    (t :inherit awesome-tray-red))
   "Buffer read only face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-input-method-face
-  '((((background light))
-     :foreground "#008080" :bold t)
-    (t
-     :foreground "#00ced1" :bold t))
+  '((((background light)) :inherit awesome-tray-cyan)
+    (t :inherit awesome-tray-cyan))
   "Input method face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-clock-face
-  '((((background light))
-     :foreground "#000000" :bold t)
-    (t
-     :foreground "#FFFFFF" :bold t))
+  '((((background light)) :inherit awesome-tray-blue-bright-face)
+    (t :inherit awesome-tray-blue-bright-face))
   "Org clock face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-org-pomodoro-face
-  '((((background light))
-     :foreground "#5317ac" :bold t)
-    (t
-     :foreground "#f7768e" :bold t))
+  '((((background light)) :inherit awesome-tray-magenta-face)
+    (t :inherit awesome-tray-magenta-face))
   "Org-pomodoro face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-pdf-view-page-face
-  '((((background light))
-     :foreground "#fd971f" :bold t)
-    (t
-     :foreground "#fb2874" :bold t))
+  '((((background light)) :inherit awesome-tray-orange)
+    (t :inherit awesome-tray-pink))
   "Pdf-view-page face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-flymake-error
-  '((t (:foreground "#FF564A")))
+  '((t :inherit awesome-tray-red))
   "Flymake error face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-flymake-warning
-  '((t (:foreground "#FF9800")))
+  '((t (:inherit awesome-tray-orange)))
   "Flymake warning face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-flymake-note
-  '((t (:foreground "#2196F3")))
+  '((t (:inherit awesome-tray-green)))
   "Flymake note face."
   :group 'awesome-tray)
 
