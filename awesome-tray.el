@@ -447,6 +447,74 @@ These goes before those shown in their full names."
   "Face for string constant ouside modules."
   :group 'awesome-tray)
 
+(defface awesome-tray-grey-face
+  '((((background light)) :foreground "dim grey" :bold t)
+    (t :foreground "dark grey" :bold t))
+  "Awesome tray grey."
+  :group 'awesome-tray)
+
+(defface awesome-tray-red-face
+  '((((background light)) :foreground "#cc2444" :bold t)
+    (t :foreground "#ff2d55" :bold t))
+  "Awesome tray red."
+  :group 'awesome-tray)
+
+(defface awesome-tray-green-face
+  '((((background light)) :foreground "#00a400" :bold t)
+    (t :foreground "green3" :bold t))
+  "Awesome tray green."
+  :group 'awesome-tray)
+
+(defface awesome-tray-green-path-face
+  '((((background light)) :foreground "#5e8e2e" :bold t)
+    (t :foreground "#9ded4d" :bold t))
+  "Awesome green face for paths."
+  :group 'awesome-tray)
+
+(defface awesome-tray-blue-face
+  '((((background light)) :foreground "#2832cc" :bold t)
+    (t :foreground "#333fff" :bold t))
+  "Awesome tray blue."
+  :group 'awesome-tray)
+
+(defface awesome-tray-blue-bright-face
+  '((((background light))
+     :foreground "#0061cc" :bold t)
+    (t
+     :foreground "#007aff" :bold t))
+  "Date face."
+  :group 'awesome-tray)
+
+(defface awesome-tray-orange-face
+  '((((background light)) :foreground "#cc7700" :bold t)
+    (t :foreground "#ff9500" :bold t))
+  "Awesome tray orange."
+  :group 'awesome-tray)
+
+(defface awesome-tray-yellow-face
+  '((((background light)) :foreground "gold" :bold t)
+    (t :foreground "yellow" :bold t))
+  "Awesome tray yellow."
+  :group 'awesome-tray)
+
+(defface awesome-tray-pink-face
+  '((((background light)) :foreground "deep pink" :bold t)
+    (t :foreground "hot pink" :bold t))
+  "Awesome tab pink."
+  :group 'awesome-tray)
+
+(defface awesome-tray-magenta-face
+  '((((background light)) :foreground "dark magenta" :bold t)
+    (t :foreground "magenta" :bold t))
+  "Awesome tray magenta."
+  :group 'awesome-tray)
+
+(defface awesome-tray-cyan-face
+  '((((background light)) :foreground "#008080" :bold t)
+    (t :foreground "#00ced1" :bold t))
+  "Awesome tray cyan."
+  :group 'awesome-tray)
+
 (defface awesome-tray-module-git-face
   '((((background light))
      :foreground "#cc2444" :bold t)
