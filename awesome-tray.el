@@ -443,7 +443,7 @@ These goes before those shown in their full names."
   :type 'integer
   :group 'awesome-tray)
 
-(defface awesome-tray-default-face '((t :inherit default))
+(defface awesome-tray-default-face '((t :inherit default :bold t))
   "Face for string constant ouside modules."
   :group 'awesome-tray)
 
