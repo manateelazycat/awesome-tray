@@ -23,6 +23,9 @@
 ;;
 ;;; Code:
 
+
+;; Base Faces:
+
 (defface awesome-tray-default-face '((t :inherit default :bold t))
   "Face for string constant ouside modules."
   :group 'awesome-tray)
@@ -92,6 +95,9 @@
     (t :foreground "#00ced1" :bold t))
   "Awesome tray cyan."
   :group 'awesome-tray)
+
+
+;; Contextual Faces
 
 (defface awesome-tray-module-git-face
   '((((background light)) :inherit awesome-tray-red-face)
