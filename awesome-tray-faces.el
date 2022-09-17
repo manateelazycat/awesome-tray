@@ -202,32 +202,32 @@
   :group 'awesome-tray)
 
 (defface awesome-tray-module-evil-face
-  '((((background light)) :inherit awesome-tray-cyan)
-    (t :inherit awesome-tray-cyan))
+  '((((background light)) :inherit awesome-tray-cyan-face)
+    (t :inherit awesome-tray-cyan-face))
   "Evil state face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-battery-face
-  '((((background light)) :inherit awesome-tray-cyan)
-    (t :inherit awesome-tray-cyan))
+  '((((background light)) :inherit awesome-tray-cyan-face)
+    (t :inherit awesome-tray-cyan-face))
   "Battery state face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-buffer-read-only-face
-  '((((background light)) :inherit awesome-tray-red)
-    (t :inherit awesome-tray-red))
+  '((((background light)) :inherit awesome-tray-red-face)
+    (t :inherit awesome-tray-red-face))
   "Buffer read only face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-belong-face
-  '((((background light)) :inherit awesome-tray-red)
-    (t :inherit awesome-tray-red))
+  '((((background light)) :inherit awesome-tray-red-face)
+    (t :inherit awesome-tray-red-face))
   "Buffer read only face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-input-method-face
-  '((((background light)) :inherit awesome-tray-cyan)
-    (t :inherit awesome-tray-cyan))
+  '((((background light)) :inherit awesome-tray-cyan-face)
+    (t :inherit awesome-tray-cyan-face))
   "Input method face."
   :group 'awesome-tray)
 
@@ -245,22 +245,22 @@
 
 (defface awesome-tray-module-pdf-view-page-face
   '((((background light)) :inherit awesome-tray-orange)
-    (t :inherit awesome-tray-pink))
+    (t :inherit awesome-tray-pink-face))
   "Pdf-view-page face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-flymake-error
-  '((t :inherit awesome-tray-red))
+  '((t :inherit awesome-tray-red-face))
   "Flymake error face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-flymake-warning
-  '((t (:inherit awesome-tray-orange)))
+  '((t :inherit awesome-tray-yellow-face))
   "Flymake warning face."
   :group 'awesome-tray)
 
 (defface awesome-tray-module-flymake-note
-  '((t (:inherit awesome-tray-green)))
+  '((t :inherit awesome-tray-blue-bright-face))
   "Flymake note face."
   :group 'awesome-tray)
 
