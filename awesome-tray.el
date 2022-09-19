@@ -207,6 +207,7 @@
 (require 'minibuffer)
 (require 'overlay)
 (require 'vc-git)
+(require 'format-spec)
 
 (require 'awesome-tray-faces)
 
