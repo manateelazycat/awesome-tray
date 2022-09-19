@@ -229,6 +229,11 @@ disable it if you have any problems with your minibuffer appearence."
   :group 'awesome-tray
   :type 'boolean)
 
+(defcustom awesome-tray-hide-mode-line t
+  "If non-nil, make the mode-line very thin and highlight it when its active/inactive."
+  :group 'awesome-tray
+  :type 'boolean)
+
 (defcustom awesome-tray-position 'right
   "Position to display awesome-tray.
 
@@ -1048,33 +1053,34 @@ If right is non nil, replace to the right"
   ;; Disable any existing awesome-tray to remove conflicts
   (awesome-tray-disable)
 
-  ;; Save mode-line colors when first time.
-  ;; Don't change `awesome-tray-mode-line-colors' anymore.
-  (unless awesome-tray-mode-line-colors
-    (setq awesome-tray-mode-line-colors
-          (list (face-attribute 'mode-line :foreground)
-                (face-attribute 'mode-line :background)
-                (face-attribute 'mode-line :family)
-                (face-attribute 'mode-line :box)
-                (face-attribute 'mode-line-inactive :foreground)
-                (face-attribute 'mode-line-inactive :background)
-                (face-attribute 'mode-line-inactive :family)
-                (face-attribute 'mode-line-inactive :box)
-                )))
-  (setq awesome-tray-mode-line-default-height (face-attribute 'mode-line :height))
+  (when awesome-tray-hide-mode-line
+    ;; Save mode-line colors when first time.
+    ;; Don't change `awesome-tray-mode-line-colors' anymore.
+    (unless awesome-tray-mode-line-colors
+      (setq awesome-tray-mode-line-colors
+            (list (face-attribute 'mode-line :foreground)
+                  (face-attribute 'mode-line :background)
+                  (face-attribute 'mode-line :family)
+                  (face-attribute 'mode-line :box)
+                  (face-attribute 'mode-line-inactive :foreground)
+                  (face-attribute 'mode-line-inactive :background)
+                  (face-attribute 'mode-line-inactive :family)
+                  (face-attribute 'mode-line-inactive :box)
+                  )))
+    (setq awesome-tray-mode-line-default-height (face-attribute 'mode-line :height))
 
-  ;; Disable mode line.
-  (set-face-attribute 'mode-line nil
-                      :foreground awesome-tray-mode-line-active-color
-                      :background awesome-tray-mode-line-active-color
-                      :height awesome-tray-mode-line-height
-                      :box nil)
-  (set-face-attribute 'mode-line-inactive nil
-                      :foreground awesome-tray-mode-line-inactive-color
-                      :background awesome-tray-mode-line-inactive-color
-                      :height awesome-tray-mode-line-height
-                      :box nil
-                      :inherit 'unspecified)
+    ;; Disable mode line.
+    (set-face-attribute 'mode-line nil
+                        :foreground awesome-tray-mode-line-active-color
+                        :background awesome-tray-mode-line-active-color
+                        :height awesome-tray-mode-line-height
+                        :box nil)
+    (set-face-attribute 'mode-line-inactive nil
+                        :foreground awesome-tray-mode-line-inactive-color
+                        :background awesome-tray-mode-line-inactive-color
+                        :height awesome-tray-mode-line-height
+                        :box nil
+                        :inherit 'unspecified))
 
   ;; Create overlays in each echo area buffer
   (dolist (buf '(" *Echo Area 0*" " *Echo Area 1*"))
@@ -1106,19 +1112,20 @@ If right is non nil, replace to the right"
 (defun awesome-tray-disable ()
   "Turn off the awesome-tray."
   (interactive)
-  ;; Restore mode-line colors.
-  (set-face-attribute 'mode-line nil
-                      :foreground (nth 0 awesome-tray-mode-line-colors)
-                      :background (nth 1 awesome-tray-mode-line-colors)
-                      :family (nth 2 awesome-tray-mode-line-colors)
-                      :box (nth 3 awesome-tray-mode-line-colors)
-                      :height awesome-tray-mode-line-default-height)
-  (set-face-attribute 'mode-line-inactive nil
-                      :foreground (nth 4 awesome-tray-mode-line-colors)
-                      :background (nth 5 awesome-tray-mode-line-colors)
-                      :family (nth 6 awesome-tray-mode-line-colors)
-                      :box (nth 7 awesome-tray-mode-line-colors)
-                      :height awesome-tray-mode-line-default-height)
+  (when awesome-tray-hide-mode-line
+    ;; Restore mode-line colors.
+    (set-face-attribute 'mode-line nil
+                        :foreground (nth 0 awesome-tray-mode-line-colors)
+                        :background (nth 1 awesome-tray-mode-line-colors)
+                        :family (nth 2 awesome-tray-mode-line-colors)
+                        :box (nth 3 awesome-tray-mode-line-colors)
+                        :height awesome-tray-mode-line-default-height)
+    (set-face-attribute 'mode-line-inactive nil
+                        :foreground (nth 4 awesome-tray-mode-line-colors)
+                        :background (nth 5 awesome-tray-mode-line-colors)
+                        :family (nth 6 awesome-tray-mode-line-colors)
+                        :box (nth 7 awesome-tray-mode-line-colors)
+                        :height awesome-tray-mode-line-default-height))
 
   ;; Remove awesome-tray overlays
   (mapc 'delete-overlay awesome-tray-overlays)
