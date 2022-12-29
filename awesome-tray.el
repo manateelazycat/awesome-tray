@@ -526,20 +526,20 @@ Example:
 
   (defun awesome-tray-module-mail-info ()
     (if (member "all-the-icons" (font-family-list))
-	    (concat (all-the-icons-material "mail" :v-adjust -0.1) ":" (substring mu4e-alert-mode-line 7 -2))
+        (concat (all-the-icons-material "mail" :v-adjust -0.1) ":" (substring mu4e-alert-mode-line 7 -2))
       mu4e-alert-mode-line))
 
   (add-to-list 'awesome-tray-module-alist
-	           '("mail" . (awesome-tray-module-mail-info awesome-tray-module-belong-face))))
+               '("mail" . (awesome-tray-module-mail-info awesome-tray-module-belong-face))))
 
 (defun awesome-tray-module-clock-info ()
   (if (org-clocking-p)
       (format " [%s] (%s)"
-	          (org-duration-from-minutes
-	           (floor (org-time-convert-to-integer
-		               (org-time-since org-clock-start-time))
-		              60))
-	          org-clock-heading)))
+              (org-duration-from-minutes
+               (floor (org-time-convert-to-integer
+                       (org-time-since org-clock-start-time))
+                      60))
+              org-clock-heading)))
 
 (defun awesome-tray-module-github-info ()
   (let ((current-seconds (awesome-tray-current-seconds)))
@@ -741,10 +741,10 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 
 (defun awesome-tray-module-mpd-info ()
   (if (and (ignore-errors (require 'libmpdel)) (executable-find "mpd"))
-           (if (libmpdel-connected-p)
-               awesome-tray-mpd-command-cache
-             "not connected to mpd")
-           ""))
+      (if (libmpdel-connected-p)
+          awesome-tray-mpd-command-cache
+        "not connected to mpd")
+    ""))
 
 (defun awesome-tray-mpd-command-update-cache ()
   (let* ((mpd-info (libmpdel-current-song))
@@ -760,10 +760,10 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
                          (replace-regexp-in-string ".*/" "" filename))
                         awesome-tray-mpd-title-max-length))
     (setq filename (awesome-tray-truncate-string filename awesome-tray-mpd-title-max-length))
-  (setq awesome-tray-mpd-command-cache
-        (format-spec awesome-tray-mpd-format
-                     (format-spec-make ?t title ?a artist ?A album ?p position
-                                       ?P playlist-length ?f cut-filename ?F filename)))))
+    (setq awesome-tray-mpd-command-cache
+          (format-spec awesome-tray-mpd-format
+                       (format-spec-make ?t title ?a artist ?A album ?p position
+                                         ?P playlist-length ?f cut-filename ?F filename)))))
 
 (defun awesome-tray-module-date-info ()
   "Displays the date."
@@ -960,48 +960,48 @@ NAME is a string, typically a directory name."
   ;; Parts of the code are from doom-modeline package
   (with-demoted-errors
       ""
-      (if (and (featurep 'flymake) flymake--state)
-          (let* ((known (hash-table-keys flymake--state))
-                 (running (flymake-running-backends))
-                 (disabled (flymake-disabled-backends))
-                 (reported (flymake-reporting-backends))
-                 (disabledp (and disabled (null running)))
-                 (waiting (cl-set-difference running reported)))
-            (when-let
-                ((flymake-state
-                  (cond
-                   (waiting "⏳")
-                   ((null known) "❔")
-                   (disabledp "❕")
-                   (t (let ((.error 0)
-                            (.warning 0)
-                            (.note 0))
-                        (cl-loop
-                         with warning-level = (warning-numeric-level :warning)
-                         with note-level = (warning-numeric-level :debug)
-                         for state being the hash-values of flymake--state
-                         do (cl-loop
-                             with diags = (flymake--state-diags state)
-                             for diag in diags do
-                             (let ((severity (flymake--lookup-type-property (flymake--diag-type diag) 'severity
-                                                                            (warning-numeric-level :error))))
-                               (cond ((> severity warning-level) (cl-incf .error))
-                                     ((> severity note-level)    (cl-incf .warning))
-                                     (t                          (cl-incf .note))))))
-                        (let ((num (+ .error .warning .note)))
-                          (if (> num 0)
-                              (string-clean-whitespace
-                               (string-join
-                                (list
-                                 (when (> .note 0)
-                                   (concat "🔵:" (propertize (number-to-string .note) 'face 'awesome-tray-module-flymake-note)))
-                                 (when (> .warning 0)
-                                   (concat "🟠:" (propertize (number-to-string .warning) 'face 'awesome-tray-module-flymake-warning)))
-                                 (when (> .error 0)
-                                   (concat "🔴:" (propertize (number-to-string .error) 'face 'awesome-tray-module-flymake-error))))
-                                " "))
-                            "🟢")))))))
-              flymake-state)))))
+    (if (and (featurep 'flymake) flymake--state)
+        (let* ((known (hash-table-keys flymake--state))
+               (running (flymake-running-backends))
+               (disabled (flymake-disabled-backends))
+               (reported (flymake-reporting-backends))
+               (disabledp (and disabled (null running)))
+               (waiting (cl-set-difference running reported)))
+          (when-let
+              ((flymake-state
+                (cond
+                 (waiting "⏳")
+                 ((null known) "❔")
+                 (disabledp "❕")
+                 (t (let ((.error 0)
+                          (.warning 0)
+                          (.note 0))
+                      (cl-loop
+                       with warning-level = (warning-numeric-level :warning)
+                       with note-level = (warning-numeric-level :debug)
+                       for state being the hash-values of flymake--state
+                       do (cl-loop
+                           with diags = (flymake--state-diags state)
+                           for diag in diags do
+                           (let ((severity (flymake--lookup-type-property (flymake--diag-type diag) 'severity
+                                                                          (warning-numeric-level :error))))
+                             (cond ((> severity warning-level) (cl-incf .error))
+                                   ((> severity note-level)    (cl-incf .warning))
+                                   (t                          (cl-incf .note))))))
+                      (let ((num (+ .error .warning .note)))
+                        (if (> num 0)
+                            (string-clean-whitespace
+                             (string-join
+                              (list
+                               (when (> .note 0)
+                                 (concat "🔵:" (propertize (number-to-string .note) 'face 'awesome-tray-module-flymake-note)))
+                               (when (> .warning 0)
+                                 (concat "🟠:" (propertize (number-to-string .warning) 'face 'awesome-tray-module-flymake-warning)))
+                               (when (> .error 0)
+                                 (concat "🔴:" (propertize (number-to-string .error) 'face 'awesome-tray-module-flymake-error))))
+                              " "))
+                          "🟢")))))))
+            flymake-state)))))
 
 (defun awesome-tray-get-match-nodes (match-rule)
   (ignore-errors
@@ -1147,30 +1147,33 @@ If right is non nil, replace to the right"
 
 (defun awesome-tray-set-text (text)
   "Set the text displayed by the awesome-tray to TEXT."
-  (let* ((wid (+ (string-width text) awesome-tray-info-padding-right))
-         (spc (pcase awesome-tray-position 
-                     ('center (propertize "  " 'cursor 1 'display
-                                 `(space :align-to (- center ,(/ wid 2)))))
-                     ('left (propertize "  " 'cursor 1 'display
-                                 `(space :align-to (- left-fringe ,wid))))
-                     ('right (propertize "  " 'cursor 1 'display
-                                 `(space :align-to (- right-fringe ,wid)))))))
+  ;; Only set tray information when minibuffer not in `input' state.
+  ;; Don't fill tray information if user is typing in minibuffer.
+  (unless (active-minibuffer-window)
+    (let* ((wid (+ (string-width text) awesome-tray-info-padding-right))
+           (spc (pcase awesome-tray-position
+                  ('center (propertize "  " 'cursor 1 'display
+                                       `(space :align-to (- center ,(/ wid 2)))))
+                  ('left (propertize "  " 'cursor 1 'display
+                                     `(space :align-to (- left-fringe ,wid))))
+                  ('right (propertize "  " 'cursor 1 'display
+                                      `(space :align-to (- right-fringe ,wid)))))))
 
-    (setq awesome-tray-text (concat (if awesome-tray-second-line "\n") spc text))
+      (setq awesome-tray-text (concat (if awesome-tray-second-line "\n") spc text))
 
-    ;; Remove any dead overlays from the minibuffer from the beginning of the list
-    (while (null (overlay-buffer (car awesome-tray-overlays)))
-      (pop awesome-tray-overlays))
+      ;; Remove any dead overlays from the minibuffer from the beginning of the list
+      (while (null (overlay-buffer (car awesome-tray-overlays)))
+        (pop awesome-tray-overlays))
 
-    ;; Add the correct text to each awesome-tray overlay
-    (dolist (o awesome-tray-overlays)
-      (when (overlay-buffer o)
-        (overlay-put o 'after-string awesome-tray-text)))
+      ;; Add the correct text to each awesome-tray overlay
+      (dolist (o awesome-tray-overlays)
+        (when (overlay-buffer o)
+          (overlay-put o 'after-string awesome-tray-text)))
 
-    ;; Display the text in Minibuf-0
-    (with-current-buffer " *Minibuf-0*"
-      (delete-region (point-min) (point-max))
-      (insert awesome-tray-text))))
+      ;; Display the text in Minibuf-0
+      (with-current-buffer " *Minibuf-0*"
+        (delete-region (point-min) (point-max))
+        (insert awesome-tray-text)))))
 
 (defun awesome-tray--minibuffer-setup ()
   "Setup the awesome-tray in the minibuffer."
