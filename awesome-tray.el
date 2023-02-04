@@ -893,7 +893,7 @@ NAME is a string, typically a directory name."
           (t ""))))
 
 (defun awesome-tray-module-belong-info ()
-  (if (featurep 'tree-sitter)
+  (if (featurep 'treesit)
       (let ((current-seconds (awesome-tray-current-seconds)))
         (if (or (not (eq (current-buffer) awesome-tray-belong-last-buffer))
                 (> (- current-seconds awesome-tray-belong-last-time) awesome-tray-belong-update-duration))
@@ -906,26 +906,24 @@ NAME is a string, typically a directory name."
 
 (defun awesome-tray-update-belong-cache ()
   (setq awesome-tray-belong-cache
-        (let* ((class-nodes (append (awesome-tray-get-match-nodes "(class_definition name: (symbol) @x)")
-                                    (awesome-tray-get-match-nodes "(class_definition name: (identifier) @x)")))
-               (function-nodes (append (awesome-tray-get-match-nodes "(function_definition name: (symbol) @x)")
-                                       (awesome-tray-get-match-nodes "(function_definition name: (identifier) @x)")))
+        (let* ((class-nodes (append (awesome-tray-get-match-nodes '((class_definition name: (symbol) @x)))
+                                    (awesome-tray-get-match-nodes '((class_definition name: (identifier) @x)))))
+               (function-nodes (append (awesome-tray-get-match-nodes '((function_definition name: (symbol) @x)))
+                                       (awesome-tray-get-match-nodes '((function_definition name: (identifier) @x)))))
                which-belong-info
                which-class-info
                which-func-info)
           (setq which-class-info (catch 'found
                                    (dolist (class-node class-nodes)
-                                     (when (and (> (point) (tsc-node-start-position (tsc-get-parent class-node)))
-                                                (< (point) (tsc-node-end-position (tsc-get-parent class-node))))
-                                       (throw 'found (tsc-node-text class-node)))
-                                     )
+                                     (when (and (> (point) (treesit-node-start (treesit-node-parent class-node)))
+                                                (< (point) (treesit-node-end (treesit-node-parent class-node))))
+                                       (throw 'found (treesit-node-text class-node))))
                                    (throw 'found "")))
           (setq which-func-info (catch 'found
                                   (dolist (function-node function-nodes)
-                                    (when (and (> (point) (tsc-node-start-position (tsc-get-parent function-node)))
-                                               (< (point) (tsc-node-end-position (tsc-get-parent function-node))))
-                                      (throw 'found (tsc-node-text function-node)))
-                                    )
+                                    (when (and (> (point) (treesit-node-start (treesit-node-parent function-node)))
+                                               (< (point) (treesit-node-end (treesit-node-parent function-node))))
+                                      (throw 'found (treesit-node-text function-node))))
                                   (throw 'found "")))
           (setq which-belong-info (string-trim (concat which-class-info " " which-func-info)))
           (if (string-equal which-belong-info "")
@@ -1003,12 +1001,13 @@ NAME is a string, typically a directory name."
                           "🟢")))))))
             flymake-state)))))
 
-(defun awesome-tray-get-match-nodes (match-rule)
+(defun awesome-tray-get-match-nodes (query)
   (ignore-errors
-    (let* ((query (tsc-make-query tree-sitter-language match-rule))
-           (root-node (tsc-root-node tree-sitter-tree))
-           (captures (mapcar #'cdr (tsc-query-captures query root-node #'tsc--buffer-substring-no-properties))))
-      captures)))
+    (mapcar #'(lambda (range)
+                (treesit-node-at (car range)))
+            (treesit-query-range
+             (treesit-node-language (treesit-buffer-root-node))
+             query))))
 
 (defun awesome-tray-truncate-string (string length &optional right)
   "Truncate STRING to LENGTH, replacing the surplus with an ellipsis.

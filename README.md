@@ -73,7 +73,7 @@ You can find all modules name in the keys of variable ```awesome-tray-module-ali
 - `battery`: Show battery status.
 - `input-method`: Show input method status.
 - `buffer-read-only`: Show read only status.
-- `belong`: Show which class/function status, need install `tree-sitter` first.
+- `belong`: Show which class/function status, need install `treesit` first.
 - `org-pomodoro`: Show `org-pomodoro` status. Denote the rest time of pomodoro by `[.]`, short break by `(.)` and long break by `{.}`.
 - `pdf-view-page`: Show page number in pdf-view-mode.
 - `flymake`: Show Flymake state.
