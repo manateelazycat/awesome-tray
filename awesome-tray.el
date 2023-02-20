@@ -1024,7 +1024,10 @@ If right is non nil, replace to the right"
 (defun awesome-tray-get-frame-width ()
   "Only calculating a main Frame width, to avoid wrong width when new frame, such as `snails'."
   (if (display-graphic-p)
-      (with-selected-frame (car (last (frame-list)))
+      (with-selected-frame
+          (if (daemonp)
+              (car (last (butlast (frame-list))))
+            (car (last (frame-list))))
         (frame-width))
     (frame-width)))
 
