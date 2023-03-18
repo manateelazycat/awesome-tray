@@ -883,10 +883,8 @@ NAME is a string, typically a directory name."
 (defun awesome-tray-module-meow-info ()
   (with-demoted-errors
       ""
-    (if (featurep 'meow)
-        (if awesome-tray-meow-show-mode
-            meow--indicator
-          "")
+    (if (and (featurep 'meow) awesome-tray-meow-show-mode)
+        meow--indicator
       "")))
 
 (defun awesome-tray--macro-recording ()
