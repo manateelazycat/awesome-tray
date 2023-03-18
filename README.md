@@ -26,7 +26,7 @@ The load-path is usually `~/elisp/`. It's set in your `~/.emacs` like this:
 
 ## Customize Mode line.
 
-- `awesome-tray-hide-mode-line`: Enabled by default, makes the mode-line very thin and highlight it when its active/inactive. 
+- `awesome-tray-hide-mode-line`: Enabled by default, makes the mode-line very thin and highlight it when its active/inactive.
 - `awesome-tray-mode-line-active-color`: Use for customize active color.
 - `awesome-tray-mode-line-inactive-color`: Use for customize inactive color.
 - `awesome-tray-mode-line-height`: Mode line height, default is 0.1
@@ -42,6 +42,7 @@ The load-path is usually `~/elisp/`. It's set in your `~/.emacs` like this:
 - `awesome-tray-evil-show-cursor-count`: If non-nil, show multiple cursors count in the evil module.
 - `awesome-tray-github-update-duration`: Update duration of the github notification, in seconds.
 - `awesome-tray-github-erase-duration`: Github notification time before it gets removed from the bar, in seconds.
+- `awesome-tray-meow-show-mode`: If non-nil, show current meow mode in the meow module.
 
 ## Dangerous options
 Please read the docstring for those variables
@@ -77,6 +78,7 @@ You can find all modules name in the keys of variable ```awesome-tray-module-ali
 - `org-pomodoro`: Show `org-pomodoro` status. Denote the rest time of pomodoro by `[.]`, short break by `(.)` and long break by `{.}`.
 - `pdf-view-page`: Show page number in pdf-view-mode.
 - `flymake`: Show Flymake state.
+- `meow`: Show meow state.
 - `mpd`: Show mpd information using [libmpdel](https://github.com/mpdel/libmpdel), you need to connect to a mpd profile, use `(libmpdel-connect-profile (libmpdel--select-profile))` unless you have multiple profiles.
 - `volume`: Show current volume using [volume.el](https://github.com/dbrock/volume.el).
 - `word-count`: Show file and selected region word-count.

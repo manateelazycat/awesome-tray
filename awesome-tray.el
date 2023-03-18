@@ -263,6 +263,11 @@ disable it if you have any problems with your minibuffer appearence."
   :group 'awesome-tray
   :type 'boolean)
 
+(defcustom awesome-tray-meow-show-mode t
+  "If non-nil, display the current meow mode in the meow module."
+  :group 'awesome-tray
+  :type 'boolean)
+
 (defcustom awesome-tray-update-interval 1
   "Interval in seconds between updating the awesome-tray contents.
 
@@ -510,6 +515,7 @@ Example:
     ("org-pomodoro" . (awesome-tray-module-org-pomodoro-info awesome-tray-module-org-pomodoro-face))
     ("pdf-view-page" . (awesome-tray-module-pdf-view-page-info awesome-tray-module-pdf-view-page-face))
     ("flymake" . (awesome-tray-module-flymake-info nil))
+    ("meow" . (awesome-tray-module-meow-info awesome-tray-module-meow-face))
     ("mpd" . (awesome-tray-module-mpd-info awesome-tray-module-mpd-face))
     ("volume" . (awesome-tray-module-volume-info awesome-tray-module-volume-face))
     ("word-count" . (awesome-tray-module-word-count-info awesome-tray-module-word-count-face))
@@ -872,6 +878,13 @@ NAME is a string, typically a directory name."
           (if awesome-tray-evil-show-cursor-count
               (setq state (string-trim (concat (awesome-tray--count-multiple-cursors) " " state))))
           state)
+      "")))
+
+(defun awesome-tray-module-meow-info ()
+  (with-demoted-errors
+      ""
+    (if (and (featurep 'meow) awesome-tray-meow-show-mode)
+        meow--indicator
       "")))
 
 (defun awesome-tray--macro-recording ()

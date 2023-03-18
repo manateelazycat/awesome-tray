@@ -213,6 +213,12 @@
   "Evil state face."
   :group 'awesome-tray)
 
+(defface awesome-tray-module-meow-face
+  '((((background light)) :inherit awesome-tray-cyan-face)
+    (t :inherit awesome-tray-cyan-face))
+  "Meow state face."
+  :group 'awesome-tray)
+
 (defface awesome-tray-module-battery-face
   '((((background light)) :inherit awesome-tray-cyan-face)
     (t :inherit awesome-tray-cyan-face))
