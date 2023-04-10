@@ -1200,12 +1200,12 @@ If right is non nil, replace to the right"
   "Get new text to be displayed."
   (interactive)
   (let* ((tray-info (awesome-tray-build-active-info))
-         (minibuffer-info (or (current-message) ""))
+         (minibuffer-info (current-message))
          (minibuffer-info (set-text-properties 0 (length minibuffer-info) nil minibuffer-info))
          (minibuffer-info (if (stringp minibuffer-info) minibuffer-info ""))
          (blank-length (- (awesome-tray-get-frame-width)
                           (string-width tray-info)
-                          (string-width (or (cdr (split-string minibuffer-info "\n")) "")))))
+                          (string-width (car (last (split-string minibuffer-info "\n")))))))
     (awesome-tray-set-text (if (> blank-length 0) (awesome-tray-build-active-info) (awesome-tray-build-essential-info)))))
 
 (provide 'awesome-tray)
