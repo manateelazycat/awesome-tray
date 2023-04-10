@@ -1201,9 +1201,11 @@ If right is non nil, replace to the right"
   (interactive)
   (let* ((tray-info (awesome-tray-build-active-info))
          (minibuffer-info (current-message))
+         (minibuffer-info (set-text-properties 0 (length minibuffer-info) nil minibuffer-info))
+         (minibuffer-info (if (stringp minibuffer-info) minibuffer-info ""))
          (blank-length (- (awesome-tray-get-frame-width)
                           (string-width tray-info)
-                          (string-width (if minibuffer-info minibuffer-info "")))))
+                          (string-width (car (last (split-string minibuffer-info "\n")))))))
     (awesome-tray-set-text (if (> blank-length 0) (awesome-tray-build-active-info) (awesome-tray-build-essential-info)))))
 
 (provide 'awesome-tray)
