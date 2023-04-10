@@ -1199,14 +1199,25 @@ If right is non nil, replace to the right"
 (defun awesome-tray-update ()
   "Get new text to be displayed."
   (interactive)
-  (let* ((tray-info (awesome-tray-build-active-info))
-         (minibuffer-info (current-message))
-         (minibuffer-info (set-text-properties 0 (length minibuffer-info) nil minibuffer-info))
-         (minibuffer-info (if (stringp minibuffer-info) minibuffer-info ""))
+  (let* ((tray-active-info (awesome-tray-build-active-info))
+         ;; Get minibuffer content.
+         (echo-message (current-message))
+         ;; Remove text property from content.
+         (echo-text (set-text-properties 0 (length echo-message) nil echo-message))
+         ;; Set empty string if `echo-text' not string.
+         (minibuffer-info (if (stringp echo-text) echo-text ""))
+         ;; Only fetch last line from content to calculate the width of left side minibuffer.
+         (minibuffer-last-line (car (last (split-string minibuffer-info "\n"))))
+         ;; Calculate blank length between message and active tray info.
          (blank-length (- (awesome-tray-get-frame-width)
-                          (string-width tray-info)
-                          (string-width (car (last (split-string minibuffer-info "\n")))))))
-    (awesome-tray-set-text (if (> blank-length 0) (awesome-tray-build-active-info) (awesome-tray-build-essential-info)))))
+                          (string-width tray-active-info)
+                          (string-width minibuffer-last-line))))
+    (awesome-tray-set-text
+     (if (> blank-length 0)
+         ;; Show active tray info if have blank.
+         tray-active-info
+       ;; Otherwise show essential tray info.
+       (awesome-tray-build-essential-info)))))
 
 (provide 'awesome-tray)
 
