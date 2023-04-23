@@ -727,7 +727,9 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
                  (setq battery-status (battery-format " [%p%%]" battery-info)))
                 ((member battery-type '("off-line" "BAT" "Battery"))
                  (setq battery-type "OFF")
-                 (setq battery-status (battery-format " [%p%% %t]" battery-info))))
+                 (if (eq system-type 'darwin)
+                     (setq battery-status (battery-format " [%p%%]" battery-info))
+                     (setq battery-status (battery-format " [%p%% %t]" battery-info)))))
 
           ;; Update battery cache.
           (setq awesome-tray-battery-status-cache (concat battery-type battery-status)))
