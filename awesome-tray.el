@@ -1131,18 +1131,19 @@ If right is non nil, replace to the right"
   (interactive)
   (when awesome-tray-hide-mode-line
     ;; Restore mode-line colors.
-    (set-face-attribute 'mode-line nil
-                        :foreground (nth 0 awesome-tray-mode-line-colors)
-                        :background (nth 1 awesome-tray-mode-line-colors)
-                        :family (nth 2 awesome-tray-mode-line-colors)
-                        :box (nth 3 awesome-tray-mode-line-colors)
-                        :height awesome-tray-mode-line-default-height)
-    (set-face-attribute 'mode-line-inactive nil
-                        :foreground (nth 4 awesome-tray-mode-line-colors)
-                        :background (nth 5 awesome-tray-mode-line-colors)
-                        :family (nth 6 awesome-tray-mode-line-colors)
-                        :box (nth 7 awesome-tray-mode-line-colors)
-                        :height awesome-tray-mode-line-default-height))
+    (when awesome-tray-mode-line-colors
+      (set-face-attribute 'mode-line nil
+                          :foreground (nth 0 awesome-tray-mode-line-colors)
+                          :background (nth 1 awesome-tray-mode-line-colors)
+                          :family (nth 2 awesome-tray-mode-line-colors)
+                          :box (nth 3 awesome-tray-mode-line-colors)
+                          :height awesome-tray-mode-line-default-height)
+      (set-face-attribute 'mode-line-inactive nil
+                          :foreground (nth 4 awesome-tray-mode-line-colors)
+                          :background (nth 5 awesome-tray-mode-line-colors)
+                          :family (nth 6 awesome-tray-mode-line-colors)
+                          :box (nth 7 awesome-tray-mode-line-colors)
+                          :height awesome-tray-mode-line-default-height)))
 
   ;; Remove awesome-tray overlays
   (mapc 'delete-overlay awesome-tray-overlays)
