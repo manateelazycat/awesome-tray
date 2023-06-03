@@ -34,6 +34,7 @@ The load-path is usually `~/elisp/`. It's set in your `~/.emacs` like this:
 - `awesome-tray-mpd-format`: Use to customize the mpd string format, see the variable docstring for details.
 - `awesome-tray-git-format`: Use to customize the git string format.
 - `awesome-tray-location-format`: Use to customize the location string format, see `mode-line-format`.
+- `awesome-tray-location-info-all`: Use to customize the location "All", if `mode-line-format` contains `%p`.
 - `awesome-tray-location-info-top`: Use to customize the location "Top", if `mode-line-format` contains `%p`.
 - `awesome-tray-location-info-bottom`: Use to customize the location "Bottom", if `mode-line-format` contains `%p`.
 - `awesome-tray-git-show-status`: If non-nil, show current file status on the git module.
