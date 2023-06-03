@@ -82,6 +82,8 @@
 ;;; Change log:
 ;; 2023/06/03
 ;;      * Add `awesome-tray-module-celestial-info' to show moon phase date and sunrise/sunset time.
+;;      * Add `awesome-tray-location-info-all', `awesome-tray-location-info-top',
+;;        and `awesome-tray-location-info-bottom' to use custom string for All, Top and Bottom in buffer location info.
 ;;
 ;; 2022/03/01
 ;;      * Use overlay re-implement tray information render.
@@ -315,6 +317,21 @@ If nil, don't update the awesome-tray automatically."
 
 (defcustom awesome-tray-separator " "
   "Default string for the separator between modules."
+  :group 'awesome-tray
+  :type 'string)
+
+(defcustom awesome-tray-location-info-all ""
+  "Default string indicating buffer all."
+  :group 'awesome-tray
+  :type 'string)
+
+(defcustom awesome-tray-location-info-top " ⬆"
+  "Default string indicating buffer top."
+  :group 'awesome-tray
+  :type 'string)
+
+(defcustom awesome-tray-location-info-bottom " ⬇"
+  "Default string indicating buffer bottom."
   :group 'awesome-tray
   :type 'string)
 
@@ -746,10 +763,12 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
   (if (equal major-mode 'eaf-mode)
       ""
     (string-replace
-     " All" ""
+     " All" awesome-tray-location-info-all
      (string-replace
-      " Top" " ⬆"
-      (string-replace " Bottom" " ⬇" (format-mode-line awesome-tray-location-format))))))
+      " Top" awesome-tray-location-info-top
+      (string-replace
+       " Bottom" awesome-tray-location-info-bottom
+       (format-mode-line awesome-tray-location-format))))))
 
 (with-eval-after-load 'libmpdel
   (add-hook 'libmpdel-current-playlist-changed-hook 'awesome-tray-mpd-command-update-cache)
