@@ -318,6 +318,16 @@ If nil, don't update the awesome-tray automatically."
   :group 'awesome-tray
   :type 'string)
 
+(defcustom awesome-tray-module-location-info-top " ⬆"
+  "Default string indicating buffer top."
+  :group 'awesome-tray
+  :type 'string)
+
+(defcustom awesome-tray-module-location-info-bottom " ⬇"
+  "Default string indicating buffer bottom."
+  :group 'awesome-tray
+  :type 'string)
+
 (defcustom awesome-tray-ellipsis "…"
   "Default string for the ellipsis when something is truncated."
   :group 'awesome-tray
@@ -748,8 +758,10 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
     (string-replace
      " All" ""
      (string-replace
-      " Top" " ⬆"
-      (string-replace " Bottom" " ⬇" (format-mode-line awesome-tray-location-format))))))
+      " Top" awesome-tray-module-location-info-top
+      (string-replace
+       " Bottom" awesome-tray-module-location-info-bottom
+       (format-mode-line awesome-tray-location-format))))))
 
 (with-eval-after-load 'libmpdel
   (add-hook 'libmpdel-current-playlist-changed-hook 'awesome-tray-mpd-command-update-cache)
