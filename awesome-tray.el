@@ -80,6 +80,8 @@
 ;;
 
 ;;; Change log:
+;; 2023/06/03
+;;      * Add `awesome-tray-module-celestial-info' to show moon phase date and sunrise/sunset time.
 ;;
 ;; 2022/03/01
 ;;      * Use overlay re-implement tray information render.
@@ -499,6 +501,8 @@ Example:
     ("buffer-name" . (awesome-tray-module-buffer-name-info awesome-tray-module-buffer-name-face))
     ("circe" . (awesome-tray-module-circe-info awesome-tray-module-circe-face))
     ("date" . (awesome-tray-module-date-info awesome-tray-module-date-face))
+    ("celestial" . (awesome-tray-module-celestial-info awesome-tray-module-celestial-face))
+    ("date" . (awesome-tray-module-date-info awesome-tray-module-date-face))
     ("evil" . (awesome-tray-module-evil-info awesome-tray-module-evil-face))
     ("file-path" . (awesome-tray-module-file-path-info awesome-tray-module-file-path-face))
     ("git" . (awesome-tray-module-git-info awesome-tray-module-git-face))
@@ -776,6 +780,14 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 (defun awesome-tray-module-date-info ()
   "Displays the date."
   (format-time-string awesome-tray-date-format))
+
+(defun awesome-tray-module-celestial-info ()
+  "Displays moon phase and sunrise/sunset time."
+  (with-demoted-errors
+      ""
+    (if (featurep 'celestial-mode-line)
+        celestial-mode-line-string
+      "")))
 
 (defun awesome-tray-module-last-command-info ()
   (format "%s" last-command))
