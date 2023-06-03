@@ -318,12 +318,12 @@ If nil, don't update the awesome-tray automatically."
   :group 'awesome-tray
   :type 'string)
 
-(defcustom awesome-tray-module-location-info-top " ⬆"
+(defcustom awesome-tray-location-info-top " ⬆"
   "Default string indicating buffer top."
   :group 'awesome-tray
   :type 'string)
 
-(defcustom awesome-tray-module-location-info-bottom " ⬇"
+(defcustom awesome-tray-location-info-bottom " ⬇"
   "Default string indicating buffer bottom."
   :group 'awesome-tray
   :type 'string)
@@ -758,9 +758,9 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
     (string-replace
      " All" ""
      (string-replace
-      " Top" awesome-tray-module-location-info-top
+      " Top" awesome-tray-location-info-top
       (string-replace
-       " Bottom" awesome-tray-module-location-info-bottom
+       " Bottom" awesome-tray-location-info-bottom
        (format-mode-line awesome-tray-location-format))))))
 
 (with-eval-after-load 'libmpdel
