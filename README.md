@@ -63,6 +63,7 @@ You can find all modules name in the keys of variable ```awesome-tray-module-ali
 - `buffer-name`: Show buffer name.
 - `circe`: Show circe tracking buffer information.
 - `date`: Show current date.
+- `celestial`: If you are not settled for date, you can add lunar phase and sunrise/set time. Requires `celestial-mode-line` package.
 - `evil`: Show evil state, recording macro and multiple cursors count in both [evil-mc](https://github.com/gabesoft/evil-mc) and [multiple-cursors](https://github.com/magnars/multiple-cursors.el).
 - `file-path`: Show file path with full customizability. When the path is long, it can be shrinked into something like `.../.em/el/awesome-tray/awesome-tray.el`. See `awesome-tray-file-path-***` variables for details.
 - `git`: Show git information.

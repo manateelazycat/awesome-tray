@@ -177,6 +177,12 @@
   "Date face."
   :group 'awesome-tray)
 
+(defface awesome-tray-module-celestial-face
+  '((((background light)) :inherit awesome-tray-grey-face)
+    (t :inherit awesome-tray-grey-face))
+  "Celestial lunar phase and sunrise/set face."
+  :group 'awesome-tray)
+
 (defface awesome-tray-module-last-command-face
   '((((background light)) :inherit awesome-tray-blue-bright-face)
     (t :inherit awesome-tray-blue-bright-face))
