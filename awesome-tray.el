@@ -733,7 +733,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
                  (setq battery-type "OFF")
                  (if (eq system-type 'darwin)
                      (setq battery-status (battery-format " [%p%%]" battery-info))
-                     (setq battery-status (battery-format " [%p%% %t]" battery-info)))))
+                   (setq battery-status (battery-format " [%p%% %t]" battery-info)))))
 
           ;; Update battery cache.
           (setq awesome-tray-battery-status-cache (concat battery-type battery-status)))
@@ -745,7 +745,11 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 (defun awesome-tray-module-location-info ()
   (if (equal major-mode 'eaf-mode)
       ""
-    (concat (format-mode-line awesome-tray-location-format))))
+    (string-replace
+     " All" ""
+     (string-replace
+      " Top" " ⬆"
+      (string-replace " Bottom" " ⬇" (format-mode-line awesome-tray-location-format))))))
 
 (with-eval-after-load 'libmpdel
   (add-hook 'libmpdel-current-playlist-changed-hook 'awesome-tray-mpd-command-update-cache)
