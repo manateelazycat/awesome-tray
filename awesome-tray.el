@@ -782,7 +782,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
   (format-time-string awesome-tray-date-format))
 
 (defun awesome-tray-module-celestial-info ()
-  "Displays moon phase and sunrise/sunset time."
+  "Displays lunar phase and sunrise/sunset time."
   (with-demoted-errors
       ""
     (if (featurep 'celestial-mode-line)
