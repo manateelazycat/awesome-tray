@@ -805,7 +805,9 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
       "")))
 
 (defun awesome-tray-module-last-command-info ()
-  (format "%s" last-command))
+  ;; Only show last command when user enable `toggle-debug-on-error'.
+  (when debug-on-error
+    (format "%s" last-command)))
 
 (defun awesome-tray-module-buffer-name-info ()
   (let (bufname)
