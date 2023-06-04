@@ -462,14 +462,6 @@ their full name."
   :type 'integer
   :group 'awesome-tray)
 
-(defcustom awesome-tray-file-path-truncate-dirname-levels 0
-  "In file-path module, how many levels of parent directories should be shown in
-their first character.
-
-These goes before those shown in their full names."
-  :type 'integer
-  :group 'awesome-tray)
-
 (defcustom awesome-tray-info-padding-right 0
   "You can customize right padding to avoid awesome-tray wrap sometimes."
   :type 'integer
@@ -838,53 +830,34 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 (defun awesome-tray-module-parent-dir-info ()
   (format "%s" (file-name-nondirectory (directory-file-name default-directory))))
 
-(defun awesome-tray-shrink-dir-name (name)
-  "Shrink NAME to be its first letter, or the first two if starts \".\"
-
-NAME is a string, typically a directory name."
-  (let ((dot-num (if (string-match "^\\.+" name)
-                     (length (match-string 0 name))
-                   0)))
-    (substring name 0 (min (length name) (+ dot-num awesome-tray-file-path-truncated-name-length)))))
+(defun awesome-tray-shrink-dir-name (input-string)
+  (let* ((words (split-string input-string "-"))
+         (abbreviated-words (mapcar (lambda (word) (substring word 0 1)) words)))
+    (mapconcat 'identity abbreviated-words "-")))
 
 (defun awesome-tray-module-file-path-info ()
-  (if (not buffer-file-name)
-      (let ((bufname (buffer-name)))
-        (setq bufname (if awesome-tray-buffer-name-buffer-changed
-                          (if (and (buffer-modified-p)
-                                   (not (eq buffer-file-name nil)))
-                              (concat (buffer-name) awesome-tray-buffer-name-buffer-changed-style)
-                            (buffer-name))
-                        (format "%s" (buffer-name))))
-        (awesome-tray-truncate-string bufname awesome-tray-file-name-max-length t))
-    (let* ((file-path (split-string (buffer-file-name) "/" t))
-           (shown-path)
-           (path-len (length file-path))
-           (modp (if (buffer-modified-p) "*" ""))
-           (full-num awesome-tray-file-path-full-dirname-levels)
-           (trunc-num awesome-tray-file-path-truncate-dirname-levels)
-           (show-name awesome-tray-file-path-show-filename))
-      (when (> path-len (+ 1 full-num))
-        (push (string-join
-               (mapcar #'awesome-tray-shrink-dir-name
-                       (cl-subseq file-path
-                                  (max 0 (- path-len (+ 1 full-num trunc-num)))
-                                  (- path-len (1+ full-num)))) "/")
-              shown-path))
-      (when (> path-len 1)
-        (push (string-join
-               (cl-subseq file-path
-                          (max 0 (- path-len (1+ full-num)))
-                          (1- path-len)) "/")
-              shown-path))
-      (when show-name
-        (push (car (last file-path)) shown-path))
-      (concat modp
-              (if (<= path-len (+ 1 full-num trunc-num))
-                  "/"
-                "./")
-              (string-join (nreverse (cl-remove "" shown-path)) "/")
-              (when (and shown-path (not show-name)) "/")))))
+  (let* ((file-path (split-string (if buffer-file-name buffer-file-name default-directory) "/" t))
+         (full-num awesome-tray-file-path-full-dirname-levels)
+         (show-name awesome-tray-file-path-show-filename)
+         shown-path)
+    ;; Remove file name if `awesome-tray-file-path-show-filename' is nil.
+    (setq show-path
+          (if buffer-file-name
+              (if show-name file-path (butlast file-path))
+            file-path))
+    ;; Remove redundant directory with `awesome-tray-file-path-full-dirname-levels' value.
+    (setq show-path (nthcdr (- (length show-path)
+                               (if buffer-file-name
+                                   (if show-name (1+ full-num) full-num)
+                                 (1+ full-num)))
+                            show-path))
+    ;; Shrink parent directory name to save minibuffer space.
+    (setq show-path
+          (append (mapcar #'awesome-tray-shrink-dir-name (butlast show-path))
+                  (last show-path)))
+    ;; Join paths.
+    (setq show-path (mapconcat #'identity show-path "/"))
+    show-path))
 
 (defun awesome-tray-module-awesome-tab-info ()
   (with-demoted-errors
