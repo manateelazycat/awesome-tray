@@ -737,12 +737,14 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
           ;; Short battery type.
           (cond ((member battery-type '("on-line" "AC"))
                  (setq battery-type "ON")
-                 (setq battery-status (battery-format " [%p%%]" battery-info)))
+                 (setq battery-status ""))
                 ((member battery-type '("off-line" "BAT" "Battery"))
                  (setq battery-type "OFF")
-                 (if (eq system-type 'darwin)
-                     (setq battery-status (battery-format " [%p%%]" battery-info))
-                   (setq battery-status (battery-format " [%p%% %t]" battery-info)))))
+                 (setq battery-status (battery-format
+                                       (if (eq system-type 'darwin)
+                                           " [%p%%]"
+                                         " [%p%% %t]" )
+                                       battery-info))))
 
           ;; Update battery cache.
           (setq awesome-tray-battery-status-cache (concat battery-type battery-status)))
