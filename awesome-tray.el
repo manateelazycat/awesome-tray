@@ -340,7 +340,7 @@ If nil, don't update the awesome-tray automatically."
   :group 'awesome-tray
   :type 'string)
 
-(defcustom awesome-tray-date-format "%m-%d %H:%M %a"
+(defcustom awesome-tray-date-format "%-m-%-d %-H:%-M %a"
   "Format string of the date module."
   :group 'awesome-tray
   :type 'string)
