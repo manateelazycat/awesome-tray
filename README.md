@@ -72,6 +72,8 @@ You can find all modules name in the keys of variable ```awesome-tray-module-ali
 - `git`: Show git information.
 - `last-command`: Show last execute command.
 - `location`: Show point position in buffer.
+- `pdf-view-page`: Show page number in pdf-view-mode.
+- `location-or-page`: Show location or pdf page number depends on current mode.
 - `parent-dir`: Show direct parent directory.
 - `mode-name`: Show major mode name.
 - `rvm`: Show Ruby version information given by `rvm-prompt`.
@@ -80,7 +82,6 @@ You can find all modules name in the keys of variable ```awesome-tray-module-ali
 - `buffer-read-only`: Show read only status.
 - `belong`: Show which class/function status, need install `treesit` first.
 - `org-pomodoro`: Show `org-pomodoro` status. Denote the rest time of pomodoro by `[.]`, short break by `(.)` and long break by `{.}`.
-- `pdf-view-page`: Show page number in pdf-view-mode.
 - `flymake`: Show Flymake state.
 - `meow`: Show meow state.
 - `mpd`: Show mpd information using [libmpdel](https://github.com/mpdel/libmpdel), you need to connect to a mpd profile, use `(libmpdel-connect-profile (libmpdel--select-profile))` unless you have multiple profiles.

@@ -135,6 +135,12 @@
   "Location face."
   :group 'awesome-tray)
 
+(defface awesome-tray-module-location-or-page-face
+  '((((background light)) :inherit awesome-tray-orange-face)
+    (t :inherit awesome-tray-orange-face))
+  "Location or page face."
+  :group 'awesome-tray)
+
 (defface awesome-tray-module-word-count-face
   '((((background light)) :inherit awesome-tray-orange-face)
     (t :inherit awesome-tray-orange-face))
