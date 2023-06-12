@@ -71,8 +71,9 @@
 ;; `awesome-tray-refresh-idle-delay'
 ;; `awesome-tray-buffer-name-buffer-changed'
 ;; `awesome-tray-buffer-name-buffer-changed-style'
-;; `awesome-tray-input-method-en-style'
-;; `awesome-tray-input-method-zh-style'
+;; `awesome-tray-input-method-default-style'
+;; `awesome-tray-input-method-local-style'
+;; `awesome-tray-input-method-local-methods'
 ;; `awesome-tray-buffer-read-only-style'
 ;;
 ;; All of the above can customize by:
