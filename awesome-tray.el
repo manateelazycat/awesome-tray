@@ -432,14 +432,20 @@ It will make command `set-mark-command' failed if not use duration."
   :type 'boolean
   :group 'awesome-tray)
 
-(defcustom awesome-tray-input-method-en-style "EN"
-  "English input method display style for input-method module."
+(defcustom awesome-tray-input-method-default-style ""
+  "Default input method display style for input-method module."
   :type 'string
   :group 'awesome-tray)
 
-(defcustom awesome-tray-input-method-zh-style "ZH"
-  "Chinese input method display style for input-method module."
+(defcustom awesome-tray-input-method-local-style "ZH"
+  "Local input method display style for input-method module."
   :type 'string
+  :group 'awesome-tray)
+
+(defcustom awesome-tray-input-method-local-methods
+  '("rime")
+  "List of local input methods you want to display `awesome-tray-input-method-local-style'"
+  :type 'list
   :group 'awesome-tray)
 
 (defcustom awesome-tray-buffer-read-only-style "R-O"
@@ -838,9 +844,12 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
       (format "%s" awesome-tray-buffer-read-only-style)))
 
 (defun awesome-tray-module-input-method-info ()
-  (if (eq current-input-method nil)
-      (format "%s" awesome-tray-input-method-en-style)
-    (format "%s" awesome-tray-input-method-zh-style)))
+  (format "%s"
+          (if (eq current-input-method nil)
+              awesome-tray-input-method-default-style
+            (if (member current-input-method awesome-tray-input-method-local-methods)
+                awesome-tray-input-method-zh-style
+              current-input-method-title))))
 
 (defun awesome-tray-module-parent-dir-info ()
   (format "%s" (file-name-nondirectory (directory-file-name default-directory))))
