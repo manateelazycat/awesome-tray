@@ -770,12 +770,10 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 
 (defun awesome-tray-module-location-or-page-info ()
   "Show Location or PDF page depends on current mode."
-  (with-demoted-errors
-      ""
-    (if (and (featurep 'pdf-view)
-             (derived-mode-p 'pdf-view-mode))
-        (awesome-tray-module-pdf-view-page-info)
-      (awesome-tray-module-location-info))))
+  (let ((page-info (awesome-tray-module-pdf-view-page-info)))
+    (if (string= page-info "")
+        (awesome-tray-module-location-info)
+      page-info)))
 
 (with-eval-after-load 'libmpdel
   (add-hook 'libmpdel-current-playlist-changed-hook 'awesome-tray-mpd-command-update-cache)
