@@ -46,6 +46,9 @@ The load-path is usually `~/elisp/`. It's set in your `~/.emacs` like this:
 - `awesome-tray-github-update-duration`: Update duration of the github notification, in seconds.
 - `awesome-tray-github-erase-duration`: Github notification time before it gets removed from the bar, in seconds.
 - `awesome-tray-meow-show-mode`: If non-nil, show current meow mode in the meow module.
+- `awesome-tray-input-method-default-style`: Input method indicator you want to show when no input method is toggled on.
+- `awesome-tray-input-method-local-style`: Input method indicator for your local input method.
+- `awesome-tray-input-method-local-methods`: List of input methods as your local input method. If input method is toggled on, but not a member of this list, `input-method-title` will display in as input method indicator in awesome-tray, such as "DE@" for German. Default is "rime".
 
 ## Dangerous options
 Please read the docstring for those variables
