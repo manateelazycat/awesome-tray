@@ -849,7 +849,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
           (if (eq current-input-method nil)
               awesome-tray-input-method-default-style
             (if (member current-input-method awesome-tray-input-method-local-methods)
-                awesome-tray-input-method-zh-style
+                awesome-tray-input-method-local-style
               current-input-method-title))))
 
 (defun awesome-tray-module-parent-dir-info ()
