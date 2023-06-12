@@ -80,6 +80,9 @@
 ;;
 
 ;;; Change log:
+;; 2023/06/12
+;;      * Add `awesome-tray-module-location-or-page-info' to show location or pdf page.
+;;
 ;; 2023/06/03
 ;;      * Add `awesome-tray-module-celestial-info' to show moon phase date and sunrise/sunset time.
 ;;      * Add `awesome-tray-location-info-all', `awesome-tray-location-info-top',
@@ -517,6 +520,7 @@ Example:
     ("git" . (awesome-tray-module-git-info awesome-tray-module-git-face))
     ("last-command" . (awesome-tray-module-last-command-info awesome-tray-module-last-command-face))
     ("location" . (awesome-tray-module-location-info awesome-tray-module-location-face))
+    ("location-or-page" . (awesome-tray-module-location-or-page-info awesome-tray-module-location-or-page-face))
     ("parent-dir" . (awesome-tray-module-parent-dir-info awesome-tray-module-parent-dir-face))
     ("mode-name" . (awesome-tray-module-mode-name-info awesome-tray-module-mode-name-face))
     ("rvm" . (awesome-tray-module-rvm-info awesome-tray-module-rvm-face))
@@ -763,6 +767,15 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
       (string-replace
        " Bottom" awesome-tray-location-info-bottom
        (format-mode-line awesome-tray-location-format))))))
+
+(defun awesome-tray-module-location-or-page-info ()
+  "Show Location or PDF page depends on current mode."
+  (with-demoted-errors
+      ""
+    (if (and (featurep 'pdf-view)
+             (derived-mode-p 'pdf-view-mode))
+        (awesome-tray-module-pdf-view-page-info)
+      (awesome-tray-module-location-info))))
 
 (with-eval-after-load 'libmpdel
   (add-hook 'libmpdel-current-playlist-changed-hook 'awesome-tray-mpd-command-update-cache)
