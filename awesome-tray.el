@@ -821,7 +821,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
   (with-demoted-errors
       ""
     (if (featurep 'celestial-mode-line)
-        celestial-mode-line-string
+        (substring-no-properties celestial-mode-line-string)
       "")))
 
 (defun awesome-tray-module-last-command-info ()
