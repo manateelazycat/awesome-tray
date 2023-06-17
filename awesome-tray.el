@@ -1196,11 +1196,16 @@ If right is non nil, replace to the right"
   (dolist (hook awesome-tray-git-update-hooks)
     (remove-hook hook 'awesome-tray-git-command-update-cache)))
 
+(defun awesome-tray-is-rime-display-in-minibuffer ()
+  (if (and (featurep 'rime) (eq rime-show-candidate 'minibuffer))
+      rime--current-input-key
+    nil))
+
 (defun awesome-tray-set-text (text)
   "Set the text displayed by the awesome-tray to TEXT."
   ;; Only set tray information when minibuffer not in `input' state.
   ;; Don't fill tray information if user is typing in minibuffer.
-  (unless (active-minibuffer-window)
+  (unless (or (active-minibuffer-window) (awesome-tray-is-rime-display-in-minibuffer))
     (let* ((wid (+ (string-width text) awesome-tray-info-padding-right))
            (spc (pcase awesome-tray-position
                   ('center (propertize "  " 'cursor 1 'display
