@@ -994,12 +994,16 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 (defun awesome-tray-module-pdf-view-page-info ()
   (with-demoted-errors
       ""
-    (if (featurep 'pdf-view)
-        (let ((state
-               (cond ((derived-mode-p 'pdf-view-mode) (format "%d/%d" (eval '(pdf-view-current-page)) (pdf-cache-number-of-pages)))
-                     (t ""))))
-          state)
-      "")))
+    (cond
+     ((and (derived-mode-p 'eaf-mode)
+           (string-equal eaf--buffer-app-name "pdf-viewer"))
+      (eaf-call-sync "execute_function" eaf--buffer-id "get_progress"))
+     ((featurep 'pdf-view)
+      (let ((state
+             (cond ((derived-mode-p 'pdf-view-mode) (format "%d/%d" (eval '(pdf-view-current-page)) (pdf-cache-number-of-pages)))
+                   (t ""))))
+        state))
+     (t ""))))
 
 (defun awesome-tray-module-flymake-info ()
   "A module for showing Flymake state."
