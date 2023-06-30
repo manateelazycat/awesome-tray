@@ -39,7 +39,7 @@
 ;; And the following to your ~/.emacs startup file.
 ;;
 ;; (require 'awesome-tray-mode-line-dynamic)
-;; (awesome-tray-mode-line-dynamic 1)
+;; (awesome-tray-mode-line-dynamic-mode 1)
 
 ;;; Requires:
 (require 'awesome-tray)
