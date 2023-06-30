@@ -81,6 +81,13 @@
 ;;
 
 ;;; Change log:
+;;
+;; 2023/07/01
+;;      * Make mode-line color indicator buffer state.
+;;
+;; 2023/06/30
+;;      * `awesome-tray-module-location-or-page-info' support EAF PDF Viewer
+;;
 ;; 2023/06/12
 ;;      * Add `awesome-tray-module-location-or-page-info' to show location or pdf page.
 ;;
@@ -290,6 +297,21 @@ If nil, don't update the awesome-tray automatically."
 
 (defcustom awesome-tray-mode-line-inactive-color "Gray10"
   "Inactive color."
+  :type 'string
+  :group 'awesome-tray)
+
+(defcustom awesome-tray-mode-line-modified-readonly-color "Green"
+  "Modified + readonly color."
+  :type 'string
+  :group 'awesome-tray)
+
+(defcustom awesome-tray-mode-line-readonly-color "DarkGreen"
+  "Readonly color."
+  :type 'string
+  :group 'awesome-tray)
+
+(defcustom awesome-tray-mode-line-modified-color "DarkOrange"
+  "Modified color."
   :type 'string
   :group 'awesome-tray)
 
@@ -1241,9 +1263,37 @@ If right is non nil, replace to the right"
   (overlay-put (car awesome-tray-overlays) 'priority 1)
   (awesome-tray-update))
 
+(defun awesome-tray-adjust-mode-line-color ()
+  (let ((mode-line-color
+         (cond
+          ;; Use `awesome-tray-mode-line-active-color' when current buffer is minibuffer or blink-search input buffer.
+          ((or (minibufferp)
+               (member (buffer-name (current-buffer)) '(" *blink search input*")))
+           awesome-tray-mode-line-active-color)
+          ;; Use `awesome-tray-mode-line-modified-readonly-color' if buffer is modified and read-only.
+          ((and (buffer-modified-p) buffer-read-only)
+           awesome-tray-mode-line-modified-readonly-color)
+          ;; Use `awesome-tray-mode-line-readonly-color' if buffer is read-only.
+          (buffer-read-only
+           awesome-tray-mode-line-readonly-color)
+          ;; Use `awesome-tray-mode-line-active-color' if `auto-save' plugin is enable, avoid blink eyes.
+          ((buffer-modified-p)
+           (if (require 'auto-save nil t)
+               awesome-tray-mode-line-active-color
+             awesome-tray-mode-line-modified-color))
+          (t
+           awesome-tray-mode-line-active-color))))
+    (set-face-attribute 'mode-line nil
+                        :foreground mode-line-color
+                        :background mode-line-color)))
+
 (defun awesome-tray-update ()
   "Get new text to be displayed."
   (interactive)
+
+  ;; Adjust mode-line color with buffer's state.
+  (awesome-tray-adjust-mode-line-color)
+
   (let* ((tray-active-info (awesome-tray-build-active-info))
          ;; Get minibuffer content.
          (echo-message (current-message))
