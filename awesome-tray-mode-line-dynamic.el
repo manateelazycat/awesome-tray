@@ -117,7 +117,7 @@ awesome-tray-mode-line when it is no longer needed or desired."
   (awesome-tray-enable))
 
 ;;;###autoload
-(define-minor-mode awesome-tray-mode-line-dynamic
+(define-minor-mode awesome-tray-mode-line-dynamic-mode
   "Toggle the dynamic behavior of the awesome-tray-mode-line.
 When enabled, the awesome-tray-mode-line dynamically updates its appearance
 based on certain conditions. This minor mode is global, meaning it affects
@@ -126,7 +126,7 @@ all buffers.
 Toggle this mode on or off to control the dynamic behavior of the
 awesome-tray-mode-line."
   :global t
-  (if awesome-tray-mode-line-dynamic
+  (if awesome-tray-mode-line-dynamic-mode
       (awesome-tray-mode-line-dynamic-enable)
     (awesome-tray-mode-line-dynamic-disable)))
 
