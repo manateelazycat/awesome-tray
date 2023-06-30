@@ -1,11 +1,11 @@
-;;; awesome-mode-line-dynamic.el --- summary -*- lexical-binding: t -*-
+;;; awesome-tray-mode-line-dynamic.el --- summary -*- lexical-binding: t -*-
 
 ;; Filename: awesome-tray-mode-line-dynamic.el
 ;; Description: Dynamic mode line tray bar
 ;; Author: Aboubacar TRAORE <traxyax@gmail.com>
-;; Maintainer: Andy Stewart <traxyax@gmail.com>
+;; Maintainer: Aboubacar TRAORE <traxyax@gmail.com>
 ;; Created: 2023-06-30T19:31:26+00:00
-;; Last-Updated: 2023-06-30T19:31:26+00:00
+;; Last-Updated: 2023-06-30T20:00:01+00:00
 ;;           By: Aboubacar TRAORE
 ;; Compatibility: GNU Emacs 28.1
 
