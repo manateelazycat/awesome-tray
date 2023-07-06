@@ -29,6 +29,10 @@ The load-path is usually `~/elisp/`. It's set in your `~/.emacs` like this:
 - `awesome-tray-hide-mode-line`: Enabled by default, makes the mode-line very thin and highlight it when its active/inactive.
 - `awesome-tray-mode-line-active-color`: Use for customize active color.
 - `awesome-tray-mode-line-inactive-color`: Use for customize inactive color.
+- `awesome-tray-adjust-mode-line-color-enable`: Enabled by default. If non-nil, adjsut mode-line  color when buffer state changes. 
+- `awesome-tray-mode-line-modified-readonly-color`: Use for customize modified and readonly color.
+- `awesome-tray-mode-line-readonly-color`: Use for customize readonly color.
+- `awesome-tray-mode-line-modified-color`: Use for customize modified color.
 - `awesome-tray-mode-line-height`: Mode line height, default is 0.1
 - `awesome-tray-date-format`: Use to customize the date string format.
 - `awesome-tray-mpd-format`: Use to customize the mpd string format, see the variable docstring for details.
