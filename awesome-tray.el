@@ -318,7 +318,7 @@ If nil, don't update the awesome-tray automatically."
   :type 'string
   :group 'awesome-tray)
 
-(defcustom awesome-tray-adjust-mode-line-color-enable t
+(defcustom awesome-tray-adjust-mode-line-color-enable nil
   "If non-nil, adjust mode-line color when buffer state changes."
   :group 'awesome-tray
   :type 'boolean)
