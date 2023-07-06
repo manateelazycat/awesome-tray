@@ -82,8 +82,11 @@
 
 ;;; Change log:
 ;;
+;; 2023/07/06
+;;      * Make mode-line color indicate buffer state configurable by `awesome-tray-adjust-mode-line-color-enable'.
+;;
 ;; 2023/07/01
-;;      * Make mode-line color indicator buffer state.
+;;      * Make mode-line color indicate buffer state.
 ;;
 ;; 2023/06/30
 ;;      * `awesome-tray-module-location-or-page-info' support EAF PDF Viewer
@@ -314,6 +317,11 @@ If nil, don't update the awesome-tray automatically."
   "Modified color."
   :type 'string
   :group 'awesome-tray)
+
+(defcustom awesome-tray-adjust-mode-line-color-enable t
+  "If non-nil, adjust mode-line color when buffer state changes."
+  :group 'awesome-tray
+  :type 'boolean)
 
 (defcustom awesome-tray-mode-line-height 0.1
   "Height of mode line."
@@ -1292,7 +1300,8 @@ If right is non nil, replace to the right"
   (interactive)
 
   ;; Adjust mode-line color with buffer's state.
-  (awesome-tray-adjust-mode-line-color)
+  (when awesome-tray-adjust-mode-line-color-enable
+    (awesome-tray-adjust-mode-line-color))
 
   (let* ((tray-active-info (awesome-tray-build-active-info))
          ;; Get minibuffer content.
