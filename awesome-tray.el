@@ -985,9 +985,12 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 (defun awesome-tray-update-belong-cache ()
   (setq awesome-tray-belong-cache
         (let* ((class-nodes (append (awesome-tray-get-match-nodes '((class_definition name: (symbol) @x)))
-                                    (awesome-tray-get-match-nodes '((class_definition name: (identifier) @x)))))
+                                    (awesome-tray-get-match-nodes '((class_definition name: (identifier) @x)))
+                                    (awesome-tray-get-match-nodes '((class_declaration name: (identifier) @x)))))
                (function-nodes (append (awesome-tray-get-match-nodes '((function_definition name: (symbol) @x)))
-                                       (awesome-tray-get-match-nodes '((function_definition name: (identifier) @x)))))
+                                       (awesome-tray-get-match-nodes '((function_definition name: (identifier) @x)))
+                                       (awesome-tray-get-match-nodes '((method_declaration name: (identifier) @x)))
+                                       ))
                which-belong-info
                which-class-info
                which-func-info)
