@@ -1120,13 +1120,15 @@ If right is non nil, replace to the right"
 
 (defun awesome-tray-get-frame-width ()
   "Only calculating a main Frame width, to avoid wrong width when new frame, such as `snails'."
+  ;; `window-width' can calculate the width of the minibuffer more accurately than `frame-width'.
+  ;; We need remove `awesome-tray-info-padding-right'
   (if (display-graphic-p)
       (with-selected-frame
           (if (daemonp)
               (car (last (butlast (frame-list))))
             (car (last (frame-list))))
-        (frame-width))
-    (frame-width)))
+        (window-width (minibuffer-window)))
+    (window-width (minibuffer-window))))
 
 (defun awesome-tray-process-exit-code-and-output (program &rest args)
   "Run PROGRAM with ARGS and return the exit code and output in a list."
