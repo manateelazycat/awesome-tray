@@ -986,11 +986,14 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
   (setq awesome-tray-belong-cache
         (let* ((class-nodes (append (awesome-tray-get-match-nodes '((class_definition name: (symbol) @x)))
                                     (awesome-tray-get-match-nodes '((class_definition name: (identifier) @x)))
-                                    (awesome-tray-get-match-nodes '((class_declaration name: (identifier) @x)))))
+                                    (awesome-tray-get-match-nodes '((class_declaration name: (identifier) @x)))
+                                    (awesome-tray-get-match-nodes '((class_specifier name: (type_identifier) @x)))
+                                    ))
                (function-nodes (append (awesome-tray-get-match-nodes '((function_definition name: (symbol) @x)))
                                        (awesome-tray-get-match-nodes '((function_definition name: (identifier) @x)))
                                        (awesome-tray-get-match-nodes '((function_declarator declarator: (identifier) @x)))
                                        (awesome-tray-get-match-nodes '((method_declaration name: (identifier) @x)))
+                                       (awesome-tray-get-match-nodes '((function_declarator declarator: (field_identifier) @x)))
                                        ))
                which-belong-info
                which-class-info
@@ -998,26 +1001,35 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
           ;; Set class information if point at between range of parent node.
           (setq which-class-info (catch 'found
                                    (dolist (class-node class-nodes)
-                                     (when (and (> (point) (treesit-node-start (treesit-node-parent class-node)))
-                                                (< (point) (treesit-node-end (treesit-node-parent class-node))))
-                                       (throw 'found (treesit-node-text class-node))))
+                                     (let ((node (car class-node)))
+                                       (pcase (format "%s" (cdr class-node))
+                                         ("(awesome-tray-get-match-nodes '((class_specifier name: (type_identifier) @x)))"
+                                          (when (and (> (point) (treesit-node-start node))
+                                                     (< (point) (treesit-node-end node)))
+                                            (throw 'found (treesit-node-text node))))
+                                         (t
+                                          (when (and (> (point) (treesit-node-start (treesit-node-parent node)))
+                                                     (< (point) (treesit-node-end (treesit-node-parent node))))
+                                            (throw 'found (treesit-node-text node)))))))
                                    (throw 'found "")))
           ;; Set function information if point at between range of parent node.
           (setq which-func-info (catch 'found
                                   (dolist (function-node function-nodes)
-                                    (when (and (> (point) (treesit-node-start (treesit-node-parent function-node)))
-                                               (< (point) (treesit-node-end (treesit-node-parent function-node))))
-                                      (throw 'found (treesit-node-text function-node))))
+                                    (let ((node (car function-node)))
+                                      (pcase (format "%s" (cdr function-node))
+                                        ("((function_declarator declarator: (identifier) @x))"
+                                         (when (and (> (point) (treesit-node-start (treesit-node-parent (treesit-node-parent node))))
+                                                    (< (point) (treesit-node-end (treesit-node-parent (treesit-node-parent node)))))
+                                           (throw 'found (treesit-node-text node))))
+                                        ("((function_declarator declarator: (field_identifier) @x))"
+                                         (when (and (> (point) (treesit-node-start (treesit-node-parent node)))
+                                                    (< (point) (treesit-node-end (treesit-node-parent node))))
+                                           (throw 'found (treesit-node-text node))))
+                                        (t
+                                         (when (and (> (point) (treesit-node-start (treesit-node-parent node)))
+                                                    (< (point) (treesit-node-end (treesit-node-parent node))))
+                                           (throw 'found (treesit-node-text node)))))))
                                   (throw 'found "")))
-          ;; Set function information if point at between range of grand parent node.
-          ;; In cpp file, function_declarator's grand parent node is function define range.
-          (when (string-equal which-func-info "")
-            (setq which-func-info (catch 'found
-                                    (dolist (function-node function-nodes)
-                                      (when (and (> (point) (treesit-node-start (treesit-node-parent (treesit-node-parent function-node))))
-                                                 (< (point) (treesit-node-end (treesit-node-parent (treesit-node-parent function-node)))))
-                                        (throw 'found (treesit-node-text function-node))))
-                                    (throw 'found ""))))
           (setq which-belong-info (string-trim (concat which-class-info " " which-func-info)))
           (if (string-equal which-belong-info "")
               ""
@@ -1101,7 +1113,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 (defun awesome-tray-get-match-nodes (query)
   (ignore-errors
     (mapcar #'(lambda (range)
-                (treesit-node-at (car range)))
+                (cons (treesit-node-at (car range)) query))
             (treesit-query-range
              (treesit-node-language (treesit-buffer-root-node))
              query))))
