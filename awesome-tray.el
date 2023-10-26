@@ -359,12 +359,12 @@ If nil, don't update the awesome-tray automatically."
   :group 'awesome-tray
   :type 'string)
 
-(defcustom awesome-tray-location-info-top " ⬆"
+(defcustom awesome-tray-location-info-top " T"
   "Default string indicating buffer top."
   :group 'awesome-tray
   :type 'string)
 
-(defcustom awesome-tray-location-info-bottom " ⬇"
+(defcustom awesome-tray-location-info-bottom " B"
   "Default string indicating buffer bottom."
   :group 'awesome-tray
   :type 'string)
