@@ -887,7 +887,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 
 (defun awesome-tray-shrink-dir-name (input-string)
   (let* ((words (split-string input-string "-"))
-         (abbreviated-words (mapcar (lambda (word) (substring word 0 1)) words)))
+         (abbreviated-words (mapcar (lambda (word) (substring word 0 (min awesome-tray-file-path-truncated-name-length (length word)))) words)))
     (mapconcat 'identity abbreviated-words "-")))
 
 (defun awesome-tray-module-file-path-info ()
