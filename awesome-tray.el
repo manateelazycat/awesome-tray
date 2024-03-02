@@ -1277,7 +1277,23 @@ If right is non nil, replace to the right"
                   ('left (propertize "  " 'cursor 1 'display
                                      `(space :align-to (- left-fringe ,wid))))
                   ('right (propertize "  " 'cursor 1 'display
-                                      `(space :align-to (- right-fringe ,wid)))))))
+                                      `(space :align-to (- right-fringe
+                                                           ,(if (display-graphic-p)
+                                                                (if (= (nth 1 (window-fringes)) 0)
+                                                                    ;; no right fringe, need 1 char padding to avoid
+                                                                    ;; line wrap
+                                                                    1
+                                                                  (if (and (not overflow-newline-into-fringe)
+                                                                           (= awesome-tray-info-padding-right 0))
+                                                                      ;; need 1 pixel padding to avoid line wrap when
+                                                                      ;; overflow-newline-into-fringe is nil
+                                                                      '(1)
+                                                                    '(0)))
+                                                              (if (= awesome-tray-info-padding-right 0)
+                                                                  ;; need 1 char in TUI to avoid line wrap
+                                                                  1
+                                                                0))
+                                                           ,wid)))))))
 
       (setq awesome-tray-text (concat (if awesome-tray-second-line "\n") spc text))
 
