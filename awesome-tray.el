@@ -1354,7 +1354,7 @@ If right is non nil, replace to the right"
          (echo-message (current-message))
          ;; Remove text property from content.
          (_ (set-text-properties 0 (length echo-message) nil echo-message))
-         ;; Set empty string if `echo-text' not string.
+         ;; Set empty string if `echo-message' not string.
          (minibuffer-info (if (stringp echo-message) echo-message ""))
          ;; Only fetch last line from content to calculate the width of left side minibuffer.
          (minibuffer-last-line (car (last (split-string minibuffer-info "\n"))))
