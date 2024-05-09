@@ -575,8 +575,8 @@ Example:
     ("word-count" . (awesome-tray-module-word-count-info awesome-tray-module-word-count-face))
     ("anzu" . (awesome-tray-module-anzu-info awesome-tray-module-anzu-face))
     ("github" . (awesome-tray-module-github-info awesome-tray-module-github-face))
-    ("hostname" . (awesome-tray-module-hostname-info awesome-tray-module-hostname-face))
-    ))
+    ("hostname" . (awesome-tray-module-hostname-info awesome-tray-module-hostname-face))))
+    
 
 (with-eval-after-load 'mu4e-alert
   (add-hook 'mu4e-index-updated-hook #'mu4e-alert-update-mail-count-modeline)
@@ -764,8 +764,8 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
   (if (executable-find "rvm-prompt")
       (format "rvm:%s" (replace-regexp-in-string
                         "\n" ""
-                        (nth 1 (awesome-tray-process-exit-code-and-output "rvm-prompt")))
-              )
+                        (nth 1 (awesome-tray-process-exit-code-and-output "rvm-prompt"))))
+              
     ""))
 
 (defun awesome-tray-module-battery-info ()
@@ -785,7 +785,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
                  (setq battery-status (battery-format
                                        (if (eq system-type 'darwin)
                                            "[%p%%]"
-                                         "[%p%% %t]" )
+                                         "[%p%% %t]")
                                        battery-info))))
 
           ;; Update battery cache.
@@ -988,14 +988,14 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
         (let* ((class-nodes (append (awesome-tray-get-match-nodes '((class_definition name: (symbol) @x)))
                                     (awesome-tray-get-match-nodes '((class_definition name: (identifier) @x)))
                                     (awesome-tray-get-match-nodes '((class_declaration name: (identifier) @x)))
-                                    (awesome-tray-get-match-nodes '((class_specifier name: (type_identifier) @x)))
-                                    ))
+                                    (awesome-tray-get-match-nodes '((class_specifier name: (type_identifier) @x)))))
+                                    
                (function-nodes (append (awesome-tray-get-match-nodes '((function_definition name: (symbol) @x)))
                                        (awesome-tray-get-match-nodes '((function_definition name: (identifier) @x)))
                                        (awesome-tray-get-match-nodes '((function_declarator declarator: (identifier) @x)))
                                        (awesome-tray-get-match-nodes '((method_declaration name: (identifier) @x)))
-                                       (awesome-tray-get-match-nodes '((function_declarator declarator: (field_identifier) @x)))
-                                       ))
+                                       (awesome-tray-get-match-nodes '((function_declarator declarator: (field_identifier) @x)))))
+                                       
                which-belong-info
                which-class-info
                which-func-info)
@@ -1179,8 +1179,8 @@ If right is non nil, replace to the right"
                   (face-attribute 'mode-line-inactive :foreground)
                   (face-attribute 'mode-line-inactive :background)
                   (face-attribute 'mode-line-inactive :family)
-                  (face-attribute 'mode-line-inactive :box)
-                  )))
+                  (face-attribute 'mode-line-inactive :box))))
+                  
     (setq awesome-tray-mode-line-default-height (face-attribute 'mode-line :height))
 
     ;; Disable mode line.
@@ -1353,9 +1353,9 @@ If right is non nil, replace to the right"
          ;; Get minibuffer content.
          (echo-message (current-message))
          ;; Remove text property from content.
-         (echo-text (set-text-properties 0 (length echo-message) nil echo-message))
+         (_ (set-text-properties 0 (length echo-message) nil echo-message))
          ;; Set empty string if `echo-text' not string.
-         (minibuffer-info (if (stringp echo-text) echo-text ""))
+         (minibuffer-info (if (stringp echo-message) echo-message ""))
          ;; Only fetch last line from content to calculate the width of left side minibuffer.
          (minibuffer-last-line (car (last (split-string minibuffer-info "\n"))))
          ;; Calculate blank length between message and active tray info.
