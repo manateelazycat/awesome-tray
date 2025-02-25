@@ -728,7 +728,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
   (if (file-exists-p (format "%s" (buffer-file-name)))
       (let* ((filename (buffer-file-name))
              (status (vc-git-state filename))
-             (branch (car (vc-git-branches))))
+             (branch (car (ignore-errors (vc-git-branches)))))
 
         (pcase status
           ('up-to-date (setq status ""))
