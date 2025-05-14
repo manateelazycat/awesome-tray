@@ -90,6 +90,7 @@ You can find all modules name in the keys of variable ```awesome-tray-module-ali
 - `belong`: Show which class/function status, need install `treesit` first.
 - `org-pomodoro`: Show `org-pomodoro` status. Denote the rest time of pomodoro by `[.]`, short break by `(.)` and long break by `{.}`.
 - `flymake`: Show Flymake state.
+- `flycheck`: Show Flycheck state.
 - `meow`: Show meow state.
 - `mpd`: Show mpd information using [libmpdel](https://github.com/mpdel/libmpdel), you need to connect to a mpd profile, use `(libmpdel-connect-profile (libmpdel--select-profile))` unless you have multiple profiles.
 - `volume`: Show current volume using [volume.el](https://github.com/dbrock/volume.el).
