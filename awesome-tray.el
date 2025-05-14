@@ -541,6 +541,8 @@ Example:
 
 (defvar awesome-tray-battery-status-cache "")
 
+(defvar awesome-tray-flycheck-status-cache "")
+
 (defvar awesome-tray-last-tray-info nil)
 
 (defvar awesome-tray-mode-line-default-height 1)
@@ -569,6 +571,7 @@ Example:
     ("org-pomodoro" . (awesome-tray-module-org-pomodoro-info awesome-tray-module-org-pomodoro-face))
     ("pdf-view-page" . (awesome-tray-module-pdf-view-page-info awesome-tray-module-pdf-view-page-face))
     ("flymake" . (awesome-tray-module-flymake-info nil))
+    ("flycheck" . (awesome-tray-module-flycheck-info nil))
     ("meow" . (awesome-tray-module-meow-info awesome-tray-module-meow-face))
     ("mpd" . (awesome-tray-module-mpd-info awesome-tray-module-mpd-face))
     ("volume" . (awesome-tray-module-volume-info awesome-tray-module-volume-face))
@@ -1110,6 +1113,49 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
                               " "))
                           "🟢")))))))
             flymake-state)))))
+
+
+(with-eval-after-load 'flycheck
+  (add-hook 'flycheck-status-changed-functions 'awesome-tray-flycheck-status-update-cache)
+  (add-hook 'window-buffer-change-functions (lambda (_) (awesome-tray-flycheck-status-update-cache)))
+  )
+
+(defun awesome-tray-flycheck-status-update-cache (&optional status)
+  (if  (or status flycheck-last-status-change)
+      (let* ((status (symbol-name flycheck-last-status-change))
+             (status (pcase status
+                       ;;("not-checked" "💤")
+                       ;;("no-checker" "❌")
+                       ("running" "⏳")
+                       ("errored" "⚠️")
+                       ("finished" "")
+                       ("interrupted" "⏸️")
+                       ("suspicious" "🤔")
+                       (_ status)))
+             (counts (flycheck-count-errors flycheck-current-errors)))
+        ;;(debug)
+
+        (setq awesome-tray-flycheck-status-cache
+              (if (not (member status  '("not-checked" "no-checker")))
+                  (let ((errors (cdr (assq 'error counts)))
+                        (warnings (cdr (assq 'warning counts))))
+                    (format "%s 🔴:%s|🟠:%s"
+                            status
+                            (propertize (number-to-string (or errors 0)) 'face 'awesome-tray-module-flymake-error)
+                            (propertize (number-to-string (or warnings 0)) 'face 'awesome-tray-module-flymake-warning)))
+                ""
+                ))
+        ;;(message awesome-tray-flycheck-status-cache)
+        )
+    (setq awesome-tray-flycheck-status-cache "")
+    )
+  )
+
+  (defun awesome-tray-module-flycheck-info ()
+    (when  (featurep 'flycheck)
+      awesome-tray-flycheck-status-cache
+      )
+    )
 
 (defun awesome-tray-get-match-nodes (query)
   (ignore-errors
