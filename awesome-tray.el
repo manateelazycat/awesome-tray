@@ -557,6 +557,7 @@ Example:
     ("evil" . (awesome-tray-module-evil-info awesome-tray-module-evil-face))
     ("file-path" . (awesome-tray-module-file-path-info awesome-tray-module-file-path-face))
     ("git" . (awesome-tray-module-git-info awesome-tray-module-git-face))
+    ("iedit" . (awesome-tray-module-iedit awesome-tray-module-iedit-face))
     ("last-command" . (awesome-tray-module-last-command-info awesome-tray-module-last-command-face))
     ("location" . (awesome-tray-module-location-info awesome-tray-module-location-face))
     ("location-or-page" . (awesome-tray-module-location-or-page-info awesome-tray-module-location-or-page-face))
@@ -1197,6 +1198,12 @@ If right is non nil, replace to the right"
 
 (defun awesome-tray-current-seconds ()
   (string-to-number (format-time-string "%s")))
+
+(defun awesome-tray-module-iedit ()
+  (when iedit-mode "Iediting ... "))
+
+(with-eval-after-load 'iedit
+  (add-to-list 'awesome-tray-active-modules "iedit"))
 
 ;;;###autoload
 (define-minor-mode awesome-tray-mode

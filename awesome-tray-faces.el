@@ -288,6 +288,12 @@
   "Flymake note face."
   :group 'awesome-tray)
 
+(defface awesome-tray-module-iedit-face
+  '((((background light)) :inherit awesome-tray-red-face)
+    (t :inherit awesome-tray-red-face))
+  "Iedit face."
+  :group 'awesome-tray)
+
 (provide 'awesome-tray-faces)
 
 ;;; awesome-tray-faces.el ends here
