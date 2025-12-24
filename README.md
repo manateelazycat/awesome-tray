@@ -26,6 +26,7 @@ The load-path is usually `~/elisp/`. It's set in your `~/.emacs` like this:
 
 ## Customize Mode line.
 
+- `awesome-tray-info-padding-right`: If you customize font, awesome-tray may wrap last character in next row, you need increase this value to avoid wrap
 - `awesome-tray-hide-mode-line`: Enabled by default, makes the mode-line very thin and highlight it when its active/inactive.
 - `awesome-tray-mode-line-active-color`: Use for customize active color.
 - `awesome-tray-mode-line-inactive-color`: Use for customize inactive color.
