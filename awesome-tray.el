@@ -580,7 +580,7 @@ Example:
     ("anzu" . (awesome-tray-module-anzu-info awesome-tray-module-anzu-face))
     ("github" . (awesome-tray-module-github-info awesome-tray-module-github-face))
     ("hostname" . (awesome-tray-module-hostname-info awesome-tray-module-hostname-face))))
-    
+
 
 (with-eval-after-load 'mu4e-alert
   (add-hook 'mu4e-index-updated-hook #'mu4e-alert-update-mail-count-modeline)
@@ -769,7 +769,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
       (format "rvm:%s" (replace-regexp-in-string
                         "\n" ""
                         (nth 1 (awesome-tray-process-exit-code-and-output "rvm-prompt"))))
-              
+
     ""))
 
 (defun awesome-tray-module-battery-info ()
@@ -993,13 +993,13 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
                                     (awesome-tray-get-match-nodes '((class_definition name: (identifier) @x)))
                                     (awesome-tray-get-match-nodes '((class_declaration name: (identifier) @x)))
                                     (awesome-tray-get-match-nodes '((class_specifier name: (type_identifier) @x)))))
-                                    
+
                (function-nodes (append (awesome-tray-get-match-nodes '((function_definition name: (symbol) @x)))
                                        (awesome-tray-get-match-nodes '((function_definition name: (identifier) @x)))
                                        (awesome-tray-get-match-nodes '((function_declarator declarator: (identifier) @x)))
                                        (awesome-tray-get-match-nodes '((method_declaration name: (identifier) @x)))
                                        (awesome-tray-get-match-nodes '((function_declarator declarator: (field_identifier) @x)))))
-                                       
+
                which-belong-info
                which-class-info
                which-func-info)
@@ -1225,19 +1225,19 @@ If right is non nil, replace to the right"
     ;; Don't change `awesome-tray-mode-line-colors' anymore.
     (unless awesome-tray-mode-line-colors
       (setq awesome-tray-mode-line-colors
-            (list (face-attribute 'mode-line :foreground)
-                  (face-attribute 'mode-line :background)
-                  (face-attribute 'mode-line :family)
-                  (face-attribute 'mode-line :box)
+            (list (face-attribute 'mode-line-active :foreground)
+                  (face-attribute 'mode-line-active :background)
+                  (face-attribute 'mode-line-active :family)
+                  (face-attribute 'mode-line-active :box)
                   (face-attribute 'mode-line-inactive :foreground)
                   (face-attribute 'mode-line-inactive :background)
                   (face-attribute 'mode-line-inactive :family)
                   (face-attribute 'mode-line-inactive :box))))
-                  
-    (setq awesome-tray-mode-line-default-height (face-attribute 'mode-line :height))
+
+    (setq awesome-tray-mode-line-default-height (face-attribute 'mode-line-active :height))
 
     ;; Disable mode line.
-    (set-face-attribute 'mode-line nil
+    (set-face-attribute 'mode-line-active nil
                         :foreground awesome-tray-mode-line-active-color
                         :background awesome-tray-mode-line-active-color
                         :height awesome-tray-mode-line-height
@@ -1282,7 +1282,7 @@ If right is non nil, replace to the right"
   (when awesome-tray-hide-mode-line
     ;; Restore mode-line colors.
     (when awesome-tray-mode-line-colors
-      (set-face-attribute 'mode-line nil
+      (set-face-attribute 'mode-line-active nil
                           :foreground (nth 0 awesome-tray-mode-line-colors)
                           :background (nth 1 awesome-tray-mode-line-colors)
                           :family (nth 2 awesome-tray-mode-line-colors)
@@ -1390,7 +1390,7 @@ If right is non nil, replace to the right"
              awesome-tray-mode-line-modified-color))
           (t
            awesome-tray-mode-line-active-color))))
-    (set-face-attribute 'mode-line nil
+    (set-face-attribute 'mode-line-active nil
                         :foreground mode-line-color
                         :background mode-line-color)))
 
