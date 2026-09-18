@@ -580,7 +580,7 @@ Example:
     ("anzu" . (awesome-tray-module-anzu-info awesome-tray-module-anzu-face))
     ("github" . (awesome-tray-module-github-info awesome-tray-module-github-face))
     ("hostname" . (awesome-tray-module-hostname-info awesome-tray-module-hostname-face))))
-    
+
 
 (with-eval-after-load 'mu4e-alert
   (add-hook 'mu4e-index-updated-hook #'mu4e-alert-update-mail-count-modeline)
@@ -769,7 +769,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
       (format "rvm:%s" (replace-regexp-in-string
                         "\n" ""
                         (nth 1 (awesome-tray-process-exit-code-and-output "rvm-prompt"))))
-              
+
     ""))
 
 (defun awesome-tray-module-battery-info ()
@@ -993,13 +993,13 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
                                     (awesome-tray-get-match-nodes '((class_definition name: (identifier) @x)))
                                     (awesome-tray-get-match-nodes '((class_declaration name: (identifier) @x)))
                                     (awesome-tray-get-match-nodes '((class_specifier name: (type_identifier) @x)))))
-                                    
+
                (function-nodes (append (awesome-tray-get-match-nodes '((function_definition name: (symbol) @x)))
                                        (awesome-tray-get-match-nodes '((function_definition name: (identifier) @x)))
                                        (awesome-tray-get-match-nodes '((function_declarator declarator: (identifier) @x)))
                                        (awesome-tray-get-match-nodes '((method_declaration name: (identifier) @x)))
                                        (awesome-tray-get-match-nodes '((function_declarator declarator: (field_identifier) @x)))))
-                                       
+
                which-belong-info
                which-class-info
                which-func-info)
